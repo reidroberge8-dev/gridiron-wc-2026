@@ -453,8 +453,8 @@
       #draft-view { padding: 8px 4px 40px; }
       .draft-layout { flex-direction: row !important; gap: 6px; align-items: flex-start; }
       /* Round cards: capped width — sidebar gets everything else */
-      .draft-main { flex: 0 1 168px; min-width: 0; }
-      .draft-sidebar { flex: 1 0 0; min-width: 120px; width: auto !important; position: static; }
+      .draft-main { flex: 0 1 190px; min-width: 0; }
+      .draft-sidebar { flex: 1 0 0; min-width: 100px; width: auto !important; position: static; }
       .avail-panel { position: static; }
       .avail-list { max-height: 85vh; overflow-y: auto; }
       .avail-item { padding: 4px 7px; gap: 5px; }
@@ -467,10 +467,10 @@
       .db2-round-header { padding: 5px 7px; }
       .db2-round-name { font-size: 0.56rem; letter-spacing: 0.4px; }
       .db2-round-meta { font-size: 0.48rem; }
-      .db2-pick-row { padding: 5px 7px; min-height: 28px; gap: 4px; }
-      .db2-num { font-size: 0.56rem; width: auto; flex-shrink: 0; }
-      /* Player name: natural width, sits tight against the pick number */
-      .db2-player { font-size: 0.68rem; flex: 0 0 auto; white-space: nowrap; }
+      .db2-pick-row { padding: 5px 7px; min-height: 26px; gap: 2px; }
+      .db2-num { font-size: 0.56rem; width: auto; flex-shrink: 0; margin-right: 1px; }
+      /* Player name: small + grey — de-emphasised so country name gets visual space */
+      .db2-player { font-size: 0.57rem; color: var(--muted); flex: 0 0 auto; white-space: nowrap; }
       /* Team fills remaining space, right-aligned */
       .db2-team { flex: 1; max-width: none; gap: 3px; justify-content: flex-end; }
       .db2-flag { font-size: 0.82rem; flex-shrink: 0; }
