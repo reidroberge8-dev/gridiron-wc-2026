@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Gridiron WC">
+  <meta name="theme-color" content="#013369">
   <title>Gridiron World Cup Challenge 2026</title>
   <style>
     :root {
@@ -42,6 +48,17 @@
     }
     .subtitle { color: rgba(255,255,255,0.7); font-size: 0.82rem; margin-top: 3px; letter-spacing: 0.5px; text-transform: uppercase; }
     .last-updated { margin-top: 8px; font-size: 0.7rem; color: rgba(255,255,255,0.55); }
+    .refresh-btn {
+      position: absolute; top: 14px; right: 16px;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%; width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: rgba(255,255,255,0.75);
+      transition: background 0.15s, transform 0.3s;
+    }
+    .refresh-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+    .refresh-btn:active { transform: rotate(180deg); }
+    .refresh-btn svg { width: 16px; height: 16px; }
     #status-dot {
       display: inline-block; width: 7px; height: 7px; border-radius: 50%;
       background: var(--green); margin-right: 5px; vertical-align: middle;
@@ -427,6 +444,13 @@
 <body>
 
 <header>
+  <button class="refresh-btn" onclick="location.reload()" title="Refresh">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M23 4v6h-6"/>
+      <path d="M1 20v-6h6"/>
+      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+    </svg>
+  </button>
   <span class="trophy">🏆</span>
   <h1>Gridiron World Cup Challenge</h1>
   <p class="subtitle">2026 FIFA World Cup &nbsp;·&nbsp; Fantasy Draft Order</p>
