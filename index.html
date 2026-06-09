@@ -427,6 +427,10 @@
 
       /* ── Draft board mobile ── */
       #draft-view { padding: 14px 8px 40px; }
+      .draft-layout { flex-direction: column; }
+      .draft-sidebar { width: 100%; position: static; }
+      .avail-panel { position: static; }
+      .avail-list { max-height: 50vh; }
       .draft-table { font-size: 0.72rem; }
       .draft-table thead th.db-h-rank   { width: 22px; }
       .draft-table thead th.db-h-player { width: 62px; }
@@ -459,7 +463,42 @@
 
     /* ── Draft Board ── */
     #draft-view { display: none; max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
+    .draft-layout { display: flex; gap: 20px; align-items: flex-start; }
+    .draft-main   { flex: 1; min-width: 0; }
+    .draft-sidebar { width: 240px; flex-shrink: 0; }
     .draft-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    /* Available teams panel */
+    .avail-panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      position: sticky; top: 16px;
+    }
+    .avail-header {
+      padding: 10px 14px; background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .avail-header span { font-size: 0.6rem; color: var(--muted); font-weight: 400; text-transform: none; letter-spacing: 0; }
+    .avail-list { max-height: 72vh; overflow-y: auto; padding: 4px 0; }
+    .avail-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-bottom: 1px solid var(--border);
+      font-size: 0.78rem;
+    }
+    .avail-item:last-child { border-bottom: none; }
+    .avail-rank {
+      font-size: 0.62rem; font-weight: 700; color: var(--muted);
+      min-width: 22px; text-align: right; flex-shrink: 0;
+    }
+    .avail-rank.top10 { color: var(--gold); }
+    .avail-flag { font-size: 0.9rem; flex-shrink: 0; }
+    .avail-name { flex: 1; font-weight: 600; color: var(--text); }
+    .avail-drafted { color: var(--muted); font-weight: 400; text-decoration: line-through; font-size: 0.72rem; }
+    .avail-owner { font-size: 0.58rem; color: var(--blue); font-weight: 600; margin-left: auto; flex-shrink: 0; }
     .draft-table {
       width: 100%; border-collapse: separate; border-spacing: 0 5px;
       table-layout: fixed;
@@ -534,7 +573,19 @@
 </div>
 
 <div id="draft-view">
-  <div id="draft-board-body"></div>
+  <div class="draft-layout">
+    <div class="draft-main">
+      <div id="draft-board-body"></div>
+    </div>
+    <div class="draft-sidebar">
+      <div class="avail-panel">
+        <div class="avail-header">Available Teams <span id="avail-count"></span></div>
+        <div class="avail-list" id="avail-list">
+          <div style="padding:20px;text-align:center;color:var(--muted);font-size:0.78rem">Loading…</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div id="content" style="display:none">
@@ -1173,6 +1224,56 @@ function renderDraftBoard() {
     </tr></thead>
     <tbody>${rows}</tbody>
   </table></div>`;
+}
+
+
+/* ── FIFA World Rankings (Apr 1 2026 — official pre-tournament) ── */
+const FIFA_RANKINGS = {
+  "Argentina":1,"France":2,"Spain":3,"England":4,"Brazil":5,
+  "Portugal":6,"Netherlands":7,"Belgium":8,"Colombia":9,"Germany":10,
+  "Morocco":11,"Croatia":12,"Uruguay":13,"United States":14,"Japan":15,
+  "Switzerland":16,"Mexico":17,"Ecuador":18,"South Korea":19,"Senegal":20,
+  "Austria":21,"Iran":22,"Australia":23,"Norway":24,"Sweden":25,
+  "Türkiye":26,"Czechia":27,"Canada":28,"Scotland":29,"Iraq":30,
+  "Qatar":31,"Algeria":32,"Paraguay":33,"Egypt":34,"Ivory Coast":35,
+  "Tunisia":36,"Bosnia-Herzegovina":37,"Saudi Arabia":38,"Congo DR":39,"Ghana":40,
+  "South Africa":41,"Uzbekistan":42,"Cape Verde":43,"Jordan":44,"Panama":45,
+  "Haiti":46,"Curaçao":47,"New Zealand":48
+};
+
+function renderAvailableTeams() {
+  const container = document.getElementById("avail-list");
+  const countEl   = document.getElementById("avail-count");
+  if (!container) return;
+
+  // Build set of drafted teams
+  const drafted = {};  // teamName → ownerName
+  if (cachedStandingsData) {
+    for (const p of cachedStandingsData.standings) {
+      for (const t of (p.teams || [])) {
+        if (t.team && t.team !== "TODO" && t.team !== "TBD") {
+          drafted[t.team] = p.name;
+        }
+      }
+    }
+  }
+
+  // All 48 teams sorted by FIFA rank
+  const allTeams = Object.entries(FIFA_RANKINGS).sort((a,b) => a[1]-b[1]);
+  const available = allTeams.filter(([name]) => !drafted[name]);
+
+  countEl.textContent = `${available.length} of 48 left`;
+
+  container.innerHTML = allTeams.map(([name, rank]) => {
+    const owner = drafted[name];
+    const isTop10 = rank <= 10;
+    return `<div class="avail-item">
+      <span class="avail-rank ${isTop10 ? "top10" : ""}">${rank}</span>
+      <span class="avail-flag">${flag(name)}</span>
+      <span class="${owner ? "avail-drafted" : "avail-name"}">${name}</span>
+      ${owner ? `<span class="avail-owner">${owner}</span>` : ""}
+    </div>`;
+  }).join("");
 }
 
 /* ── View toggle ── */
