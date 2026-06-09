@@ -641,6 +641,14 @@
       font-weight: 500;
       flex-shrink: 0;
     }
+    .db2-onclock {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .db2-onclock-row {
+      background: rgba(204,85,0,0.06);
+      border-radius: 6px;
+    }
   </style>
 </head>
 <body>
@@ -1319,6 +1327,22 @@ function renderDraftBoard() {
     teamsByPlayer[p.name] = p.teams || [];
   }
 
+  // Pre-compute which overall pick is "on the clock" (first unpicked slot)
+  let onClockNum = null;
+  {
+    let n = 1;
+    for (let r = 0; r < 4; r++) {
+      const seq = r % 2 === 0 ? DRAFT_ORDER : [...DRAFT_ORDER].reverse();
+      for (const playerName of seq) {
+        const teams = teamsByPlayer[playerName] || [];
+        const t = teams[r];
+        const filled = t && t.team && t.team !== "TODO" && t.team !== "TBD";
+        if (!filled && onClockNum === null) onClockNum = n;
+        n++;
+      }
+    }
+  }
+
   // Build 4 round cards (snake draft)
   let overall = 1;
   const cards = [0,1,2,3].map(r => {
@@ -1330,10 +1354,14 @@ function renderDraftBoard() {
       const teams = teamsByPlayer[playerName] || [];
       const t = teams[r];
       const teamName = (!t || t.team === "TODO" || t.team === "TBD") ? null : t.team;
+      const isOnClock = !teamName && num === onClockNum;
       const teamHTML = teamName
         ? `<span class="db2-team"><span class="db2-flag">${flag(teamName)}</span><span class="db2-tname">${teamName}</span></span>`
-        : `<span class="db2-tbd">TBD</span>`;
-      return `<div class="db2-pick-row ${teamName ? "" : "db2-tbd-row"}">
+        : isOnClock
+          ? `<span class="db2-onclock">⏰</span>`
+          : `<span class="db2-tbd">TBD</span>`;
+      const rowClass = teamName ? "" : isOnClock ? "db2-onclock-row" : "db2-tbd-row";
+      return `<div class="db2-pick-row ${rowClass}">
         <span class="db2-num">#${num}</span>
         <span class="db2-player">${playerName}</span>
         ${teamHTML}
