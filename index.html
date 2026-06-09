@@ -432,15 +432,29 @@
       .bracket-scroll { -webkit-overflow-scrolling: touch; }
       .bracket-round  { min-width: 140px; }
 
-      /* ── Draft board mobile ── */
-      #draft-view { padding: 12px 8px 40px; }
-      .draft-layout { flex-direction: column; }
-      .draft-sidebar { width: 100%; position: static; }
+      /* ── Draft board mobile: keep side-by-side, never stack ── */
+      #draft-view { padding: 8px 6px 40px; }
+      .draft-layout { flex-direction: row !important; gap: 8px; align-items: flex-start; }
+      .draft-sidebar { width: 110px !important; flex-shrink: 0; position: static; }
       .avail-panel { position: static; }
-      .avail-list { max-height: 50vh; }
-      .db2-pick-row { padding: 8px 12px; min-height: 38px; }
-      .db2-player { font-size: 0.82rem; }
-      .db2-tname { font-size: 0.75rem; }
+      .avail-list { max-height: 85vh; overflow-y: auto; }
+      /* Compact the available-teams list */
+      .avail-item { padding: 5px 8px; gap: 5px; }
+      .avail-rank { font-size: 0.58rem; min-width: 16px; }
+      .avail-flag { font-size: 0.82rem; }
+      .avail-name, .avail-drafted { font-size: 0.65rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .avail-header { font-size: 0.6rem; padding: 7px 8px; }
+      /* Compact the round cards */
+      .db2-round-card { margin-bottom: 8px; }
+      .db2-round-header { padding: 7px 10px; }
+      .db2-round-name { font-size: 0.62rem; }
+      .db2-round-meta { font-size: 0.55rem; }
+      .db2-pick-row { padding: 7px 10px; min-height: 34px; gap: 0; }
+      .db2-num { font-size: 0.58rem; width: 22px; }
+      .db2-player { font-size: 0.78rem; }
+      .db2-flag { font-size: 0.9rem; }
+      .db2-tname { font-size: 0.7rem; }
+      .db2-tbd { font-size: 0.65rem; }
     }
 
     /* ── Live score in standings table cell ── */
