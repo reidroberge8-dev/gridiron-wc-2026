@@ -343,35 +343,52 @@ function formatUpdated(iso) {
 
 /* ── Standings ── */
 function buildTeamCell(t, slotLabel) {
-  const isTbd = !t || t.team === "TODO" || t.team === "TBD";
-  const name  = isTbd ? slotLabel : t.team;
-  const pts   = isTbd ? 0 : (t.total ?? 0);
-  const wins  = isTbd ? [] : (t.wins ?? []);
-  const ties  = isTbd ? [] : (t.ties ?? []);
-  const elim  = isTbd ? false : (t.eliminated ?? false);
-  const last  = isTbd ? null : (t.last_result ?? null);
-  const next  = isTbd ? null : (t.next_game ?? null);
+  const isTbd  = !t || t.team === "TODO" || t.team === "TBD";
+  const name   = isTbd ? slotLabel : t.team;
+  const pts    = isTbd ? 0 : (t.total ?? 0);
+  const wins   = isTbd ? [] : (t.wins  ?? []);
+  const ties   = isTbd ? [] : (t.ties  ?? []);
+  const elim   = isTbd ? false : (t.eliminated ?? false);
+  const last   = isTbd ? null  : (t.last_result ?? null);
+  const next   = isTbd ? null  : (t.next_game   ?? null);
+  const record = isTbd ? null  : (t.record       ?? null);
 
+  // Point chips (wins + draws)
   let chips = "";
   for (const w of wins) chips += `<span class="chip chip-win">${STAGE_SHORT[w.stage]||w.stage} +${w.pts}</span>`;
   for (const d of ties) chips += `<span class="chip chip-tie">${STAGE_SHORT[d.stage]||d.stage} +${d.pts}</span>`;
 
+  // Last result line
   let lastLine = "";
   if (last) {
     const cls = RESULT_CLASS[last.result] || "";
-    lastLine = `<div class="meta-line"><span class="meta-label">Last</span><span class="${cls}">${last.result}</span><span>${last.score} vs ${last.opponent}</span></div>`;
+    lastLine = `
+      <div class="meta-line">
+        <span class="meta-label">Last</span>
+        <span class="${cls}">${last.result}</span>
+        <span>${last.score} vs ${last.opponent}</span>
+      </div>`;
   }
 
+  // Next game or Eliminated
   let nextLine = "";
   if (elim) {
-    nextLine = `<div class="eliminated-badge">Eliminated</div>`;
+    const rec = record ? ` · ${record}` : "";
+    nextLine = `<div class="eliminated-badge">☠ Eliminated${rec}</div>`;
   } else if (next) {
-    nextLine = `<div class="meta-line"><span class="meta-label">Next</span><span>vs ${next.opponent}, ${fmtDate(next.date)}</span></div>`;
+    nextLine = `
+      <div class="meta-line">
+        <span class="meta-label">Next</span>
+        <span>vs ${next.opponent}, ${fmtDate(next.date)}</span>
+      </div>`;
   }
 
   return `
-    <td class="${isTbd ? 'team-cell team-tbd' : 'team-cell'}">
-      <div class="team-flag-name"><span>${isTbd ? "⬜" : flag(name)}</span><span>${name}</span></div>
+    <td class="${isTbd ? "team-cell team-tbd" : "team-cell"}">
+      <div class="team-flag-name">
+        <span>${isTbd ? "⬜" : flag(name)}</span>
+        <span>${name}</span>
+      </div>
       ${chips ? `<div class="chips">${chips}</div>` : ""}
       <div class="team-meta">${lastLine}${nextLine}</div>
     </td>

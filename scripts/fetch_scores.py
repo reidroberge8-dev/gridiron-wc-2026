@@ -49,10 +49,10 @@ def build_team_data(events):
     def ensure(name):
         if name not in teams:
             teams[name] = {
-                "wins": [], "ties": [], "total": 0,
+                "wins": [], "ties": [], "losses": [], "total": 0,
                 "last_result": None, "next_game": None,
                 "eliminated": False,
-                "_completed_dates": [],   # for sorting
+                "_completed_dates": [],
                 "_scheduled_dates": [],
             }
 
@@ -109,6 +109,7 @@ def build_team_data(events):
             win_pts = WIN_POINTS.get(slug, 0)
             teams[winner]["wins"].append({"stage": slug, "opponent": loser, "pts": win_pts})
             teams[winner]["total"] += win_pts
+            teams[loser]["losses"].append({"stage": slug, "opponent": winner})
             # Knockout loss = eliminated
             if slug in KNOCKOUT_SLUGS:
                 teams[loser]["eliminated"] = True
@@ -137,6 +138,9 @@ def build_team_data(events):
     for t in teams.values():
         del t["_completed_dates"]
         del t["_scheduled_dates"]
+        # Add computed record string
+        w = len(t["wins"]); d = len(t["ties"]); l = len(t["losses"])
+        t["record"] = f"{w}W-{d}D-{l}L"
 
     # Detect group-stage elimination:
     # If a team has no next_game AND group stage is well underway, they didn't advance
