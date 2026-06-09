@@ -407,6 +407,21 @@
       .bracket-scroll { -webkit-overflow-scrolling: touch; }
       .bracket-round  { min-width: 140px; }
     }
+
+    /* ── Live score in standings table cell ── */
+    .live-score-row {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 0.72rem; margin-top: 3px;
+    }
+    .live-score-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--green); display: inline-block; flex-shrink: 0;
+      animation: pulse 1.2s infinite;
+    }
+    .live-score-label { font-size: 0.62rem; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.4px; }
+    .live-score-num   { font-weight: 800; color: var(--text); font-size: 0.85rem; }
+    .live-score-opp   { color: var(--text-dim); }
+    .live-score-clock { font-size: 0.6rem; color: var(--muted); font-weight: 400; }
   </style>
 </head>
 <body>
@@ -543,6 +558,10 @@ function fmtDate(iso) {
   return d.toLocaleDateString("en-US",{month:"short",day:"numeric"})
        + " " + d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZoneName:"short"});
 }
+function fmtDateOnly(iso) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleDateString("en-US",{month:"short",day:"numeric"});
+}
 function fmtTime(iso) {
   if (!iso) return "";
   return new Date(iso).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZoneName:"short"});
@@ -568,9 +587,24 @@ function buildTeamCell(t, slotLabel) {
   for (const w of wins) chips += `<span class="chip chip-win">${STAGE_SHORT[w.stage]||w.stage} +${w.pts}</span>`;
   for (const d of ties) chips += `<span class="chip chip-tie">${STAGE_SHORT[d.stage]||d.stage} +${d.pts}</span>`;
 
+  // Live score (takes priority over Last/Next)
+  const lg = !isTbd ? liveGamesMap[name] : null;
+  let liveLine = "";
+  if (lg) {
+    const clockStr = lg.isHT ? "HT" : lg.clock;
+    liveLine = `
+      <div class="live-score-row">
+        <span class="live-score-dot"></span>
+        <span class="live-score-label">Live</span>
+        <span class="live-score-num">${lg.myScore}–${lg.oppScore}</span>
+        <span class="live-score-opp">vs ${lg.opponent}</span>
+        <span class="live-score-clock">${clockStr}</span>
+      </div>`;
+  }
+
   // Last result line
   let lastLine = "";
-  if (last) {
+  if (!lg && last) {
     const cls = RESULT_CLASS[last.result] || "";
     lastLine = `
       <div class="meta-line">
@@ -582,15 +616,17 @@ function buildTeamCell(t, slotLabel) {
 
   // Next game or Eliminated
   let nextLine = "";
-  if (elim) {
-    const rec = record ? ` · ${record}` : "";
-    nextLine = `<div class="eliminated-badge">☠ Eliminated${rec}</div>`;
-  } else if (next) {
-    nextLine = `
-      <div class="meta-line">
-        <span class="meta-label">Next</span>
-        <span>vs ${next.opponent}, ${fmtDate(next.date)}</span>
-      </div>`;
+  if (!lg) {
+    if (elim) {
+      const rec = record ? ` · ${record}` : "";
+      nextLine = `<div class="eliminated-badge">☠ Eliminated${rec}</div>`;
+    } else if (next) {
+      nextLine = `
+        <div class="meta-line">
+          <span class="meta-label">Next</span>
+          <span>vs ${next.opponent}, ${fmtDateOnly(next.date)}</span>
+        </div>`;
+    }
   }
 
   return `
@@ -600,7 +636,7 @@ function buildTeamCell(t, slotLabel) {
         <span>${name}</span>
       </div>
       ${chips ? `<div class="chips">${chips}</div>` : ""}
-      <div class="team-meta">${lastLine}${nextLine}</div>
+      <div class="team-meta">${liveLine}${lastLine}${nextLine}</div>
     </td>
     <td class="team-pts-cell"><span class="team-pts">${pts}</span><span class="team-pts-lbl">pts</span></td>`;
 }
@@ -628,15 +664,22 @@ function buildMobileCards(standings) {
       for (const w of wins) chips += `<span class="chip chip-win">${STAGE_SHORT[w.stage]||w.stage} +${w.pts}</span>`;
       for (const d of ties) chips += `<span class="chip chip-tie">${STAGE_SHORT[d.stage]||d.stage} +${d.pts}</span>`;
 
+      // Live score (takes priority)
+      const mlg = !isTbd ? liveGamesMap[name] : null;
       let meta = "";
-      if (last) {
-        const cls = RESULT_CLASS[last.result] || "";
-        meta += `<div class="m-meta-line"><span class="m-meta-lbl">Last</span><span class="${cls}">${last.result}</span><span>${last.score} vs ${last.opponent}</span></div>`;
-      }
-      if (elim) {
-        meta += `<div class="eliminated-badge" style="margin-top:4px">☠ Eliminated${record ? ` · ${record}` : ""}</div>`;
-      } else if (next) {
-        meta += `<div class="m-meta-line"><span class="m-meta-lbl">Next</span><span>vs ${next.opponent}, ${fmtDate(next.date)}</span></div>`;
+      if (mlg) {
+        const mClock = mlg.isHT ? "HT" : mlg.clock;
+        meta += `<div class="live-score-row"><span class="live-score-dot"></span><span class="live-score-label">Live</span><span class="live-score-num">${mlg.myScore}–${mlg.oppScore}</span><span class="live-score-opp">vs ${mlg.opponent}</span><span class="live-score-clock">${mClock}</span></div>`;
+      } else {
+        if (last) {
+          const cls = RESULT_CLASS[last.result] || "";
+          meta += `<div class="m-meta-line"><span class="m-meta-lbl">Last</span><span class="${cls}">${last.result}</span><span>${last.score} vs ${last.opponent}</span></div>`;
+        }
+        if (elim) {
+          meta += `<div class="eliminated-badge" style="margin-top:4px">☠ Eliminated${record ? ` · ${record}` : ""}</div>`;
+        } else if (next) {
+          meta += `<div class="m-meta-line"><span class="m-meta-lbl">Next</span><span>vs ${next.opponent}, ${fmtDateOnly(next.date)}</span></div>`;
+        }
       }
 
       return `<div class="m-team-row ${isTbd ? "tbd" : ""}">
@@ -670,6 +713,7 @@ function buildMobileCards(standings) {
 }
 
 function buildStandings(data) {
+  cachedStandingsData = data;
   const tbody = document.getElementById("standings-body");
   tbody.innerHTML = "";
   buildMobileCards(data.standings);
@@ -708,7 +752,9 @@ function buildLocked(data) {
 }
 
 /* ── Live scores ── */
-let playerTeamMap = {};   // "Spain" -> ["Devin"], "Brazil" -> ["Reid","Nolan"]
+let playerTeamMap = {};
+let liveGamesMap = {};      // teamName -> { opponent, myScore, oppScore, clock, isHT }
+let cachedStandingsData = null;   // "Spain" -> ["Devin"], "Brazil" -> ["Reid","Nolan"]
 
 function buildPlayerTeamMap(standings) {
   playerTeamMap = {};
@@ -795,6 +841,28 @@ function dayLabel(iso) {
 function renderLiveScores(events) {
   const container = document.getElementById("live-games");
   const dot       = document.getElementById("live-dot");
+
+  // Build liveGamesMap from currently live events
+  liveGamesMap = {};
+  const liveNow = events.filter(e => {
+    const s = e.competitions[0].status.type.name;
+    return s === "STATUS_IN_PROGRESS" || s === "STATUS_HALFTIME";
+  });
+  for (const e of liveNow) {
+    const comp   = e.competitions[0];
+    const isHT   = comp.status.type.name === "STATUS_HALFTIME";
+    const clock  = comp.status.displayClock || "";
+    const home   = comp.competitors.find(c => c.homeAway === "home");
+    const away   = comp.competitors.find(c => c.homeAway === "away");
+    const hName  = home?.team?.displayName || "";
+    const aName  = away?.team?.displayName || "";
+    const hScore = home?.score ?? 0;
+    const aScore = away?.score ?? 0;
+    if (hName) liveGamesMap[hName] = { opponent: aName, myScore: hScore, oppScore: aScore, clock, isHT };
+    if (aName) liveGamesMap[aName] = { opponent: hName, myScore: aScore, oppScore: hScore, clock, isHT };
+  }
+  // Re-render standings cells to reflect live scores
+  if (cachedStandingsData) buildStandings(cachedStandingsData);
 
   const todayStr  = new Date().toISOString().slice(0,10);
 
