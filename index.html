@@ -6,298 +6,219 @@
   <title>Gridiron World Cup Challenge 2026</title>
   <style>
     :root {
-      --bg:        #06090f;
-      --surface:   #0e1420;
-      --surface2:  #151d2e;
-      --border:    #1e2d45;
-      --gold:      #f0b429;
-      --gold-dim:  #a07820;
-      --green:     #22c55e;
-      --blue:      #3b82f6;
-      --red:       #ef4444;
-      --muted:     #64748b;
-      --text:      #e2e8f0;
-      --text-dim:  #94a3b8;
+      --bg:       #06090f;
+      --surface:  #0e1420;
+      --surface2: #151d2e;
+      --border:   #1e2d45;
+      --gold:     #f0b429;
+      --green:    #22c55e;
+      --red:      #ef4444;
+      --blue:     #3b82f6;
+      --muted:    #64748b;
+      --text:     #e2e8f0;
+      --text-dim: #94a3b8;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      min-height: 100vh;
-    }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
 
     /* ── Header ── */
     header {
       background: linear-gradient(135deg, #0a1628 0%, #0e1f3d 50%, #0a1628 100%);
       border-bottom: 1px solid var(--border);
-      padding: 28px 24px 20px;
+      padding: 24px 24px 18px;
       text-align: center;
       position: relative;
-      overflow: hidden;
     }
     header::before {
-      content: '';
-      position: absolute;
-      inset: 0;
+      content: ''; position: absolute; inset: 0;
       background: radial-gradient(ellipse at 50% -20%, rgba(240,180,41,0.15) 0%, transparent 60%);
       pointer-events: none;
     }
-    .trophy { font-size: 2.4rem; display: block; margin-bottom: 6px; }
+    .trophy { font-size: 2.2rem; display: block; margin-bottom: 4px; }
     h1 {
-      font-size: 1.75rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
+      font-size: 1.65rem; font-weight: 800; letter-spacing: -0.5px;
       background: linear-gradient(135deg, #f0b429, #ffd700, #f0b429);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-    .subtitle {
-      color: var(--text-dim);
-      font-size: 0.85rem;
-      margin-top: 4px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-    .last-updated {
-      position: absolute;
-      top: 12px;
-      right: 16px;
-      font-size: 0.7rem;
-      color: var(--muted);
-    }
+    .subtitle { color: var(--text-dim); font-size: 0.82rem; margin-top: 3px; letter-spacing: 0.5px; text-transform: uppercase; }
+    .last-updated { margin-top: 8px; font-size: 0.7rem; color: var(--muted); }
     #status-dot {
-      display: inline-block;
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--green);
-      margin-right: 5px;
+      display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); margin-right: 5px; vertical-align: middle;
       animation: pulse 2s infinite;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.3; }
-    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-    /* ── Layout ── */
-    main { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+    /* ── Page layout: sidebar right ── */
+    .page-body { display: flex; align-items: flex-start; gap: 20px; max-width: 1200px; margin: 0 auto; padding: 22px 16px 48px; }
+    .main-col  { flex: 1; min-width: 0; }
+    .side-col  { width: 290px; flex-shrink: 0; }
 
-    /* ── Scoring Key ── */
+    /* ── Scoring key ── */
     .scoring-key {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 18px;
-      margin-bottom: 24px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px 20px;
-      align-items: center;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 11px 16px; margin-bottom: 20px;
+      display: flex; flex-wrap: wrap; gap: 7px 18px; align-items: center;
     }
-    .scoring-key h3 {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--muted);
-      width: 100%;
-      margin-bottom: 2px;
+    .scoring-key h3 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); width: 100%; }
+    .key-item { font-size: 0.75rem; color: var(--text-dim); }
+    .key-pts  { font-weight: 700; color: var(--gold); margin-right: 3px; }
+
+    .section-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 8px; padding-left: 2px; }
+
+    /* ── Standings table ── */
+    .standings-table { width: 100%; border-collapse: separate; border-spacing: 0 5px; }
+    .standings-table thead th {
+      font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--muted); padding: 3px 9px 7px; text-align: left; font-weight: 600;
     }
-    .key-item {
-      font-size: 0.78rem;
-      color: var(--text-dim);
-    }
-    .key-pts {
-      font-weight: 700;
-      color: var(--gold);
-      margin-right: 3px;
+    .standings-table thead th.right { text-align: right; }
+    .standings-table tbody tr { background: var(--surface); }
+    .standings-table tbody tr:not(.locked-row):hover { background: var(--surface2); }
+    .standings-table tbody td { padding: 9px 9px; vertical-align: top; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .standings-table tbody td:first-child { border-radius: 10px 0 0 10px; border-left: 3px solid transparent; }
+    .standings-table tbody td:last-child  { border-radius: 0 10px 10px 0; }
+    tr[data-rank="1"] td:first-child { border-left-color: #ffd700 !important; }
+    tr[data-rank="2"] td:first-child { border-left-color: #c0c0c0 !important; }
+    tr[data-rank="3"] td:first-child { border-left-color: #cd7f32 !important; }
+
+    .rank-cell { width: 42px; text-align: center; vertical-align: middle !important; }
+    .rank-badge { width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.88rem; font-weight: 800; }
+    .rank-1     { background: rgba(255,215,0,0.15);   color: #ffd700; }
+    .rank-2     { background: rgba(192,192,192,0.15); color: #c0c0c0; }
+    .rank-3     { background: rgba(205,127,50,0.15);  color: #cd7f32; }
+    .rank-other { background: var(--surface2);         color: var(--muted); font-size: 0.82rem; }
+
+    .name-cell { width: 95px; min-width: 78px; vertical-align: middle !important; }
+    .player-name { font-weight: 700; font-size: 0.92rem; }
+    .pick-badge  { font-size: 0.6rem; color: var(--muted); display: block; margin-top: 2px; }
+
+    .team-cell { min-width: 148px; }
+    .team-tbd  { opacity: 0.32; }
+    .team-flag-name { display: flex; align-items: center; gap: 5px; font-size: 0.82rem; font-weight: 600; white-space: nowrap; }
+
+    .chips { margin-top: 4px; display: flex; flex-wrap: wrap; gap: 2px; }
+    .chip { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 0.58rem; font-weight: 700; }
+    .chip-win { background: rgba(34,197,94,0.15);  color: #22c55e; }
+    .chip-tie { background: rgba(250,204,21,0.15); color: #facc15; }
+
+    .team-meta { margin-top: 4px; display: flex; flex-direction: column; gap: 2px; }
+    .meta-line { font-size: 0.62rem; color: var(--text-dim); display: flex; align-items: center; gap: 4px; }
+    .meta-label { color: var(--muted); font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.4px; min-width: 26px; }
+    .result-w { color: #22c55e; font-weight: 700; }
+    .result-d { color: #facc15; font-weight: 700; }
+    .result-l { color: #f87171; font-weight: 700; }
+    .eliminated-badge {
+      display: inline-block; margin-top: 4px;
+      background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25);
+      color: #f87171; font-size: 0.58rem; font-weight: 700;
+      padding: 1px 6px; border-radius: 4px; letter-spacing: 0.4px; text-transform: uppercase;
     }
 
-    /* ── Section header ── */
-    .section-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--muted);
-      margin-bottom: 10px;
-      padding-left: 2px;
-    }
+    .team-pts-cell { width: 44px; text-align: right; vertical-align: middle !important; padding-right: 10px; }
+    .team-pts     { font-size: 1rem; font-weight: 700; color: var(--gold); display: block; }
+    .team-pts-lbl { font-size: 0.56rem; color: var(--muted); }
 
-    /* ── Leaderboard ── */
-    .leaderboard { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+    .divider-cell { width: 1px; padding: 0 !important; background: var(--border); }
 
-    .player-card {
+    .total-cell { width: 62px; text-align: right; padding-right: 12px !important; vertical-align: middle !important; }
+    .total-pts  { font-size: 1.4rem; font-weight: 800; color: var(--gold); display: block; line-height: 1; }
+    .total-lbl  { font-size: 0.56rem; color: var(--muted); text-transform: uppercase; }
+
+    .locked-row td { opacity: 0.5; }
+
+    /* ── Live Scores sidebar ── */
+    .live-panel {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
       overflow: hidden;
-      transition: border-color 0.2s;
-      cursor: pointer;
+      position: sticky;
+      top: 16px;
     }
-    .player-card:hover { border-color: #2d4a7a; }
-    .player-card.expanded { border-color: var(--blue); }
-
-    /* rank badge colors */
-    .player-card[data-rank="1"] { border-left: 3px solid #ffd700; }
-    .player-card[data-rank="2"] { border-left: 3px solid #c0c0c0; }
-    .player-card[data-rank="3"] { border-left: 3px solid #cd7f32; }
-
-    .card-header {
-      display: grid;
-      grid-template-columns: 48px 1fr auto auto;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 16px;
-    }
-
-    .rank-badge {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem;
-      font-weight: 800;
-    }
-    .rank-1 { background: rgba(255,215,0,0.15); color: #ffd700; }
-    .rank-2 { background: rgba(192,192,192,0.15); color: #c0c0c0; }
-    .rank-3 { background: rgba(205,127,50,0.15); color: #cd7f32; }
-    .rank-other { background: var(--surface2); color: var(--muted); font-size: 0.9rem; }
-
-    .player-name { font-weight: 700; font-size: 1.05rem; }
-    .draft-pick-badge {
-      font-size: 0.72rem;
-      font-weight: 600;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      padding: 2px 8px;
-      border-radius: 20px;
-      white-space: nowrap;
-    }
-    .player-total {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: var(--gold);
-      text-align: right;
-      min-width: 56px;
-    }
-    .pts-label {
-      font-size: 0.65rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      display: block;
-      text-align: right;
-      margin-top: -4px;
-    }
-
-    /* ── Expanded team breakdown ── */
-    .card-teams {
-      display: none;
-      border-top: 1px solid var(--border);
-      padding: 12px 16px;
-      gap: 8px;
-      flex-direction: column;
-      background: var(--surface2);
-    }
-    .player-card.expanded .card-teams { display: flex; }
-
-    .team-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: start;
-      gap: 8px;
-      padding: 8px 10px;
-      background: var(--surface);
-      border-radius: 8px;
-      border: 1px solid var(--border);
-    }
-    .team-name {
-      font-weight: 600;
-      font-size: 0.9rem;
+    .live-panel-header {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      background: var(--surface2);
     }
-    .team-pts {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--gold);
-      text-align: right;
-      white-space: nowrap;
+    .live-panel-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+    .live-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green); flex-shrink: 0;
+      animation: pulse 1.2s infinite;
     }
-    .team-results {
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      margin-top: 3px;
-    }
-    .result-chip {
-      display: inline-block;
-      padding: 1px 6px;
-      border-radius: 4px;
-      margin-right: 3px;
-      font-weight: 600;
-      font-size: 0.68rem;
-    }
-    .chip-win { background: rgba(34,197,94,0.15); color: #22c55e; }
-    .chip-tie { background: rgba(250,204,21,0.15); color: #facc15; }
-    .chip-tbd { background: rgba(100,116,139,0.1); color: var(--muted); }
+    .live-dot.inactive { background: var(--muted); animation: none; }
+    .live-updated { margin-left: auto; font-size: 0.6rem; color: var(--muted); }
 
-    /* ── Locked picks ── */
-    .locked-section { margin-top: 8px; }
-    .locked-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 16px;
-      display: grid;
-      grid-template-columns: 48px 1fr auto;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
-      opacity: 0.65;
-    }
-    .locked-badge {
-      font-size: 0.7rem;
-      background: rgba(239,68,68,0.1);
-      color: #ef4444;
-      border: 1px solid rgba(239,68,68,0.2);
-      padding: 2px 7px;
-      border-radius: 20px;
-      font-weight: 600;
-    }
-    .locked-icon { color: var(--muted); font-size: 1rem; }
+    #live-games { padding: 8px 0; }
 
-    /* ── Footer ── */
-    footer {
+    .live-game {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .live-game:last-child { border-bottom: none; }
+
+    .live-status {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 7px; display: flex; align-items: center; gap: 6px;
+    }
+    .status-live   { color: #22c55e; }
+    .status-ht     { color: #facc15; }
+    .status-final  { color: var(--muted); }
+    .status-sched  { color: var(--blue); }
+    .live-clock    { color: var(--text-dim); font-weight: 400; }
+
+    .live-matchup { display: flex; flex-direction: column; gap: 4px; }
+    .live-team {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 0.82rem;
+    }
+    .live-team-flag  { font-size: 0.95rem; width: 22px; text-align: center; }
+    .live-team-name  { flex: 1; font-weight: 600; }
+    .live-team-score { font-size: 1.05rem; font-weight: 800; color: var(--text); min-width: 18px; text-align: right; }
+    .live-team-score.winner { color: var(--gold); }
+    .live-team.loser .live-team-name,
+    .live-team.loser .live-team-score { opacity: 0.5; }
+
+    .live-owners {
+      margin-top: 6px; display: flex; flex-wrap: wrap; gap: 3px;
+    }
+    .owner-chip {
+      font-size: 0.58rem; font-weight: 600; padding: 1px 6px; border-radius: 10px;
+      background: rgba(59,130,246,0.15); color: #93c5fd;
+      border: 1px solid rgba(59,130,246,0.2);
+    }
+
+    .live-empty {
+      padding: 24px 14px;
       text-align: center;
       color: var(--muted);
-      font-size: 0.72rem;
-      padding: 0 16px 24px;
+      font-size: 0.78rem;
+      line-height: 1.5;
     }
 
-    /* ── Loading / Error ── */
-    #loading {
-      text-align: center;
-      padding: 60px 24px;
-      color: var(--muted);
-    }
+    /* ── Loading / error ── */
+    #loading { text-align: center; padding: 60px 24px; color: var(--muted); }
     #error-msg {
-      display: none;
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(239,68,68,0.3);
-      color: #f87171;
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 16px;
-      font-size: 0.85rem;
+      display: none; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
+      color: #f87171; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 0.82rem;
     }
 
-    @media (max-width: 480px) {
-      h1 { font-size: 1.3rem; }
-      .card-header { grid-template-columns: 40px 1fr auto; }
-      .draft-pick-badge { display: none; }
-      .player-total { font-size: 1.3rem; }
+    footer { text-align: center; color: var(--muted); font-size: 0.7rem; padding: 0 16px 24px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .page-body { flex-direction: column; }
+      .side-col  { width: 100%; position: static; }
+      .live-panel { position: static; }
+    }
+    @media (max-width: 680px) {
+      .team-cell { min-width: 115px; }
+      .standings-table tbody td,
+      .standings-table thead th { padding: 7px 5px; }
     }
   </style>
 </head>
@@ -307,188 +228,333 @@
   <span class="trophy">🏆</span>
   <h1>Gridiron World Cup Challenge</h1>
   <p class="subtitle">2026 FIFA World Cup &nbsp;·&nbsp; Fantasy Draft Order</p>
-  <div class="last-updated">
-    <span id="status-dot"></span>
-    <span id="updated-text">Loading…</span>
-  </div>
+  <div class="last-updated"><span id="status-dot"></span><span id="updated-text">Loading…</span></div>
 </header>
 
-<main>
-  <div id="error-msg"></div>
-  <div id="loading">⚽ Loading scores…</div>
-  <div id="content" style="display:none">
-    <div class="scoring-key">
-      <h3>Point Values</h3>
-      <span class="key-item"><span class="key-pts">+3</span> Group Win</span>
-      <span class="key-item"><span class="key-pts">+1</span> Group Draw</span>
-      <span class="key-item"><span class="key-pts">+4</span> R32 Win</span>
-      <span class="key-item"><span class="key-pts">+5</span> R16 Win</span>
-      <span class="key-item"><span class="key-pts">+6</span> QF Win</span>
-      <span class="key-item"><span class="key-pts">+7</span> SF Win</span>
-      <span class="key-item"><span class="key-pts">+8</span> Final Win</span>
+<div id="loading" style="padding:60px 24px;text-align:center;color:var(--muted)">⚽ Loading scores…</div>
+<div id="error-msg"></div>
+
+<div id="content" style="display:none">
+  <div class="page-body">
+
+    <!-- Left: standings -->
+    <div class="main-col">
+      <div class="scoring-key">
+        <h3>Point Values</h3>
+        <span class="key-item"><span class="key-pts">+3</span> Group Win</span>
+        <span class="key-item"><span class="key-pts">+1</span> Group Draw</span>
+        <span class="key-item"><span class="key-pts">+4</span> R32 Win</span>
+        <span class="key-item"><span class="key-pts">+5</span> R16 Win</span>
+        <span class="key-item"><span class="key-pts">+6</span> QF Win</span>
+        <span class="key-item"><span class="key-pts">+7</span> SF Win</span>
+        <span class="key-item"><span class="key-pts">+8</span> Final Win</span>
+      </div>
+
+      <div class="section-label">Live Standings — Picks 1–9</div>
+      <div style="overflow-x:auto">
+        <table class="standings-table">
+          <thead>
+            <tr>
+              <th></th><th>Player</th>
+              <th>Team 1</th><th class="right">Pts</th><th></th>
+              <th>Team 2</th><th class="right">Pts</th><th></th>
+              <th>Team 3</th><th class="right">Pts</th>
+              <th class="right">Total</th>
+            </tr>
+          </thead>
+          <tbody id="standings-body"></tbody>
+        </table>
+      </div>
+
+      <div class="section-label" style="margin-top:14px">Locked Picks</div>
+      <div style="overflow-x:auto">
+        <table class="standings-table">
+          <tbody id="locked-body"></tbody>
+        </table>
+      </div>
     </div>
 
-    <div class="section-label">Live Standings — Picks 1–9</div>
-    <div class="leaderboard" id="leaderboard"></div>
+    <!-- Right: live scores -->
+    <div class="side-col">
+      <div class="section-label">Live Scores</div>
+      <div class="live-panel">
+        <div class="live-panel-header">
+          <div class="live-dot inactive" id="live-dot"></div>
+          <span class="live-panel-title" id="live-title">Today's Matches</span>
+          <span class="live-updated" id="live-updated"></span>
+        </div>
+        <div id="live-games"><div class="live-empty">Loading…</div></div>
+      </div>
+    </div>
 
-    <div class="section-label locked-section">Locked Picks</div>
-    <div id="locked-picks"></div>
   </div>
-</main>
+</div>
 
-<footer>
-  Data via football-data.org &nbsp;·&nbsp; Updates every 30 min &nbsp;·&nbsp; 3rd place game excluded
-</footer>
+<footer>Data via espn.com &nbsp;·&nbsp; Standings update every 5 min &nbsp;·&nbsp; Live scores update every 60 sec &nbsp;·&nbsp; 3rd place game excluded</footer>
 
 <script>
 const FLAGS = {
-  "Argentina":      "🇦🇷", "Australia":      "🇦🇺", "Belgium":        "🇧🇪",
-  "Brazil":         "🇧🇷", "Cameroon":       "🇨🇲", "Canada":         "🇨🇦",
-  "Chile":          "🇨🇱", "Colombia":       "🇨🇴", "Costa Rica":     "🇨🇷",
-  "Croatia":        "🇭🇷", "Denmark":        "🇩🇰", "Ecuador":        "🇪🇨",
-  "England":        "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "France":         "🇫🇷", "Germany":        "🇩🇪",
-  "Ghana":          "🇬🇭", "Iran":           "🇮🇷", "Italy":          "🇮🇹",
-  "Japan":          "🇯🇵", "Mexico":         "🇲🇽", "Morocco":        "🇲🇦",
-  "Netherlands":    "🇳🇱", "Nigeria":        "🇳🇬", "Panama":         "🇵🇦",
-  "Peru":           "🇵🇪", "Poland":         "🇵🇱", "Portugal":       "🇵🇹",
-  "Qatar":          "🇶🇦", "Saudi Arabia":   "🇸🇦", "Senegal":        "🇸🇳",
-  "Serbia":         "🇷🇸", "South Korea":    "🇰🇷", "Spain":          "🇪🇸",
-  "Switzerland":    "🇨🇭", "Tunisia":        "🇹🇳", "Turkey":         "🇹🇷",
-  "United States":  "🇺🇸", "Uruguay":        "🇺🇾", "Wales":          "🏴󠁧󠁢󠁷󠁬󠁳󠁿",
-  "Algeria":        "🇩🇿", "Austria":        "🇦🇹", "Bolivia":        "🇧🇴",
-  "Congo DR":       "🇨🇩", "Côte d'Ivoire":  "🇨🇮", "Czech Republic": "🇨🇿",
-  "Egypt":          "🇪🇬", "Greece":         "🇬🇷", "Honduras":       "🇭🇳",
-  "Hungary":        "🇭🇺", "Indonesia":      "🇮🇩", "Jamaica":        "🇯🇲",
-  "Kenya":          "🇰🇪", "Malaysia":       "🇲🇾", "Mali":           "🇲🇱",
-  "New Zealand":    "🇳🇿", "Norway":         "🇳🇴", "Paraguay":       "🇵🇾",
-  "Romania":        "🇷🇴", "Scotland":       "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "Slovakia":       "🇸🇰",
-  "Slovenia":       "🇸🇮", "South Africa":   "🇿🇦", "Sweden":         "🇸🇪",
-  "Thailand":       "🇹🇭", "Ukraine":        "🇺🇦", "Venezuela":      "🇻🇪",
-  "Zimbabwe":       "🇿🇼", "Uzbekistan":     "🇺🇿", "Cuba":           "🇨🇺",
+  "Argentina":"🇦🇷","Australia":"🇦🇺","Belgium":"🇧🇪","Brazil":"🇧🇷",
+  "Cameroon":"🇨🇲","Canada":"🇨🇦","Chile":"🇨🇱","Colombia":"🇨🇴",
+  "Costa Rica":"🇨🇷","Croatia":"🇭🇷","Denmark":"🇩🇰","Ecuador":"🇪🇨",
+  "England":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","France":"🇫🇷","Germany":"🇩🇪","Ghana":"🇬🇭",
+  "Iran":"🇮🇷","Italy":"🇮🇹","Japan":"🇯🇵","Mexico":"🇲🇽","Morocco":"🇲🇦",
+  "Netherlands":"🇳🇱","Nigeria":"🇳🇬","Panama":"🇵🇦","Peru":"🇵🇪",
+  "Poland":"🇵🇱","Portugal":"🇵🇹","Qatar":"🇶🇦","Saudi Arabia":"🇸🇦",
+  "Senegal":"🇸🇳","Serbia":"🇷🇸","South Korea":"🇰🇷","Spain":"🇪🇸",
+  "Switzerland":"🇨🇭","Tunisia":"🇹🇳","Turkey":"🇹🇷","United States":"🇺🇸",
+  "Uruguay":"🇺🇾","Wales":"🏴󠁧󠁢󠁷󠁬󠁳󠁿","Algeria":"🇩🇿","Austria":"🇦🇹",
+  "Bolivia":"🇧🇴","Congo DR":"🇨🇩","Côte d'Ivoire":"🇨🇮",
+  "Czech Republic":"🇨🇿","Czechia":"🇨🇿",
+  "Egypt":"🇪🇬","Greece":"🇬🇷","Honduras":"🇭🇳","Hungary":"🇭🇺",
+  "Indonesia":"🇮🇩","Jamaica":"🇯🇲","Kenya":"🇰🇪","Malaysia":"🇲🇾",
+  "Mali":"🇲🇱","New Zealand":"🇳🇿","Norway":"🇳🇴","Paraguay":"🇵🇾",
+  "Romania":"🇷🇴","Scotland":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Slovakia":"🇸🇰","Slovenia":"🇸🇮",
+  "South Africa":"🇿🇦","Sweden":"🇸🇪","Thailand":"🇹🇭","Ukraine":"🇺🇦",
+  "Venezuela":"🇻🇪","Zimbabwe":"🇿🇼","Uzbekistan":"🇺🇿","Cuba":"🇨🇺",
 };
 
-const STAGE_LABELS = {
-  GROUP_STAGE:    "Group Stage",
-  LAST_32:        "Round of 32",
-  LAST_16:        "Round of 16",
-  QUARTER_FINALS: "Quarterfinal",
-  SEMI_FINALS:    "Semifinal",
-  FINAL:          "Final",
+const STAGE_SHORT = {
+  "group-stage":"GS","round-of-32":"R32","round-of-16":"R16",
+  "quarterfinals":"QF","semifinals":"SF","final":"F"
 };
+const RESULT_CLASS = { W:"result-w", D:"result-d", L:"result-l" };
 
 function flag(name) { return FLAGS[name] || "🏳️"; }
 
-function formatUpdated(iso) {
+function fmtDate(iso) {
+  if (!iso) return "";
   const d = new Date(iso);
-  return d.toLocaleString("en-US", {
-    month: "short", day: "numeric",
-    hour: "numeric", minute: "2-digit",
-    timeZoneName: "short"
-  });
+  return d.toLocaleDateString("en-US",{month:"short",day:"numeric"})
+       + " " + d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZoneName:"short"});
+}
+function fmtTime(iso) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZoneName:"short"});
+}
+function formatUpdated(iso) {
+  return new Date(iso).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
 }
 
-function buildResultChips(wins, ties) {
-  const chips = [];
-  for (const w of wins) {
-    chips.push(`<span class="result-chip chip-win">W vs ${w.opponent} (${STAGE_LABELS[w.stage] || w.stage}, +${w.pts})</span>`);
+/* ── Standings ── */
+function buildTeamCell(t, slotLabel) {
+  const isTbd = !t || t.team === "TODO" || t.team === "TBD";
+  const name  = isTbd ? slotLabel : t.team;
+  const pts   = isTbd ? 0 : (t.total ?? 0);
+  const wins  = isTbd ? [] : (t.wins ?? []);
+  const ties  = isTbd ? [] : (t.ties ?? []);
+  const elim  = isTbd ? false : (t.eliminated ?? false);
+  const last  = isTbd ? null : (t.last_result ?? null);
+  const next  = isTbd ? null : (t.next_game ?? null);
+
+  let chips = "";
+  for (const w of wins) chips += `<span class="chip chip-win">${STAGE_SHORT[w.stage]||w.stage} +${w.pts}</span>`;
+  for (const d of ties) chips += `<span class="chip chip-tie">${STAGE_SHORT[d.stage]||d.stage} +${d.pts}</span>`;
+
+  let lastLine = "";
+  if (last) {
+    const cls = RESULT_CLASS[last.result] || "";
+    lastLine = `<div class="meta-line"><span class="meta-label">Last</span><span class="${cls}">${last.result}</span><span>${last.score} vs ${last.opponent}</span></div>`;
   }
-  for (const t of ties) {
-    chips.push(`<span class="result-chip chip-tie">D vs ${t.opponent} (${STAGE_LABELS[t.stage] || t.stage}, +${t.pts})</span>`);
+
+  let nextLine = "";
+  if (elim) {
+    nextLine = `<div class="eliminated-badge">Eliminated</div>`;
+  } else if (next) {
+    nextLine = `<div class="meta-line"><span class="meta-label">Next</span><span>vs ${next.opponent}, ${fmtDate(next.date)}</span></div>`;
   }
-  return chips.length
-    ? chips.join("")
-    : `<span class="result-chip chip-tbd">No results yet</span>`;
+
+  return `
+    <td class="${isTbd ? 'team-cell team-tbd' : 'team-cell'}">
+      <div class="team-flag-name"><span>${isTbd ? "⬜" : flag(name)}</span><span>${name}</span></div>
+      ${chips ? `<div class="chips">${chips}</div>` : ""}
+      <div class="team-meta">${lastLine}${nextLine}</div>
+    </td>
+    <td class="team-pts-cell"><span class="team-pts">${pts}</span><span class="team-pts-lbl">pts</span></td>`;
 }
 
-function buildLeaderboard(data) {
-  const lb = document.getElementById("leaderboard");
-  lb.innerHTML = "";
-
+function buildStandings(data) {
+  const tbody = document.getElementById("standings-body");
+  tbody.innerHTML = "";
   for (const p of data.standings) {
-    const rankClass = p.draft_pick <= 3 ? `rank-${p.draft_pick}` : "rank-other";
-    const rankDisplay = p.draft_pick <= 3
-      ? ["🥇","🥈","🥉"][p.draft_pick - 1]
-      : p.draft_pick;
-
-    const teamsHTML = (p.teams || []).map(t => {
-      const pts = t.total ?? 0;
-      const wins = t.wins ?? [];
-      const ties = t.ties ?? [];
-      return `
-        <div class="team-row">
-          <div>
-            <div class="team-name">${flag(t.team)} ${t.team}</div>
-            <div class="team-results">${buildResultChips(wins, ties)}</div>
-          </div>
-          <div class="team-pts">${pts}<span style="font-size:0.65rem;color:var(--muted);margin-left:2px">pts</span></div>
-        </div>`;
-    }).join("") || `<div style="color:var(--muted);font-size:0.8rem;padding:6px 0">Teams TBD</div>`;
-
-    const card = document.createElement("div");
-    card.className = "player-card";
-    card.dataset.rank = p.draft_pick;
-    card.innerHTML = `
-      <div class="card-header">
-        <div class="rank-badge ${rankClass}">${rankDisplay}</div>
-        <div>
-          <div class="player-name">${p.name}</div>
-          <div class="draft-pick-badge">Draft Pick #${p.draft_pick}</div>
-        </div>
-        <div></div>
-        <div>
-          <div class="player-total">${p.total}</div>
-          <span class="pts-label">pts</span>
-        </div>
-      </div>
-      <div class="card-teams">${teamsHTML}</div>`;
-
-    card.addEventListener("click", () => card.classList.toggle("expanded"));
-    lb.appendChild(card);
+    const rank = p.draft_pick;
+    const rankClass   = rank <= 3 ? `rank-${rank}` : "rank-other";
+    const rankDisplay = rank <= 3 ? ["🥇","🥈","🥉"][rank-1] : rank;
+    const teams = (p.teams && p.teams.length === 3) ? p.teams : [null,null,null];
+    const tr = document.createElement("tr");
+    tr.dataset.rank = rank;
+    tr.innerHTML = `
+      <td class="rank-cell"><div class="rank-badge ${rankClass}">${rankDisplay}</div></td>
+      <td class="name-cell"><div class="player-name">${p.name}</div><span class="pick-badge">Pick #${rank}</span></td>
+      ${buildTeamCell(teams[0],"Team 1")}
+      <td class="divider-cell"></td>
+      ${buildTeamCell(teams[1],"Team 2")}
+      <td class="divider-cell"></td>
+      ${buildTeamCell(teams[2],"Team 3")}
+      <td class="total-cell"><span class="total-pts">${p.total}</span><span class="total-lbl">pts</span></td>`;
+    tbody.appendChild(tr);
   }
 }
 
-function buildLockedPicks(data) {
-  const el = document.getElementById("locked-picks");
-  el.innerHTML = "";
+function buildLocked(data) {
+  const tbody = document.getElementById("locked-body");
+  tbody.innerHTML = "";
   for (const lp of (data.locked_picks || [])) {
-    el.innerHTML += `
-      <div class="locked-card">
-        <div class="rank-badge rank-other">${lp.pick}</div>
-        <div class="player-name" style="color:var(--text-dim)">${lp.name}</div>
-        <span class="locked-badge">🔒 Locked</span>
-      </div>`;
+    const tr = document.createElement("tr");
+    tr.className = "locked-row";
+    tr.innerHTML = `
+      <td class="rank-cell"><div class="rank-badge rank-other">${lp.pick}</div></td>
+      <td class="name-cell" colspan="9"><div class="player-name" style="color:var(--text-dim)">${lp.name}</div><span class="pick-badge">🔒 Locked</span></td>
+      <td class="total-cell"><span class="total-pts" style="color:var(--muted)">—</span></td>`;
+    tbody.appendChild(tr);
   }
 }
+
+/* ── Live scores ── */
+let playerTeamMap = {};   // "Spain" -> ["Devin"], "Brazil" -> ["Reid","Nolan"]
+
+function buildPlayerTeamMap(standings) {
+  playerTeamMap = {};
+  for (const p of standings) {
+    for (const t of (p.teams || [])) {
+      const name = t.team;
+      if (!name || name === "TODO" || name === "TBD") continue;
+      if (!playerTeamMap[name]) playerTeamMap[name] = [];
+      playerTeamMap[name].push(p.name);
+    }
+  }
+}
+
+async function refreshLiveScores() {
+  try {
+    const res  = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?t=${Date.now()}`);
+    const data = await res.json();
+    renderLiveScores(data.events || []);
+    document.getElementById("live-updated").textContent = new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+  } catch(e) {
+    console.warn("Live score fetch failed:", e);
+  }
+}
+
+function renderLiveScores(events) {
+  const container = document.getElementById("live-games");
+  const dot       = document.getElementById("live-dot");
+  const title     = document.getElementById("live-title");
+
+  if (!events.length) {
+    dot.className = "live-dot inactive";
+    title.textContent = "Today's Matches";
+    container.innerHTML = `<div class="live-empty">No matches scheduled today.<br>Tournament begins June 11.</div>`;
+    return;
+  }
+
+  const hasLive = events.some(e => {
+    const s = e.competitions[0].status.type.name;
+    return s === "STATUS_IN_PROGRESS" || s === "STATUS_HALFTIME";
+  });
+
+  dot.className   = hasLive ? "live-dot" : "live-dot inactive";
+  title.textContent = hasLive ? "Live Now" : "Today's Matches";
+
+  // Sort: live first, then finished, then scheduled
+  const order = { "STATUS_IN_PROGRESS":0, "STATUS_HALFTIME":0, "STATUS_FINAL":1, "STATUS_FULL_TIME":1, "STATUS_SCHEDULED":2 };
+  events.sort((a,b) => {
+    const sa = order[a.competitions[0].status.type.name] ?? 3;
+    const sb = order[b.competitions[0].status.type.name] ?? 3;
+    return sa - sb || new Date(a.date) - new Date(b.date);
+  });
+
+  container.innerHTML = events.map(e => {
+    const comp        = e.competitions[0];
+    const statusType  = comp.status.type;
+    const statusName  = statusType.name;
+    const clock       = comp.status.displayClock;
+    const competitors = comp.competitors;
+    const home = competitors.find(c => c.homeAway === "home");
+    const away = competitors.find(c => c.homeAway === "away");
+    const homeName = home.team.displayName;
+    const awayName = away.team.displayName;
+    const homeScore = home.score ?? 0;
+    const awayScore = away.score ?? 0;
+    const homeWon   = home.winner;
+    const awayWon   = away.winner;
+
+    // Status label
+    let statusHTML = "";
+    if (statusName === "STATUS_IN_PROGRESS") {
+      statusHTML = `<span class="status-live">● LIVE</span><span class="live-clock">${clock}</span>`;
+    } else if (statusName === "STATUS_HALFTIME") {
+      statusHTML = `<span class="status-ht">◑ Half Time</span>`;
+    } else if (statusName === "STATUS_FINAL" || statusName === "STATUS_FULL_TIME") {
+      statusHTML = `<span class="status-final">Final</span>`;
+    } else {
+      statusHTML = `<span class="status-sched">${fmtTime(e.date)}</span>`;
+    }
+
+    const isFinished = statusName === "STATUS_FINAL" || statusName === "STATUS_FULL_TIME";
+
+    // Team rows
+    function teamRow(name, score, won, isHome) {
+      const loser = isFinished && !won && (homeWon || awayWon);
+      return `
+        <div class="live-team ${loser ? 'loser' : ''}">
+          <span class="live-team-flag">${flag(name)}</span>
+          <span class="live-team-name">${name}</span>
+          <span class="live-team-score ${won ? 'winner' : ''}">${score}</span>
+        </div>`;
+    }
+
+    // Owner chips
+    const owners = new Set([
+      ...(playerTeamMap[homeName] || []),
+      ...(playerTeamMap[awayName] || [])
+    ]);
+    const ownerHTML = [...owners].length
+      ? `<div class="live-owners">${[...owners].map(o => `<span class="owner-chip">⭐ ${o}</span>`).join("")}</div>`
+      : "";
+
+    return `
+      <div class="live-game">
+        <div class="live-status">${statusHTML}</div>
+        <div class="live-matchup">
+          ${teamRow(homeName, homeScore, homeWon, true)}
+          ${teamRow(awayName, awayScore, awayWon, false)}
+        </div>
+        ${ownerHTML}
+      </div>`;
+  }).join("");
+}
+
+/* ── Main load ── */
+let liveInterval = null;
 
 async function loadScores() {
-  const loading = document.getElementById("loading");
-  const content = document.getElementById("content");
-  const errEl   = document.getElementById("error-msg");
-
   try {
-    // cache-bust so GitHub Pages serves fresh JSON
     const res  = await fetch(`data/scores.json?t=${Date.now()}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-
-    document.getElementById("updated-text").textContent =
-      "Updated " + formatUpdated(data.last_updated);
-
-    buildLeaderboard(data);
-    buildLockedPicks(data);
-
-    loading.style.display = "none";
-    content.style.display = "block";
-  } catch (err) {
-    loading.style.display = "none";
-    errEl.style.display   = "block";
-    errEl.textContent     = "⚠️ Could not load scores: " + err.message;
+    document.getElementById("updated-text").textContent = "Standings updated " + formatUpdated(data.last_updated);
+    buildStandings(data);
+    buildLocked(data);
+    buildPlayerTeamMap(data.standings);
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("content").style.display = "block";
+  } catch(err) {
+    document.getElementById("loading").style.display = "none";
+    const el = document.getElementById("error-msg");
+    el.style.display = "block";
+    el.textContent = "⚠️ Could not load scores: " + err.message;
   }
 }
 
-// Load on start, then refresh every 5 minutes
+// Initial load
 loadScores();
+refreshLiveScores();
+
+// Standings: every 5 min
 setInterval(loadScores, 5 * 60 * 1000);
+// Live scores: every 60 sec
+setInterval(refreshLiveScores, 60 * 1000);
 </script>
 </body>
 </html>
