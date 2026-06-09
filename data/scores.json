@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-09T01:26:48.476503+00:00",
+  "last_updated": "2026-06-09T01:47:11.062334+00:00",
   "standings": [
     {
       "name": "Joe Klim",
@@ -8,19 +8,28 @@
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         }
       ],
       "total": 0,
@@ -33,19 +42,28 @@
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         }
       ],
       "total": 0,
@@ -58,19 +76,28 @@
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         }
       ],
       "total": 0,
@@ -83,19 +110,28 @@
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         }
       ],
       "total": 0,
@@ -108,19 +144,28 @@
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         }
       ],
       "total": 0,
@@ -133,19 +178,28 @@
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         }
       ],
       "total": 0,
@@ -158,19 +212,28 @@
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         }
       ],
       "total": 0,
@@ -180,22 +243,35 @@
       "name": "Devin",
       "teams": [
         {
-          "team": "TODO",
+          "team": "Spain",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": {
+            "opponent": "Cape Verde",
+            "date": "2026-06-15T16:00Z",
+            "stage": "group-stage"
+          },
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         }
       ],
       "total": 0,
@@ -208,26 +284,1356 @@
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         },
         {
           "team": "TODO",
           "wins": [],
           "ties": [],
-          "total": 0
+          "total": 0,
+          "last_result": null,
+          "next_game": null,
+          "eliminated": false
         }
       ],
       "total": 0,
       "draft_pick": 9
     }
   ],
-  "team_points": {},
+  "team_data": {
+    "Mexico": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "South Africa",
+        "date": "2026-06-11T19:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "South Africa": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Mexico",
+        "date": "2026-06-11T19:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "South Korea": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Czechia",
+        "date": "2026-06-12T02:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Czechia": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "South Korea",
+        "date": "2026-06-12T02:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Canada": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Bosnia-Herzegovina",
+        "date": "2026-06-12T19:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Bosnia-Herzegovina": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Canada",
+        "date": "2026-06-12T19:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "United States": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Paraguay",
+        "date": "2026-06-13T01:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Paraguay": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "United States",
+        "date": "2026-06-13T01:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Qatar": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Switzerland",
+        "date": "2026-06-13T19:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Switzerland": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Qatar",
+        "date": "2026-06-13T19:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Brazil": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Morocco",
+        "date": "2026-06-13T22:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Morocco": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Brazil",
+        "date": "2026-06-13T22:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Haiti": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Scotland",
+        "date": "2026-06-14T01:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Scotland": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Haiti",
+        "date": "2026-06-14T01:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Australia": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "T\u00fcrkiye",
+        "date": "2026-06-14T04:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "T\u00fcrkiye": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Australia",
+        "date": "2026-06-14T04:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Germany": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Cura\u00e7ao",
+        "date": "2026-06-14T17:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Cura\u00e7ao": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Germany",
+        "date": "2026-06-14T17:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Netherlands": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Japan",
+        "date": "2026-06-14T20:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Japan": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Netherlands",
+        "date": "2026-06-14T20:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Ivory Coast": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Ecuador",
+        "date": "2026-06-14T23:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Ecuador": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Ivory Coast",
+        "date": "2026-06-14T23:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Sweden": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Tunisia",
+        "date": "2026-06-15T02:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Tunisia": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Sweden",
+        "date": "2026-06-15T02:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Spain": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Cape Verde",
+        "date": "2026-06-15T16:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Cape Verde": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Spain",
+        "date": "2026-06-15T16:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Belgium": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Egypt",
+        "date": "2026-06-15T19:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Egypt": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Belgium",
+        "date": "2026-06-15T19:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Saudi Arabia": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Uruguay",
+        "date": "2026-06-15T22:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Uruguay": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Saudi Arabia",
+        "date": "2026-06-15T22:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Iran": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "New Zealand",
+        "date": "2026-06-16T01:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "New Zealand": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Iran",
+        "date": "2026-06-16T01:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "France": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Senegal",
+        "date": "2026-06-16T19:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Senegal": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "France",
+        "date": "2026-06-16T19:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Iraq": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Norway",
+        "date": "2026-06-16T22:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Norway": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Iraq",
+        "date": "2026-06-16T22:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Argentina": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Algeria",
+        "date": "2026-06-17T01:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Algeria": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Argentina",
+        "date": "2026-06-17T01:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Austria": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Jordan",
+        "date": "2026-06-17T04:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Jordan": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Austria",
+        "date": "2026-06-17T04:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Portugal": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Congo DR",
+        "date": "2026-06-17T17:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Congo DR": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Portugal",
+        "date": "2026-06-17T17:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "England": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Croatia",
+        "date": "2026-06-17T20:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Croatia": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "England",
+        "date": "2026-06-17T20:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Ghana": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Panama",
+        "date": "2026-06-17T23:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Panama": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Ghana",
+        "date": "2026-06-17T23:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Uzbekistan": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Colombia",
+        "date": "2026-06-18T02:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Colombia": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Uzbekistan",
+        "date": "2026-06-18T02:00Z",
+        "stage": "group-stage"
+      },
+      "eliminated": false
+    },
+    "Group A 2nd Place": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group B 2nd Place",
+        "date": "2026-06-28T19:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group B 2nd Place": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group A 2nd Place",
+        "date": "2026-06-28T19:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group C Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group F 2nd Place",
+        "date": "2026-06-29T17:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group F 2nd Place": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group C Winner",
+        "date": "2026-06-29T17:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group E Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Third Place Group A/B/C/D/F",
+        "date": "2026-06-29T20:30Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Third Place Group A/B/C/D/F": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group E Winner",
+        "date": "2026-06-29T20:30Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group F Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group C 2nd Place",
+        "date": "2026-06-30T01:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group C 2nd Place": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group F Winner",
+        "date": "2026-06-30T01:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group E 2nd Place": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group I 2nd Place",
+        "date": "2026-06-30T17:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group I 2nd Place": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group E 2nd Place",
+        "date": "2026-06-30T17:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group I Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Third Place Group C/D/F/G/H",
+        "date": "2026-06-30T21:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Third Place Group C/D/F/G/H": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group I Winner",
+        "date": "2026-06-30T21:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group A Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Third Place Group C/E/F/H/I",
+        "date": "2026-07-01T01:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Third Place Group C/E/F/H/I": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group A Winner",
+        "date": "2026-07-01T01:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group L Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Third Place Group E/H/I/J/K",
+        "date": "2026-07-01T16:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Third Place Group E/H/I/J/K": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group L Winner",
+        "date": "2026-07-01T16:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group G Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Third Place Group A/E/H/I/J",
+        "date": "2026-07-01T20:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Third Place Group A/E/H/I/J": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group G Winner",
+        "date": "2026-07-01T20:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group D Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Third Place Group B/E/F/I/J",
+        "date": "2026-07-02T00:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Third Place Group B/E/F/I/J": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group D Winner",
+        "date": "2026-07-02T00:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group H Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group J 2nd Place",
+        "date": "2026-07-02T19:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group J 2nd Place": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group H Winner",
+        "date": "2026-07-02T19:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group K 2nd Place": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group L 2nd Place",
+        "date": "2026-07-02T23:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group L 2nd Place": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group K 2nd Place",
+        "date": "2026-07-02T23:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group B Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Third Place Group E/F/G/I/J",
+        "date": "2026-07-03T03:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Third Place Group E/F/G/I/J": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group B Winner",
+        "date": "2026-07-03T03:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group D 2nd Place": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group G 2nd Place",
+        "date": "2026-07-03T18:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group G 2nd Place": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group D 2nd Place",
+        "date": "2026-07-03T18:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group J Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group H 2nd Place",
+        "date": "2026-07-03T22:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group H 2nd Place": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group J Winner",
+        "date": "2026-07-03T22:00Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Group K Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Third Place Group D/E/I/J/L",
+        "date": "2026-07-04T01:30Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Third Place Group D/E/I/J/L": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Group K Winner",
+        "date": "2026-07-04T01:30Z",
+        "stage": "round-of-32"
+      },
+      "eliminated": false
+    },
+    "Round of 32 1 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 3 Winner",
+        "date": "2026-07-04T17:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 3 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 1 Winner",
+        "date": "2026-07-04T17:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 2 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 5 Winner",
+        "date": "2026-07-04T21:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 5 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 2 Winner",
+        "date": "2026-07-04T21:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 4 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 6 Winner",
+        "date": "2026-07-05T20:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 6 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 4 Winner",
+        "date": "2026-07-05T20:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 7 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 8 Winner",
+        "date": "2026-07-06T00:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 8 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 7 Winner",
+        "date": "2026-07-06T00:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 11 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 12 Winner",
+        "date": "2026-07-06T19:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 12 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 11 Winner",
+        "date": "2026-07-06T19:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 9 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 10 Winner",
+        "date": "2026-07-07T00:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 10 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 9 Winner",
+        "date": "2026-07-07T00:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 14 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 16 Winner",
+        "date": "2026-07-07T16:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 16 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 14 Winner",
+        "date": "2026-07-07T16:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 13 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 15 Winner",
+        "date": "2026-07-07T20:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 32 15 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 32 13 Winner",
+        "date": "2026-07-07T20:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false
+    },
+    "Round of 16 1 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 16 2 Winner",
+        "date": "2026-07-09T20:00Z",
+        "stage": "quarterfinals"
+      },
+      "eliminated": false
+    },
+    "Round of 16 2 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 16 1 Winner",
+        "date": "2026-07-09T20:00Z",
+        "stage": "quarterfinals"
+      },
+      "eliminated": false
+    },
+    "Round of 16 5 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 16 6 Winner",
+        "date": "2026-07-10T19:00Z",
+        "stage": "quarterfinals"
+      },
+      "eliminated": false
+    },
+    "Round of 16 6 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 16 5 Winner",
+        "date": "2026-07-10T19:00Z",
+        "stage": "quarterfinals"
+      },
+      "eliminated": false
+    },
+    "Round of 16 3 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 16 4 Winner",
+        "date": "2026-07-11T21:00Z",
+        "stage": "quarterfinals"
+      },
+      "eliminated": false
+    },
+    "Round of 16 4 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 16 3 Winner",
+        "date": "2026-07-11T21:00Z",
+        "stage": "quarterfinals"
+      },
+      "eliminated": false
+    },
+    "Round of 16 7 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 16 8 Winner",
+        "date": "2026-07-12T01:00Z",
+        "stage": "quarterfinals"
+      },
+      "eliminated": false
+    },
+    "Round of 16 8 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Round of 16 7 Winner",
+        "date": "2026-07-12T01:00Z",
+        "stage": "quarterfinals"
+      },
+      "eliminated": false
+    },
+    "Quarterfinal 1 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Quarterfinal 2 Winner",
+        "date": "2026-07-14T19:00Z",
+        "stage": "semifinals"
+      },
+      "eliminated": false
+    },
+    "Quarterfinal 2 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Quarterfinal 1 Winner",
+        "date": "2026-07-14T19:00Z",
+        "stage": "semifinals"
+      },
+      "eliminated": false
+    },
+    "Quarterfinal 3 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Quarterfinal 4 Winner",
+        "date": "2026-07-15T19:00Z",
+        "stage": "semifinals"
+      },
+      "eliminated": false
+    },
+    "Quarterfinal 4 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Quarterfinal 3 Winner",
+        "date": "2026-07-15T19:00Z",
+        "stage": "semifinals"
+      },
+      "eliminated": false
+    },
+    "Semifinal 1 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Semifinal 2 Winner",
+        "date": "2026-07-19T19:00Z",
+        "stage": "final"
+      },
+      "eliminated": false
+    },
+    "Semifinal 2 Winner": {
+      "wins": [],
+      "ties": [],
+      "total": 0,
+      "last_result": null,
+      "next_game": {
+        "opponent": "Semifinal 1 Winner",
+        "date": "2026-07-19T19:00Z",
+        "stage": "final"
+      },
+      "eliminated": false
+    }
+  },
   "locked_picks": [
     {
       "pick": 10,
