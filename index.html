@@ -496,6 +496,49 @@
     .avail-name { flex: 1; font-weight: 600; color: var(--text); }
     .avail-drafted { color: var(--muted); font-weight: 400; text-decoration: line-through; font-size: 0.72rem; }
     .avail-owner { font-size: 0.58rem; color: var(--blue); font-weight: 600; margin-left: auto; flex-shrink: 0; }
+    /* ── Leaderboard snapshot bar ── */
+    .snapshot-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .snapshot-title {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .snapshot-list { display: flex; flex-direction: column; gap: 4px; }
+    .snap-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 8px;
+      border-radius: 8px;
+      transition: background 0.1s;
+    }
+    .snap-row:hover { background: var(--surface2); }
+    .snap-rank {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 800; flex-shrink: 0;
+    }
+    .snap-name { flex: 1; font-weight: 700; font-size: 0.88rem; color: var(--text); }
+    .snap-bar-wrap { flex: 2; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .snap-bar-fill { height: 100%; border-radius: 3px; background: var(--gold); transition: width 0.4s ease; }
+    .snap-pts { font-size: 0.88rem; font-weight: 800; color: var(--gold); min-width: 38px; text-align: right; flex-shrink: 0; }
+    .snap-pts-lbl { font-size: 0.6rem; color: var(--muted); margin-left: 2px; }
+    @media (max-width: 700px) {
+      .snap-bar-wrap { flex: 1.5; }
+      .snap-name { font-size: 0.82rem; }
+    }
+
     /* ── Scores & Schedule view ── */
     #scores-view { display: none; max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
     .scores-layout { display: flex; gap: 20px; align-items: flex-start; }
@@ -664,6 +707,11 @@
 
     <!-- Left: standings -->
     <div class="main-col">
+      <div class="snapshot-bar" id="snapshot-bar" style="display:none">
+        <div class="snapshot-title">Live Standings</div>
+        <div class="snapshot-list" id="snapshot-list"></div>
+      </div>
+
       <div class="scoring-key">
         <h3>Point Values</h3>
         <span class="key-item"><span class="key-pts">+3</span> Group Win</span>
@@ -897,10 +945,32 @@ function buildMobileCards(standings) {
   }).join("");
 }
 
+function buildSnapshot(standings) {
+  const bar  = document.getElementById('snapshot-bar');
+  const list = document.getElementById('snapshot-list');
+  if (!bar || !list) return;
+  bar.style.display = 'block';
+  const medals = ['🥇','🥈','🥉'];
+  const maxPts = Math.max(...standings.map(p => p.total || 0), 1);
+  list.innerHTML = standings.map(p => {
+    const rank  = p.draft_pick;
+    const rc    = rank <= 3 ? `rank-${rank}` : 'rank-other';
+    const label = rank <= 3 ? medals[rank - 1] : rank;
+    const pct   = Math.round(((p.total || 0) / maxPts) * 100);
+    return `<div class="snap-row">`
+      + `<div class="snap-rank ${rc}">${label}</div>`
+      + `<span class="snap-name">${p.name}</span>`
+      + `<div class="snap-bar-wrap"><div class="snap-bar-fill" style="width:${pct}%"></div></div>`
+      + `<span class="snap-pts">${p.total || 0}<span class="snap-pts-lbl">pts</span></span>`
+      + `</div>`;
+  }).join('');
+}
+
 function buildStandings(data) {
   cachedStandingsData = data;
   const tbody = document.getElementById("standings-body");
   tbody.innerHTML = "";
+  buildSnapshot(data.standings);
   buildMobileCards(data.standings);
   for (const p of data.standings) {
     const rank = p.draft_pick;
