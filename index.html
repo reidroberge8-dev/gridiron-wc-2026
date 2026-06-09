@@ -557,21 +557,28 @@
     }
 
     /* ── Scores & Schedule view ── */
-    #scores-view { display: none; max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
-    .scores-layout { display: flex; gap: 20px; align-items: flex-start; }
-    .scores-main  { flex: 1; min-width: 0; }
-    .scores-aside { width: 320px; flex-shrink: 0; }
-    #scores-view .section-label { margin-bottom: 8px; padding-left: 2px; }
-    #scores-view #live-games { max-height: 80vh; }
-    #scores-view #group-standings-body { max-height: 80vh; }
-    @media (max-width: 900px) {
-      .scores-layout { flex-direction: column; align-items: stretch; }
-      .scores-main  { width: 100%; }
-      .scores-aside { width: 100%; }
+    #scores-view { display: none; max-width: 860px; margin: 0 auto; padding: 16px 16px 48px; }
+    /* Sub-tab bar */
+    .scores-tabs {
+      display: flex; gap: 6px; margin-bottom: 16px;
     }
+    .scores-tab {
+      flex: 1; padding: 8px 10px; border-radius: 8px; font-size: 0.78rem;
+      font-weight: 700; cursor: pointer; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-dim);
+      transition: all 0.15s; text-align: center;
+    }
+    .scores-tab:hover { border-color: #0062b1; color: var(--text); background: #eef4fb; }
+    .scores-tab.active { background: #013369; border-color: #013369; color: #fff; }
+    /* Panels */
+    .scores-panel { }
+    #live-games   { max-height: 80vh; overflow-y: auto; }
+    #schedule-games { max-height: 80vh; overflow-y: auto; }
+    #group-standings-body { max-height: 80vh; overflow-y: auto; }
     @media (max-width: 700px) {
-      #scores-view { padding: 12px 6px 40px; }
-      #scores-view #live-games { max-height: none; }
+      #scores-view { padding: 10px 6px 40px; }
+      .scores-tab { font-size: 0.7rem; padding: 7px 6px; }
+      #live-games, #schedule-games, #group-standings-body { max-height: none; }
     }
 
     /* ── Draft Board v2 (mobile-first round cards) ── */
@@ -707,27 +714,43 @@
 </div>
 
 <div id="scores-view">
-  <div class="scores-layout">
-    <div class="scores-main">
-      <div class="section-label">Live Scores</div>
-      <div class="live-panel">
-        <div class="live-panel-header">
-          <div class="live-dot inactive" id="live-dot"></div>
-          <span class="live-panel-title" id="live-title">Live Scores</span>
-          <span class="live-updated" id="live-updated"></span>
-        </div>
-        <div id="live-games"><div class="live-empty">Loading…</div></div>
+  <!-- Sub-tab bar -->
+  <div class="scores-tabs">
+    <button class="scores-tab active" id="stab-scores"   onclick="switchScoresTab('scores')">⚽ Scores</button>
+    <button class="scores-tab"        id="stab-schedule" onclick="switchScoresTab('schedule')">📅 Schedule</button>
+    <button class="scores-tab"        id="stab-groups"   onclick="switchScoresTab('groups')">📊 Groups</button>
+  </div>
+
+  <!-- Scores: live + all completed -->
+  <div class="scores-panel" id="scores-panel">
+    <div class="live-panel">
+      <div class="live-panel-header">
+        <div class="live-dot inactive" id="live-dot"></div>
+        <span class="live-panel-title" id="live-title">Scores</span>
+        <span class="live-updated" id="live-updated"></span>
       </div>
+      <div id="live-games"><div class="live-empty">Loading…</div></div>
     </div>
-    <div class="scores-aside">
-      <div class="section-label">Group Standings</div>
-      <div class="group-panel">
-        <div class="group-panel-header">
-          Group Standings
-          <span id="group-updated"></span>
-        </div>
-        <div id="group-standings-body"><div class="live-empty">Loading…</div></div>
+  </div>
+
+  <!-- Schedule: upcoming only -->
+  <div class="scores-panel" id="schedule-panel" style="display:none">
+    <div class="live-panel">
+      <div class="live-panel-header">
+        <span class="live-panel-title">Upcoming Schedule</span>
       </div>
+      <div id="schedule-games"><div class="live-empty">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- Groups: group standings -->
+  <div class="scores-panel" id="groups-panel" style="display:none">
+    <div class="group-panel" style="margin-top:0">
+      <div class="group-panel-header">
+        Group Standings
+        <span id="group-updated"></span>
+      </div>
+      <div id="group-standings-body"><div class="live-empty">Loading…</div></div>
     </div>
   </div>
 </div>
@@ -1130,8 +1153,7 @@ function dayLabel(iso) {
 }
 
 function renderLiveScores(events) {
-  const container = document.getElementById("live-games");
-  const dot       = document.getElementById("live-dot");
+  const dot = document.getElementById("live-dot");
 
   // Build liveGamesMap from currently live events
   liveGamesMap = {};
@@ -1155,54 +1177,54 @@ function renderLiveScores(events) {
   // Re-render standings cells to reflect live scores
   if (cachedStandingsData) buildStandings(cachedStandingsData);
 
-  // All World Cup games are played in US cities — use Eastern time (EDT = UTC-4)
-  // for date grouping so late-evening games (e.g. 9pm ET) don't spill into the next UTC day.
+  // EDT = UTC-4 throughout the World Cup (Jun-Jul 2026)
   function toETDay(isoStr) {
     return new Date(new Date(isoStr).getTime() - 4 * 3600 * 1000).toISOString().slice(0, 10);
   }
 
-  const todayStr  = toETDay(new Date().toISOString());
-
   const live      = events.filter(e => { const s=e.competitions[0].status.type.name; return s==="STATUS_IN_PROGRESS"||s==="STATUS_HALFTIME"; });
-  const todayDone = events.filter(e => { const s=e.competitions[0].status.type.name; return (s==="STATUS_FINAL"||s==="STATUS_FULL_TIME") && toETDay(e.date)===todayStr; });
+  const completed = events.filter(e => { const s=e.competitions[0].status.type.name; return s==="STATUS_FINAL"||s==="STATUS_FULL_TIME"; });
   const upcoming  = events.filter(e => e.competitions[0].status.type.name==="STATUS_SCHEDULED");
 
   dot.className = live.length ? "live-dot" : "live-dot inactive";
 
-  let html = "";
-
-  // Live games
+  // ── Scores panel: live now + all completed (most recent day first) ──
+  let scoresHtml = "";
   if (live.length) {
-    html += `<div class="section-divider live-hdr">● Live Now (${live.length})</div>`;
-    html += live.map(gameCard).join("");
+    scoresHtml += `<div class="section-divider live-hdr">● Live Now (${live.length})</div>`;
+    scoresHtml += live.map(gameCard).join("");
   }
-
-  // Todays completed games only
-  if (todayDone.length) {
-    html += `<div class="section-divider done-hdr">Final — Today</div>`;
-    html += todayDone.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(gameCard).join("");
+  if (completed.length) {
+    const byDay = {};
+    for (const e of completed) {
+      const day = toETDay(e.date);
+      if (!byDay[day]) byDay[day] = [];
+      byDay[day].push(e);
+    }
+    for (const day of Object.keys(byDay).sort().reverse()) {
+      scoresHtml += `<div class="day-header">${dayLabel(day+"T16:00:00Z")}</div>`;
+      scoresHtml += byDay[day].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(gameCard).join("");
+    }
   }
+  document.getElementById("live-games").innerHTML =
+    scoresHtml || `<div class="live-empty">No completed matches yet.</div>`;
 
-  // Upcoming — grouped by Eastern day, soonest first
+  // ── Schedule panel: upcoming only, chronological ──
+  let schedHtml = "";
   if (upcoming.length) {
-    html += `<div class="section-divider next-hdr">Upcoming Schedule</div>`;
     const byDay = {};
     for (const e of upcoming) {
-      const day = toETDay(e.date);          // Eastern date key, not UTC
+      const day = toETDay(e.date);
       if (!byDay[day]) byDay[day] = [];
       byDay[day].push(e);
     }
     for (const day of Object.keys(byDay).sort()) {
-      html += `<div class="day-header">${dayLabel(day+"T16:00:00Z")}</div>`;  // noon ET = 4pm UTC for label
-      html += byDay[day].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(gameCard).join("");
+      schedHtml += `<div class="day-header">${dayLabel(day+"T16:00:00Z")}</div>`;
+      schedHtml += byDay[day].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(gameCard).join("");
     }
   }
-
-  if (!html) {
-    html = `<div class="live-empty">No match data available.</div>`;
-  }
-
-  container.innerHTML = html;
+  document.getElementById("schedule-games").innerHTML =
+    schedHtml || `<div class="live-empty">No upcoming matches scheduled.</div>`;
 }
 
 /* ── Main load ── */
@@ -1444,6 +1466,15 @@ function renderAvailableTeams() {
 
 /* ── View toggle ── */
 let currentView = "leaderboard";
+let currentScoresTab = "scores";
+
+function switchScoresTab(tab) {
+  currentScoresTab = tab;
+  ["scores","schedule","groups"].forEach(t => {
+    document.getElementById("stab-" + t).classList.toggle("active", t === tab);
+    document.getElementById(t + "-panel").style.display = t === tab ? "block" : "none";
+  });
+}
 let cachedBracketEvents = [];
 
 function switchView(view) {
