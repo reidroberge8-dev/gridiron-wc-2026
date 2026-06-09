@@ -451,12 +451,12 @@
 
       /* ── Draft board mobile: keep side-by-side, never stack ── */
       #draft-view { padding: 8px 4px 40px; }
-      .draft-layout { flex-direction: row !important; gap: 6px; align-items: flex-start; }
+      .draft-layout { flex-direction: row !important; gap: 6px; align-items: stretch; }
       /* Round cards: capped width — sidebar gets everything else */
       .draft-main { flex: 0 1 190px; min-width: 0; }
-      .draft-sidebar { flex: 1 0 0; min-width: 100px; width: auto !important; position: static; }
-      .avail-panel { position: static; }
-      .avail-list { max-height: 85vh; overflow-y: auto; }
+      .draft-sidebar { flex: 1 0 0; min-width: 100px; width: auto !important; position: static; display: flex; flex-direction: column; }
+      .avail-panel { position: static; height: 100%; display: flex; flex-direction: column; }
+      .avail-list { flex: 1; overflow-y: auto; max-height: none; }
       .avail-item { padding: 4px 7px; gap: 5px; }
       .avail-rank { font-size: 0.56rem; min-width: 14px; }
       .avail-flag { font-size: 0.8rem; }
