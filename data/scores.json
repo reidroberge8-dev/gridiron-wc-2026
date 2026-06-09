@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-09T02:29:47.413263+00:00",
+  "last_updated": "2026-06-09T02:44:48.154805+00:00",
   "standings": [
     {
       "name": "Joe Klim",
@@ -140,13 +140,19 @@
       "name": "Reid",
       "teams": [
         {
-          "team": "TODO",
+          "team": "England",
           "wins": [],
           "ties": [],
+          "losses": [],
           "total": 0,
           "last_result": null,
-          "next_game": null,
-          "eliminated": false
+          "next_game": {
+            "opponent": "Croatia",
+            "date": "2026-06-17T20:00Z",
+            "stage": "group-stage"
+          },
+          "eliminated": false,
+          "record": "0W-0D-0L"
         },
         {
           "team": "TODO",
@@ -183,13 +189,19 @@
       "name": "Nolan",
       "teams": [
         {
-          "team": "TODO",
+          "team": "Brazil",
           "wins": [],
           "ties": [],
+          "losses": [],
           "total": 0,
           "last_result": null,
-          "next_game": null,
-          "eliminated": false
+          "next_game": {
+            "opponent": "Morocco",
+            "date": "2026-06-13T22:00Z",
+            "stage": "group-stage"
+          },
+          "eliminated": false,
+          "record": "0W-0D-0L"
         },
         {
           "team": "TODO",
@@ -226,13 +238,19 @@
       "name": "Matt",
       "teams": [
         {
-          "team": "TODO",
+          "team": "Argentina",
           "wins": [],
           "ties": [],
+          "losses": [],
           "total": 0,
           "last_result": null,
-          "next_game": null,
-          "eliminated": false
+          "next_game": {
+            "opponent": "Algeria",
+            "date": "2026-06-17T01:00Z",
+            "stage": "group-stage"
+          },
+          "eliminated": false,
+          "record": "0W-0D-0L"
         },
         {
           "team": "TODO",
