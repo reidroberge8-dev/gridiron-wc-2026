@@ -1,18 +1,99 @@
 {
   "players": [
-    { "name": "Joe Klim",  "teams": ["TODO", "TODO", "TODO"] },
-    { "name": "Joe Kasz",  "teams": ["TODO", "TODO", "TODO"] },
-    { "name": "Joe Ricc",  "teams": ["France", "TODO", "TODO"] },
-    { "name": "Reid",      "teams": ["TODO", "TODO", "TODO"] },
-    { "name": "Nolan",     "teams": ["TODO", "TODO", "TODO"] },
-    { "name": "Matt",      "teams": ["TODO", "TODO", "TODO"] },
-    { "name": "Luke",      "teams": ["TODO", "TODO", "TODO"] },
-    { "name": "Devin",     "teams": ["Spain", "TODO", "TODO"] },
-    { "name": "Spark",     "teams": ["TODO", "TODO", "TODO"] }
+    {
+      "name": "Joe Klim",
+      "teams": [
+        "TODO",
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    {
+      "name": "Joe Kasz",
+      "teams": [
+        "TODO",
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    {
+      "name": "Joe Ricc",
+      "teams": [
+        "France",
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    {
+      "name": "Reid",
+      "teams": [
+        "TODO",
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    {
+      "name": "Nolan",
+      "teams": [
+        "TODO",
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    {
+      "name": "Matt",
+      "teams": [
+        "TODO",
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    {
+      "name": "Luke",
+      "teams": [
+        "TODO",
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    {
+      "name": "Devin",
+      "teams": [
+        "Spain",
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    },
+    {
+      "name": "Spark",
+      "teams": [
+        "TODO",
+        "TODO",
+        "TODO",
+        "TODO"
+      ]
+    }
   ],
   "locked_picks": [
-    { "pick": 10, "name": "Baker" },
-    { "pick": 11, "name": "Pel" },
-    { "pick": 12, "name": "Walter" }
+    {
+      "pick": 10,
+      "name": "Baker"
+    },
+    {
+      "pick": 11,
+      "name": "Pel"
+    },
+    {
+      "pick": 12,
+      "name": "Walter"
+    }
   ]
 }

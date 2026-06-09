@@ -473,7 +473,8 @@
               <th></th><th>Player</th>
               <th>Team 1</th><th class="right">Pts</th><th></th>
               <th>Team 2</th><th class="right">Pts</th><th></th>
-              <th>Team 3</th><th class="right">Pts</th>
+              <th>Team 3</th><th class="right">Pts</th><th></th>
+              <th>Team 4</th><th class="right">Pts</th>
               <th class="right">Total</th>
             </tr>
           </thead>
@@ -647,7 +648,7 @@ function buildMobileCards(standings) {
     const rank = p.draft_pick;
     const rankClass   = rank <= 3 ? `rank-${rank}` : "rank-other";
     const rankDisplay = rank <= 3 ? ["🥇","🥈","🥉"][rank-1] : rank;
-    const teams = (p.teams && p.teams.length === 3) ? p.teams : [null,null,null];
+    const teams = (p.teams && p.teams.length >= 1) ? [...p.teams, null, null, null, null].slice(0,4) : [null,null,null,null];
 
     const teamRows = teams.map((t, i) => {
       const isTbd  = !t || t.team === "TODO" || t.team === "TBD";
@@ -721,7 +722,7 @@ function buildStandings(data) {
     const rank = p.draft_pick;
     const rankClass   = rank <= 3 ? `rank-${rank}` : "rank-other";
     const rankDisplay = rank <= 3 ? ["🥇","🥈","🥉"][rank-1] : rank;
-    const teams = (p.teams && p.teams.length === 3) ? p.teams : [null,null,null];
+    const teams = (p.teams && p.teams.length >= 1) ? [...p.teams, null, null, null, null].slice(0,4) : [null,null,null,null];
     const tr = document.createElement("tr");
     tr.dataset.rank = rank;
     tr.innerHTML = `
@@ -732,6 +733,8 @@ function buildStandings(data) {
       ${buildTeamCell(teams[1],"Team 2")}
       <td class="divider-cell"></td>
       ${buildTeamCell(teams[2],"Team 3")}
+      <td class="divider-cell"></td>
+      ${buildTeamCell(teams[3],"Team 4")}
       <td class="total-cell"><span class="total-pts">${p.total}</span><span class="total-lbl">pts</span></td>`;
     tbody.appendChild(tr);
   }
@@ -745,7 +748,7 @@ function buildLocked(data) {
     tr.className = "locked-row";
     tr.innerHTML = `
       <td class="rank-cell"><div class="rank-badge rank-other">${lp.pick}</div></td>
-      <td class="name-cell" colspan="9"><div class="player-name" style="color:var(--text-dim)">${lp.name}</div><span class="pick-badge">🔒 Locked</span></td>
+      <td class="name-cell" colspan="11"><div class="player-name" style="color:var(--text-dim)">${lp.name}</div><span class="pick-badge">🔒 Locked</span></td>
       <td class="total-cell"><span class="total-pts" style="color:var(--muted)">—</span></td>`;
     tbody.appendChild(tr);
   }
