@@ -254,7 +254,16 @@
       padding: 7px 14px 4px;
       background: var(--surface2);
     }
-    .group-table { width: 100%; border-collapse: collapse; }
+    .group-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    /* Fixed column widths — identical across all group tables so columns align */
+    .group-table td:nth-child(1) { width: 20px; }    /* rank */
+    /* td:nth-child(2) = team name — takes all remaining space */
+    .group-table td:nth-child(3) { width: 28px; }    /* GP */
+    .group-table td:nth-child(4) { width: 24px; }    /* W */
+    .group-table td:nth-child(5) { width: 24px; }    /* D */
+    .group-table td:nth-child(6) { width: 24px; }    /* L */
+    .group-table td:nth-child(7) { width: 30px; }    /* GD */
+    .group-table td:nth-child(8) { width: 30px; }    /* Pts */
     .group-table td {
       font-size: 0.72rem;
       padding: 5px 6px;
@@ -262,9 +271,9 @@
       color: var(--text-dim);
     }
     .group-table tr:last-child td { border-bottom: none; }
-    .group-table td:first-child { padding-left: 14px; width: 18px; color: var(--muted); font-size: 0.65rem; }
+    .group-table td:first-child { padding-left: 14px; color: var(--muted); font-size: 0.65rem; }
     .group-table td:last-child { padding-right: 14px; }
-    .group-team-name { display: flex; align-items: center; gap: 5px; }
+    .group-team-name { display: flex; align-items: center; gap: 5px; overflow: hidden; white-space: nowrap; }
     .group-team-name.owned { color: var(--text); font-weight: 700; }
     .g-pts { font-weight: 700; color: var(--text); text-align: right; }
     .g-num { text-align: right; color: var(--muted); }
