@@ -498,7 +498,7 @@
     #draft-view { display: none; max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
     .draft-layout { display: flex; gap: 20px; align-items: flex-start; }
     .draft-main   { flex: 1; min-width: 0; }
-    .draft-sidebar { width: 240px; flex-shrink: 0; }
+    .draft-sidebar { width: 200px; flex-shrink: 0; }
     .draft-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
     /* Available teams panel */
@@ -632,9 +632,10 @@
     .db2-pick-row {
       display: flex;
       align-items: center;
-      padding: 9px 14px;
+      gap: 4px;
+      padding: 8px 12px;
       border-bottom: 1px solid var(--border);
-      min-height: 42px;
+      min-height: 38px;
     }
     .db2-pick-row:last-child { border-bottom: none; }
     .db2-tbd-row { opacity: 0.4; }
@@ -642,15 +643,16 @@
       font-size: 0.62rem;
       font-weight: 700;
       color: var(--muted);
-      width: 30px;
+      width: auto;
+      min-width: 20px;
       flex-shrink: 0;
     }
     .db2-player {
-      font-weight: 600;
-      font-size: 0.78rem;
+      font-weight: 500;
+      font-size: 0.65rem;
       flex: 0 0 auto;
       white-space: nowrap;
-      color: var(--text);
+      color: var(--muted);
     }
     .db2-team {
       display: flex;
