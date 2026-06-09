@@ -424,6 +424,22 @@
       /* bracket horizontal scroll hint */
       .bracket-scroll { -webkit-overflow-scrolling: touch; }
       .bracket-round  { min-width: 140px; }
+
+      /* ── Draft board mobile ── */
+      #draft-view { padding: 14px 8px 40px; }
+      .draft-table { font-size: 0.72rem; }
+      .draft-table thead th.db-h-rank   { width: 22px; }
+      .draft-table thead th.db-h-player { width: 62px; }
+      .draft-table thead th.db-h-round  { font-size: 0.55rem; letter-spacing: 0.3px; }
+      .draft-table thead th.db-h-round span { display: none; }
+      .draft-table tbody td { padding: 7px 5px; }
+      .db-rank   { font-size: 0.68rem; }
+      .db-player { font-size: 0.75rem; font-weight: 700; }
+      .db-pick   { font-size: 0.5rem; margin-bottom: 2px; }
+      .db-flag   { font-size: 0.82rem; }
+      .db-name   { font-size: 0.65rem; line-height: 1.2; word-break: break-word; }
+      .db-team-tbd { font-size: 0.65rem; }
+      .db-team   { gap: 3px; }
     }
 
     /* ── Live score in standings table cell ── */
@@ -443,6 +459,7 @@
 
     /* ── Draft Board ── */
     #draft-view { display: none; max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
+    .draft-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .draft-table {
       width: 100%; border-collapse: separate; border-spacing: 0 5px;
       table-layout: fixed;
@@ -1145,7 +1162,7 @@ function renderDraftBoard() {
     </tr>`;
   }).join("");
 
-  container.innerHTML = `<table class="draft-table">
+  container.innerHTML = `<div class="draft-scroll"><table class="draft-table">
     <thead><tr>
       <th class="db-h-rank">#</th>
       <th class="db-h-player">Player</th>
@@ -1155,7 +1172,7 @@ function renderDraftBoard() {
       <th class="db-h-round">Round 4<span>${ROUND_PICK_RANGE[3]}</span></th>
     </tr></thead>
     <tbody>${rows}</tbody>
-  </table>`;
+  </table></div>`;
 }
 
 /* ── View toggle ── */
