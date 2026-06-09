@@ -205,6 +205,56 @@
       line-height: 1.5;
     }
 
+    /* ── Group Standings panel ── */
+    .group-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+    .group-panel-header {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .group-panel-header span { color: var(--muted); font-size: 0.6rem; font-weight: 400; }
+    #group-standings-body { max-height: 70vh; overflow-y: auto; }
+    .group-block { border-bottom: 1px solid var(--border); }
+    .group-block:last-child { border-bottom: none; }
+    .group-name {
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--muted);
+      padding: 7px 14px 4px;
+      background: var(--surface2);
+    }
+    .group-table { width: 100%; border-collapse: collapse; }
+    .group-table td {
+      font-size: 0.72rem;
+      padding: 5px 6px;
+      border-bottom: 1px solid rgba(30,45,69,0.6);
+      color: var(--text-dim);
+    }
+    .group-table tr:last-child td { border-bottom: none; }
+    .group-table td:first-child { padding-left: 14px; width: 18px; color: var(--muted); font-size: 0.65rem; }
+    .group-table td:last-child { padding-right: 14px; }
+    .group-team-name { display: flex; align-items: center; gap: 5px; }
+    .group-team-name.owned { color: var(--text); font-weight: 700; }
+    .g-pts { font-weight: 700; color: var(--text); text-align: right; }
+    .g-num { text-align: right; color: var(--muted); }
+    .g-adv { background: rgba(34,197,94,0.12); }
+    .owned-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--gold); display: inline-block; flex-shrink: 0;
+    }
+
     /* ── Loading / error ── */
     #loading { text-align: center; padding: 60px 24px; color: var(--muted); }
     #error-msg {
@@ -290,6 +340,15 @@
         </div>
         <div id="live-games"><div class="live-empty">Loading…</div></div>
       </div>
+    <!-- Group standings panel -->
+      <div class="group-panel">
+        <div class="group-panel-header">
+          Group Standings
+          <span id="group-updated"></span>
+        </div>
+        <div id="group-standings-body"><div class="live-empty">Loading…</div></div>
+      </div>
+
     </div>
 
   </div>
@@ -317,6 +376,9 @@ const FLAGS = {
   "Romania":"🇷🇴","Scotland":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Slovakia":"🇸🇰","Slovenia":"🇸🇮",
   "South Africa":"🇿🇦","Sweden":"🇸🇪","Thailand":"🇹🇭","Ukraine":"🇺🇦",
   "Venezuela":"🇻🇪","Zimbabwe":"🇿🇼","Uzbekistan":"🇺🇿","Cuba":"🇨🇺",
+  "Türkiye":"🇹🇷","Ivory Coast":"🇨🇮","Bosnia-Herzegovina":"🇧🇦",
+  "Curaçao":"🇨🇼","Cape Verde":"🇨🇻","Iraq":"🇮🇶","Jordan":"🇯🇴","Haiti":"🇭🇹",
+  "Congo DR":"🇨🇩","Algeria":"🇩🇿","Austria":"🇦🇹","Panama":"🇵🇦","Ghana":"🇬🇭",
 };
 
 const STAGE_SHORT = {
@@ -587,14 +649,99 @@ async function loadScores() {
   }
 }
 
+const ESPN_STANDINGS = "https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings";
+
+async function refreshGroupStandings() {
+  try {
+    const res  = await fetch(ESPN_STANDINGS + "?t=" + Date.now());
+    const data = await res.json();
+    renderGroupStandings(data.children || []);
+    document.getElementById("group-updated").textContent =
+      new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+  } catch(e) {
+    console.warn("Group standings fetch failed:", e);
+  }
+}
+
+function renderGroupStandings(groups) {
+  const container = document.getElementById("group-standings-body");
+  if (!groups.length) {
+    container.innerHTML = `<div class="live-empty">Standings not yet available.</div>`;
+    return;
+  }
+
+  container.innerHTML = groups.map(g => {
+    const entries = g.standings?.entries || [];
+
+    // Sort by rank (R stat), fallback to points
+    entries.sort((a, b) => {
+      const ra = parseInt(a.stats.find(s=>s.abbreviation==="R")?.value ?? 99);
+      const rb = parseInt(b.stats.find(s=>s.abbreviation==="R")?.value ?? 99);
+      return ra - rb;
+    });
+
+    const rows = entries.map((e, i) => {
+      const team  = e.team?.displayName || "?";
+      const stats = Object.fromEntries(e.stats.map(s => [s.abbreviation, s.displayValue ?? s.value ?? "0"]));
+      const gp    = stats.GP  ?? "0";
+      const w     = stats.W   ?? "0";
+      const d     = stats.D   ?? "0";
+      const l     = stats.L   ?? "0";
+      const gd    = stats.GD  ?? "0";
+      const pts   = stats.P   ?? "0";
+      const rank  = parseInt(stats.R ?? (i+1));
+      const adv   = rank <= 2;  // top 2 advance automatically (+ 8 best 3rd)
+      const owned = !!playerTeamMap[team];
+
+      return `<tr class="${adv ? "g-adv" : ""}">
+        <td>${rank}</td>
+        <td>
+          <div class="group-team-name ${owned ? "owned" : ""}">
+            ${flag(team)} ${team}
+            ${owned ? `<span class="owned-dot" title="${playerTeamMap[team].join(", ")}"></span>` : ""}
+          </div>
+        </td>
+        <td class="g-num">${gp}</td>
+        <td class="g-num">${w}</td>
+        <td class="g-num">${d}</td>
+        <td class="g-num">${l}</td>
+        <td class="g-num">${gd}</td>
+        <td class="g-pts">${pts}</td>
+      </tr>`;
+    }).join("");
+
+    return `<div class="group-block">
+      <div class="group-name">${g.name}</div>
+      <table class="group-table">
+        <thead>
+          <tr>
+            <td></td>
+            <td style="color:var(--muted);font-size:0.6rem">Team</td>
+            <td class="g-num" style="color:var(--muted);font-size:0.6rem">GP</td>
+            <td class="g-num" style="color:var(--muted);font-size:0.6rem">W</td>
+            <td class="g-num" style="color:var(--muted);font-size:0.6rem">D</td>
+            <td class="g-num" style="color:var(--muted);font-size:0.6rem">L</td>
+            <td class="g-num" style="color:var(--muted);font-size:0.6rem">GD</td>
+            <td class="g-pts" style="color:var(--muted);font-size:0.6rem">Pts</td>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }).join("");
+}
+
 // Initial load
 loadScores();
 refreshLiveScores();
+refreshGroupStandings();
 
 // Standings: every 5 min
 setInterval(loadScores, 5 * 60 * 1000);
 // Live scores: every 60 sec
 setInterval(refreshLiveScores, 60 * 1000);
+// Group standings: every 5 min
+setInterval(refreshGroupStandings, 5 * 60 * 1000);
 </script>
 </body>
 </html>
