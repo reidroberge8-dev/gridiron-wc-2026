@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gridiron World Cup Challenge 2026</title>
+  <style>
+    :root {
+      --bg:        #06090f;
+      --surface:   #0e1420;
+      --surface2:  #151d2e;
+      --border:    #1e2d45;
+      --gold:      #f0b429;
+      --gold-dim:  #a07820;
+      --green:     #22c55e;
+      --blue:      #3b82f6;
+      --red:       #ef4444;
+      --muted:     #64748b;
+      --text:      #e2e8f0;
+      --text-dim:  #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #0a1628 0%, #0e1f3d 50%, #0a1628 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 24px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% -20%, rgba(240,180,41,0.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .trophy { font-size: 2.4rem; display: block; margin-bottom: 6px; }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #f0b429, #ffd700, #f0b429);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .last-updated {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+    #status-dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      margin-right: 5px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    /* ── Layout ── */
+    main { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+
+    /* ── Scoring Key ── */
+    .scoring-key {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 20px;
+      align-items: center;
+    }
+    .scoring-key h3 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      width: 100%;
+      margin-bottom: 2px;
+    }
+    .key-item {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+    .key-pts {
+      font-weight: 700;
+      color: var(--gold);
+      margin-right: 3px;
+    }
+
+    /* ── Section header ── */
+    .section-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      padding-left: 2px;
+    }
+
+    /* ── Leaderboard ── */
+    .leaderboard { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+
+    .player-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+      cursor: pointer;
+    }
+    .player-card:hover { border-color: #2d4a7a; }
+    .player-card.expanded { border-color: var(--blue); }
+
+    /* rank badge colors */
+    .player-card[data-rank="1"] { border-left: 3px solid #ffd700; }
+    .player-card[data-rank="2"] { border-left: 3px solid #c0c0c0; }
+    .player-card[data-rank="3"] { border-left: 3px solid #cd7f32; }
+
+    .card-header {
+      display: grid;
+      grid-template-columns: 48px 1fr auto auto;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+    }
+
+    .rank-badge {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      font-weight: 800;
+    }
+    .rank-1 { background: rgba(255,215,0,0.15); color: #ffd700; }
+    .rank-2 { background: rgba(192,192,192,0.15); color: #c0c0c0; }
+    .rank-3 { background: rgba(205,127,50,0.15); color: #cd7f32; }
+    .rank-other { background: var(--surface2); color: var(--muted); font-size: 0.9rem; }
+
+    .player-name { font-weight: 700; font-size: 1.05rem; }
+    .draft-pick-badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 2px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .player-total {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--gold);
+      text-align: right;
+      min-width: 56px;
+    }
+    .pts-label {
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      display: block;
+      text-align: right;
+      margin-top: -4px;
+    }
+
+    /* ── Expanded team breakdown ── */
+    .card-teams {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      gap: 8px;
+      flex-direction: column;
+      background: var(--surface2);
+    }
+    .player-card.expanded .card-teams { display: flex; }
+
+    .team-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      gap: 8px;
+      padding: 8px 10px;
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .team-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .team-pts {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-align: right;
+      white-space: nowrap;
+    }
+    .team-results {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-top: 3px;
+    }
+    .result-chip {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-right: 3px;
+      font-weight: 600;
+      font-size: 0.68rem;
+    }
+    .chip-win { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .chip-tie { background: rgba(250,204,21,0.15); color: #facc15; }
+    .chip-tbd { background: rgba(100,116,139,0.1); color: var(--muted); }
+
+    /* ── Locked picks ── */
+    .locked-section { margin-top: 8px; }
+    .locked-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+      opacity: 0.65;
+    }
+    .locked-badge {
+      font-size: 0.7rem;
+      background: rgba(239,68,68,0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239,68,68,0.2);
+      padding: 2px 7px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .locked-icon { color: var(--muted); font-size: 1rem; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.72rem;
+      padding: 0 16px 24px;
+    }
+
+    /* ── Loading / Error ── */
+    #loading {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--muted);
+    }
+    #error-msg {
+      display: none;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #f87171;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 1.3rem; }
+      .card-header { grid-template-columns: 40px 1fr auto; }
+      .draft-pick-badge { display: none; }
+      .player-total { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="trophy">🏆</span>
+  <h1>Gridiron World Cup Challenge</h1>
+  <p class="subtitle">2026 FIFA World Cup &nbsp;·&nbsp; Fantasy Draft Order</p>
+  <div class="last-updated">
+    <span id="status-dot"></span>
+    <span id="updated-text">Loading…</span>
+  </div>
+</header>
+
+<main>
+  <div id="error-msg"></div>
+  <div id="loading">⚽ Loading scores…</div>
+  <div id="content" style="display:none">
+    <div class="scoring-key">
+      <h3>Point Values</h3>
+      <span class="key-item"><span class="key-pts">+3</span> Group Win</span>
+      <span class="key-item"><span class="key-pts">+1</span> Group Draw</span>
+      <span class="key-item"><span class="key-pts">+4</span> R32 Win</span>
+      <span class="key-item"><span class="key-pts">+5</span> R16 Win</span>
+      <span class="key-item"><span class="key-pts">+6</span> QF Win</span>
+      <span class="key-item"><span class="key-pts">+7</span> SF Win</span>
+      <span class="key-item"><span class="key-pts">+8</span> Final Win</span>
+    </div>
+
+    <div class="section-label">Live Standings — Picks 1–9</div>
+    <div class="leaderboard" id="leaderboard"></div>
+
+    <div class="section-label locked-section">Locked Picks</div>
+    <div id="locked-picks"></div>
+  </div>
+</main>
+
+<footer>
+  Data via football-data.org &nbsp;·&nbsp; Updates every 30 min &nbsp;·&nbsp; 3rd place game excluded
+</footer>
+
+<script>
+const FLAGS = {
+  "Argentina":      "🇦🇷", "Australia":      "🇦🇺", "Belgium":        "🇧🇪",
+  "Brazil":         "🇧🇷", "Cameroon":       "🇨🇲", "Canada":         "🇨🇦",
+  "Chile":          "🇨🇱", "Colombia":       "🇨🇴", "Costa Rica":     "🇨🇷",
+  "Croatia":        "🇭🇷", "Denmark":        "🇩🇰", "Ecuador":        "🇪🇨",
+  "England":        "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "France":         "🇫🇷", "Germany":        "🇩🇪",
+  "Ghana":          "🇬🇭", "Iran":           "🇮🇷", "Italy":          "🇮🇹",
+  "Japan":          "🇯🇵", "Mexico":         "🇲🇽", "Morocco":        "🇲🇦",
+  "Netherlands":    "🇳🇱", "Nigeria":        "🇳🇬", "Panama":         "🇵🇦",
+  "Peru":           "🇵🇪", "Poland":         "🇵🇱", "Portugal":       "🇵🇹",
+  "Qatar":          "🇶🇦", "Saudi Arabia":   "🇸🇦", "Senegal":        "🇸🇳",
+  "Serbia":         "🇷🇸", "South Korea":    "🇰🇷", "Spain":          "🇪🇸",
+  "Switzerland":    "🇨🇭", "Tunisia":        "🇹🇳", "Turkey":         "🇹🇷",
+  "United States":  "🇺🇸", "Uruguay":        "🇺🇾", "Wales":          "🏴󠁧󠁢󠁷󠁬󠁳󠁿",
+  "Algeria":        "🇩🇿", "Austria":        "🇦🇹", "Bolivia":        "🇧🇴",
+  "Congo DR":       "🇨🇩", "Côte d'Ivoire":  "🇨🇮", "Czech Republic": "🇨🇿",
+  "Egypt":          "🇪🇬", "Greece":         "🇬🇷", "Honduras":       "🇭🇳",
+  "Hungary":        "🇭🇺", "Indonesia":      "🇮🇩", "Jamaica":        "🇯🇲",
+  "Kenya":          "🇰🇪", "Malaysia":       "🇲🇾", "Mali":           "🇲🇱",
+  "New Zealand":    "🇳🇿", "Norway":         "🇳🇴", "Paraguay":       "🇵🇾",
+  "Romania":        "🇷🇴", "Scotland":       "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "Slovakia":       "🇸🇰",
+  "Slovenia":       "🇸🇮", "South Africa":   "🇿🇦", "Sweden":         "🇸🇪",
+  "Thailand":       "🇹🇭", "Ukraine":        "🇺🇦", "Venezuela":      "🇻🇪",
+  "Zimbabwe":       "🇿🇼", "Uzbekistan":     "🇺🇿", "Cuba":           "🇨🇺",
+};
+
+const STAGE_LABELS = {
+  GROUP_STAGE:    "Group Stage",
+  LAST_32:        "Round of 32",
+  LAST_16:        "Round of 16",
+  QUARTER_FINALS: "Quarterfinal",
+  SEMI_FINALS:    "Semifinal",
+  FINAL:          "Final",
+};
+
+function flag(name) { return FLAGS[name] || "🏳️"; }
+
+function formatUpdated(iso) {
+  const d = new Date(iso);
+  return d.toLocaleString("en-US", {
+    month: "short", day: "numeric",
+    hour: "numeric", minute: "2-digit",
+    timeZoneName: "short"
+  });
+}
+
+function buildResultChips(wins, ties) {
+  const chips = [];
+  for (const w of wins) {
+    chips.push(`<span class="result-chip chip-win">W vs ${w.opponent} (${STAGE_LABELS[w.stage] || w.stage}, +${w.pts})</span>`);
+  }
+  for (const t of ties) {
+    chips.push(`<span class="result-chip chip-tie">D vs ${t.opponent} (${STAGE_LABELS[t.stage] || t.stage}, +${t.pts})</span>`);
+  }
+  return chips.length
+    ? chips.join("")
+    : `<span class="result-chip chip-tbd">No results yet</span>`;
+}
+
+function buildLeaderboard(data) {
+  const lb = document.getElementById("leaderboard");
+  lb.innerHTML = "";
+
+  for (const p of data.standings) {
+    const rankClass = p.draft_pick <= 3 ? `rank-${p.draft_pick}` : "rank-other";
+    const rankDisplay = p.draft_pick <= 3
+      ? ["🥇","🥈","🥉"][p.draft_pick - 1]
+      : p.draft_pick;
+
+    const teamsHTML = (p.teams || []).map(t => {
+      const pts = t.total ?? 0;
+      const wins = t.wins ?? [];
+      const ties = t.ties ?? [];
+      return `
+        <div class="team-row">
+          <div>
+            <div class="team-name">${flag(t.team)} ${t.team}</div>
+            <div class="team-results">${buildResultChips(wins, ties)}</div>
+          </div>
+          <div class="team-pts">${pts}<span style="font-size:0.65rem;color:var(--muted);margin-left:2px">pts</span></div>
+        </div>`;
+    }).join("") || `<div style="color:var(--muted);font-size:0.8rem;padding:6px 0">Teams TBD</div>`;
+
+    const card = document.createElement("div");
+    card.className = "player-card";
+    card.dataset.rank = p.draft_pick;
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="rank-badge ${rankClass}">${rankDisplay}</div>
+        <div>
+          <div class="player-name">${p.name}</div>
+          <div class="draft-pick-badge">Draft Pick #${p.draft_pick}</div>
+        </div>
+        <div></div>
+        <div>
+          <div class="player-total">${p.total}</div>
+          <span class="pts-label">pts</span>
+        </div>
+      </div>
+      <div class="card-teams">${teamsHTML}</div>`;
+
+    card.addEventListener("click", () => card.classList.toggle("expanded"));
+    lb.appendChild(card);
+  }
+}
+
+function buildLockedPicks(data) {
+  const el = document.getElementById("locked-picks");
+  el.innerHTML = "";
+  for (const lp of (data.locked_picks || [])) {
+    el.innerHTML += `
+      <div class="locked-card">
+        <div class="rank-badge rank-other">${lp.pick}</div>
+        <div class="player-name" style="color:var(--text-dim)">${lp.name}</div>
+        <span class="locked-badge">🔒 Locked</span>
+      </div>`;
+  }
+}
+
+async function loadScores() {
+  const loading = document.getElementById("loading");
+  const content = document.getElementById("content");
+  const errEl   = document.getElementById("error-msg");
+
+  try {
+    // cache-bust so GitHub Pages serves fresh JSON
+    const res  = await fetch(`data/scores.json?t=${Date.now()}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    document.getElementById("updated-text").textContent =
+      "Updated " + formatUpdated(data.last_updated);
+
+    buildLeaderboard(data);
+    buildLockedPicks(data);
+
+    loading.style.display = "none";
+    content.style.display = "block";
+  } catch (err) {
+    loading.style.display = "none";
+    errEl.style.display   = "block";
+    errEl.textContent     = "⚠️ Could not load scores: " + err.message;
+  }
+}
+
+// Load on start, then refresh every 5 minutes
+loadScores();
+setInterval(loadScores, 5 * 60 * 1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "last_updated": "2026-06-08T00:00:00+00:00",
+  "standings": [
+    { "name": "Joe Klim",  "draft_pick": 1, "total": 0, "teams": [] },
+    { "name": "Joe Kasz",  "draft_pick": 2, "total": 0, "teams": [] },
+    { "name": "Joe Ricc",  "draft_pick": 3, "total": 0, "teams": [] },
+    { "name": "Reid",      "draft_pick": 4, "total": 0, "teams": [] },
+    { "name": "Nolan",     "draft_pick": 5, "total": 0, "teams": [] },
+    { "name": "Matt",      "draft_pick": 6, "total": 0, "teams": [] },
+    { "name": "Luke",      "draft_pick": 7, "total": 0, "teams": [] },
+    { "name": "Devin",     "draft_pick": 8, "total": 0, "teams": [] },
+    { "name": "Spark",     "draft_pick": 9, "total": 0, "teams": [] }
+  ],
+  "team_points": {},
+  "locked_picks": [
+    { "pick": 10, "name": "Baker" },
+    { "pick": 11, "name": "Pel" },
+    { "pick": 12, "name": "Walter" }
+  ]
+}
