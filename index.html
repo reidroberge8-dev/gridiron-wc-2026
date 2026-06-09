@@ -285,7 +285,8 @@
 
     /* ── View toggle ── */
     .view-toggle {
-      display: flex; justify-content: center; gap: 8px;
+      display: grid; grid-template-columns: repeat(4, auto);
+      justify-content: center; gap: 8px;
       padding: 14px 16px 0;
       max-width: 1200px; margin: 0 auto;
     }
@@ -293,10 +294,17 @@
       padding: 7px 20px; border-radius: 8px; font-size: 0.78rem;
       font-weight: 700; cursor: pointer; border: 1px solid var(--border);
       background: var(--surface); color: var(--text-dim);
-      transition: all 0.15s; letter-spacing: 0.3px;
+      transition: all 0.15s; letter-spacing: 0.3px; white-space: nowrap;
     }
     .toggle-btn:hover { border-color: #0062b1; color: var(--text); background: #eef4fb; }
     .toggle-btn.active { background: #013369; border-color: #013369; color: #ffffff; }
+    @media (max-width: 700px) {
+      .view-toggle {
+        grid-template-columns: 1fr 1fr;
+        padding: 12px 12px 0;
+      }
+      .toggle-btn { padding: 9px 12px; font-size: 0.72rem; text-align: center; }
+    }
 
     /* ── Bracket view ── */
     #bracket-view { display: none; max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
@@ -418,8 +426,7 @@
       .m-pts-num    { font-size: 1rem; font-weight: 700; color: var(--gold); display: block; }
       .m-pts-lbl    { font-size: 0.58rem; color: var(--muted); }
 
-      /* toggle buttons smaller on mobile */
-      .toggle-btn { padding: 6px 14px; font-size: 0.72rem; }
+      /* toggle buttons: 2×2 grid handles sizing via .view-toggle @media above */
 
       /* bracket horizontal scroll hint */
       .bracket-scroll { -webkit-overflow-scrolling: touch; }
@@ -489,6 +496,19 @@
     .avail-name { flex: 1; font-weight: 600; color: var(--text); }
     .avail-drafted { color: var(--muted); font-weight: 400; text-decoration: line-through; font-size: 0.72rem; }
     .avail-owner { font-size: 0.58rem; color: var(--blue); font-weight: 600; margin-left: auto; flex-shrink: 0; }
+    /* ── Scores & Schedule view ── */
+    #scores-view { display: none; max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
+    .scores-layout { display: flex; gap: 20px; align-items: flex-start; }
+    .scores-main  { flex: 1; min-width: 0; }
+    .scores-aside { width: 320px; flex-shrink: 0; }
+    #scores-view .section-label { margin-bottom: 8px; padding-left: 2px; }
+    #scores-view #live-games { max-height: 80vh; }
+    #scores-view #group-standings-body { max-height: 80vh; }
+    @media (max-width: 900px) {
+      .scores-layout { flex-direction: column; }
+      .scores-aside { width: 100%; }
+    }
+
     /* ── Draft Board v2 (mobile-first round cards) ── */
     .db2-round-card {
       background: var(--surface);
@@ -582,9 +602,10 @@
 </header>
 
 <div class="view-toggle">
-  <button class="toggle-btn active" id="btn-challenge" onclick="switchView('challenge')">🏆 Gridiron Challenge</button>
-  <button class="toggle-btn"        id="btn-bracket"   onclick="switchView('bracket')">📊 World Cup Bracket</button>
-  <button class="toggle-btn"        id="btn-draft"     onclick="switchView('draft')">📋 Draft Board</button>
+  <button class="toggle-btn active" id="btn-leaderboard" onclick="switchView('leaderboard')">🏆 Leaderboard</button>
+  <button class="toggle-btn"        id="btn-draft"       onclick="switchView('draft')">📋 Draft Results</button>
+  <button class="toggle-btn"        id="btn-scores"      onclick="switchView('scores')">⚽ Scores &amp; Schedule</button>
+  <button class="toggle-btn"        id="btn-bracket"     onclick="switchView('bracket')">📊 Bracket</button>
 </div>
 
 <div id="loading" style="padding:60px 24px;text-align:center;color:var(--muted)">⚽ Loading scores…</div>
@@ -607,6 +628,32 @@
         <div class="avail-list" id="avail-list">
           <div style="padding:20px;text-align:center;color:var(--muted);font-size:0.78rem">Loading…</div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="scores-view">
+  <div class="scores-layout">
+    <div class="scores-main">
+      <div class="section-label">Live Scores</div>
+      <div class="live-panel">
+        <div class="live-panel-header">
+          <div class="live-dot inactive" id="live-dot"></div>
+          <span class="live-panel-title" id="live-title">Live Scores</span>
+          <span class="live-updated" id="live-updated"></span>
+        </div>
+        <div id="live-games"><div class="live-empty">Loading…</div></div>
+      </div>
+    </div>
+    <div class="scores-aside">
+      <div class="section-label">Group Standings</div>
+      <div class="group-panel">
+        <div class="group-panel-header">
+          Group Standings
+          <span id="group-updated"></span>
+        </div>
+        <div id="group-standings-body"><div class="live-empty">Loading…</div></div>
       </div>
     </div>
   </div>
@@ -656,28 +703,6 @@
           <tbody id="locked-body"></tbody>
         </table>
       </div>
-    </div>
-
-    <!-- Right: live scores -->
-    <div class="side-col">
-      <div class="section-label">Live Scores</div>
-      <div class="live-panel">
-        <div class="live-panel-header">
-          <div class="live-dot inactive" id="live-dot"></div>
-          <span class="live-panel-title" id="live-title">Live Scores</span>
-          <span class="live-updated" id="live-updated"></span>
-        </div>
-        <div id="live-games"><div class="live-empty">Loading…</div></div>
-      </div>
-    <!-- Group standings panel -->
-      <div class="group-panel">
-        <div class="group-panel-header">
-          Group Standings
-          <span id="group-updated"></span>
-        </div>
-        <div id="group-standings-body"><div class="live-empty">Loading…</div></div>
-      </div>
-
     </div>
 
   </div>
@@ -1292,17 +1317,19 @@ function renderAvailableTeams() {
 }
 
 /* ── View toggle ── */
-let currentView = "challenge";
+let currentView = "leaderboard";
 let cachedBracketEvents = [];
 
 function switchView(view) {
   currentView = view;
-  document.getElementById("btn-challenge").classList.toggle("active", view === "challenge");
-  document.getElementById("btn-bracket").classList.toggle("active",   view === "bracket");
-  document.getElementById("btn-draft").classList.toggle("active",     view === "draft");
-  document.getElementById("content").style.display       = view === "challenge" ? "block" : "none";
-  document.getElementById("bracket-view").style.display  = view === "bracket"   ? "block" : "none";
-  document.getElementById("draft-view").style.display    = view === "draft"     ? "block" : "none";
+  document.getElementById("btn-leaderboard").classList.toggle("active", view === "leaderboard");
+  document.getElementById("btn-scores").classList.toggle("active",      view === "scores");
+  document.getElementById("btn-bracket").classList.toggle("active",     view === "bracket");
+  document.getElementById("btn-draft").classList.toggle("active",       view === "draft");
+  document.getElementById("content").style.display      = view === "leaderboard" ? "block" : "none";
+  document.getElementById("scores-view").style.display  = view === "scores"      ? "block" : "none";
+  document.getElementById("bracket-view").style.display = view === "bracket"     ? "block" : "none";
+  document.getElementById("draft-view").style.display   = view === "draft"       ? "block" : "none";
   if (view === "bracket") renderBracket(cachedBracketEvents);
   if (view === "draft")   { renderDraftBoard(); renderAvailableTeams(); }
 }
