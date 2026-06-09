@@ -332,15 +332,77 @@
     .owned-pip { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
 
     /* ── Responsive ── */
+    /* ── Mobile card layout ── */
+    .mobile-cards { display: none; }
+
     @media (max-width: 900px) {
       .page-body { flex-direction: column; }
-      .side-col  { width: 100%; position: static; }
+      .side-col  { width: 100%; position: static; max-height: none; overflow-y: visible; }
       .live-panel { position: static; }
+      #live-games { max-height: 50vh; }
+      #group-standings-body { max-height: 50vh; }
     }
-    @media (max-width: 680px) {
-      .team-cell { min-width: 115px; }
-      .standings-table tbody td,
-      .standings-table thead th { padding: 7px 5px; }
+
+    @media (max-width: 700px) {
+      /* hide desktop table, show mobile cards */
+      .desktop-table { display: none !important; }
+      .mobile-cards  { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+
+      /* player card */
+      .m-player-card {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: 12px; overflow: hidden;
+      }
+      .m-player-card[data-rank="1"] { border-left: 3px solid #ffd700; }
+      .m-player-card[data-rank="2"] { border-left: 3px solid #c0c0c0; }
+      .m-player-card[data-rank="3"] { border-left: 3px solid #cd7f32; }
+
+      .m-player-header {
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 14px; background: var(--surface2);
+        border-bottom: 1px solid var(--border);
+      }
+      .m-rank-badge {
+        width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.9rem; font-weight: 800;
+      }
+      .m-player-info { flex: 1; }
+      .m-player-name { font-weight: 700; font-size: 0.95rem; }
+      .m-pick-badge  { font-size: 0.62rem; color: var(--muted); }
+      .m-total { text-align: right; }
+      .m-total-pts { font-size: 1.3rem; font-weight: 800; color: var(--gold); display: block; line-height: 1; }
+      .m-total-lbl { font-size: 0.58rem; color: var(--muted); text-transform: uppercase; }
+
+      /* team rows inside card */
+      .m-team-row {
+        display: flex; align-items: flex-start; gap: 10px;
+        padding: 9px 14px; border-bottom: 1px solid var(--border);
+      }
+      .m-team-row:last-child { border-bottom: none; }
+      .m-team-row.tbd { opacity: 0.35; }
+      .m-team-left  { flex: 1; min-width: 0; }
+      .m-team-flag-name {
+        display: flex; align-items: center; gap: 6px;
+        font-size: 0.88rem; font-weight: 600;
+      }
+      .m-team-meta  { margin-top: 3px; display: flex; flex-direction: column; gap: 2px; }
+      .m-meta-line  {
+        font-size: 0.65rem; color: var(--text-dim);
+        display: flex; align-items: center; gap: 4px;
+      }
+      .m-meta-lbl   { font-size: 0.58rem; color: var(--muted); text-transform: uppercase; min-width: 26px; }
+      .m-chips      { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 3px; }
+      .m-team-pts   { text-align: right; flex-shrink: 0; }
+      .m-pts-num    { font-size: 1rem; font-weight: 700; color: var(--gold); display: block; }
+      .m-pts-lbl    { font-size: 0.58rem; color: var(--muted); }
+
+      /* toggle buttons smaller on mobile */
+      .toggle-btn { padding: 6px 14px; font-size: 0.72rem; }
+
+      /* bracket horizontal scroll hint */
+      .bracket-scroll { -webkit-overflow-scrolling: touch; }
+      .bracket-round  { min-width: 140px; }
     }
   </style>
 </head>
@@ -384,7 +446,9 @@
       </div>
 
       <div class="section-label">Live Standings — Picks 1–9</div>
-      <div style="overflow-x:auto">
+
+      <!-- Desktop table -->
+      <div class="desktop-table" style="overflow-x:auto">
         <table class="standings-table">
           <thead>
             <tr>
@@ -398,6 +462,9 @@
           <tbody id="standings-body"></tbody>
         </table>
       </div>
+
+      <!-- Mobile cards -->
+      <div class="mobile-cards" id="mobile-cards"></div>
 
       <div class="section-label" style="margin-top:14px">Locked Picks</div>
       <div style="overflow-x:auto">
@@ -535,9 +602,74 @@ function buildTeamCell(t, slotLabel) {
     <td class="team-pts-cell"><span class="team-pts">${pts}</span><span class="team-pts-lbl">pts</span></td>`;
 }
 
+function buildMobileCards(standings) {
+  const container = document.getElementById("mobile-cards");
+  container.innerHTML = standings.map(p => {
+    const rank = p.draft_pick;
+    const rankClass   = rank <= 3 ? `rank-${rank}` : "rank-other";
+    const rankDisplay = rank <= 3 ? ["🥇","🥈","🥉"][rank-1] : rank;
+    const teams = (p.teams && p.teams.length === 3) ? p.teams : [null,null,null];
+
+    const teamRows = teams.map((t, i) => {
+      const isTbd  = !t || t.team === "TODO" || t.team === "TBD";
+      const name   = isTbd ? `Team ${i+1}` : t.team;
+      const pts    = isTbd ? 0 : (t.total ?? 0);
+      const wins   = isTbd ? [] : (t.wins  ?? []);
+      const ties   = isTbd ? [] : (t.ties  ?? []);
+      const elim   = isTbd ? false : (t.eliminated ?? false);
+      const last   = isTbd ? null  : (t.last_result ?? null);
+      const next   = isTbd ? null  : (t.next_game   ?? null);
+      const record = isTbd ? null  : (t.record ?? null);
+
+      let chips = "";
+      for (const w of wins) chips += `<span class="chip chip-win">${STAGE_SHORT[w.stage]||w.stage} +${w.pts}</span>`;
+      for (const d of ties) chips += `<span class="chip chip-tie">${STAGE_SHORT[d.stage]||d.stage} +${d.pts}</span>`;
+
+      let meta = "";
+      if (last) {
+        const cls = RESULT_CLASS[last.result] || "";
+        meta += `<div class="m-meta-line"><span class="m-meta-lbl">Last</span><span class="${cls}">${last.result}</span><span>${last.score} vs ${last.opponent}</span></div>`;
+      }
+      if (elim) {
+        meta += `<div class="eliminated-badge" style="margin-top:4px">☠ Eliminated${record ? ` · ${record}` : ""}</div>`;
+      } else if (next) {
+        meta += `<div class="m-meta-line"><span class="m-meta-lbl">Next</span><span>vs ${next.opponent}, ${fmtDate(next.date)}</span></div>`;
+      }
+
+      return `<div class="m-team-row ${isTbd ? "tbd" : ""}">
+        <div class="m-team-left">
+          <div class="m-team-flag-name">${isTbd ? "⬜" : flag(name)} ${name}</div>
+          ${chips ? `<div class="m-chips">${chips}</div>` : ""}
+          <div class="m-team-meta">${meta}</div>
+        </div>
+        <div class="m-team-pts">
+          <span class="m-pts-num">${pts}</span>
+          <span class="m-pts-lbl">pts</span>
+        </div>
+      </div>`;
+    }).join("");
+
+    return `<div class="m-player-card" data-rank="${rank}">
+      <div class="m-player-header">
+        <div class="m-rank-badge ${rankClass}">${rankDisplay}</div>
+        <div class="m-player-info">
+          <div class="m-player-name">${p.name}</div>
+          <div class="m-pick-badge">Pick #${rank}</div>
+        </div>
+        <div class="m-total">
+          <span class="m-total-pts">${p.total}</span>
+          <span class="m-total-lbl">pts</span>
+        </div>
+      </div>
+      ${teamRows}
+    </div>`;
+  }).join("");
+}
+
 function buildStandings(data) {
   const tbody = document.getElementById("standings-body");
   tbody.innerHTML = "";
+  buildMobileCards(data.standings);
   for (const p of data.standings) {
     const rank = p.draft_pick;
     const rankClass   = rank <= 3 ? `rank-${rank}` : "rank-other";
