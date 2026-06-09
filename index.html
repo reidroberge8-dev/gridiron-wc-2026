@@ -440,6 +440,49 @@
     .live-score-num   { font-weight: 800; color: var(--text); font-size: 0.85rem; }
     .live-score-opp   { color: var(--text-dim); }
     .live-score-clock { font-size: 0.6rem; color: var(--muted); font-weight: 400; }
+
+    /* ── Draft Board ── */
+    #draft-view { display: none; max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
+    .draft-table {
+      width: 100%; border-collapse: separate; border-spacing: 0 5px;
+      table-layout: fixed;
+    }
+    .draft-table thead th {
+      font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--muted); padding: 4px 12px 8px; text-align: left; font-weight: 600;
+    }
+    .draft-table thead th.db-h-rank  { width: 36px; text-align: center; }
+    .draft-table thead th.db-h-player { width: 100px; }
+    .draft-table thead th.db-h-round  { /* equal share of remainder */ }
+    .draft-table thead th.db-h-round span { font-weight: 400; color: var(--muted); font-size: 0.58rem; display: block; letter-spacing: 0; text-transform: none; margin-top: 1px; }
+
+    .draft-table tbody tr {
+      background: var(--surface); box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .draft-table tbody tr:hover { background: var(--surface2); }
+    .draft-table tbody td {
+      padding: 10px 12px; vertical-align: top;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .draft-table tbody td:first-child { border-radius: 10px 0 0 10px; border-left: 1px solid var(--border); }
+    .draft-table tbody td:last-child  { border-radius: 0 10px 10px 0; border-right: 1px solid var(--border); }
+
+    .db-rank   { width: 36px; text-align: center; vertical-align: middle !important; font-size: 0.78rem; font-weight: 700; color: var(--muted); }
+    .db-player { font-weight: 700; font-size: 0.9rem; vertical-align: middle !important; }
+
+    .db-cell     { }
+    .db-cell.db-tbd { opacity: 0.4; }
+    .db-pick     { display: block; font-size: 0.58rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; letter-spacing: 0.3px; }
+    .db-team     { display: flex; align-items: center; gap: 5px; }
+    .db-flag     { font-size: 1rem; flex-shrink: 0; }
+    .db-name     { font-size: 0.82rem; font-weight: 600; color: var(--text); line-height: 1.2; }
+    .db-team-tbd { font-size: 0.8rem; font-weight: 500; color: var(--muted); }
+
+    /* Round column separators */
+    .draft-table td.db-cell { border-left: 1px solid var(--border); }
+    .draft-table td.db-rank,
+    .draft-table td.db-player { border-left: none; }
+    .draft-table th.db-h-round { border-left: 1px solid var(--border); padding-left: 12px; }
   </style>
 </head>
 <body>
@@ -461,6 +504,7 @@
 <div class="view-toggle">
   <button class="toggle-btn active" id="btn-challenge" onclick="switchView('challenge')">🏆 Gridiron Challenge</button>
   <button class="toggle-btn"        id="btn-bracket"   onclick="switchView('bracket')">📊 World Cup Bracket</button>
+  <button class="toggle-btn"        id="btn-draft"     onclick="switchView('draft')">📋 Draft Board</button>
 </div>
 
 <div id="loading" style="padding:60px 24px;text-align:center;color:var(--muted)">⚽ Loading scores…</div>
@@ -470,6 +514,10 @@
   <div class="bracket-scroll">
     <div class="bracket-rounds" id="bracket-rounds"></div>
   </div>
+</div>
+
+<div id="draft-view">
+  <div id="draft-board-body"></div>
 </div>
 
 <div id="content" style="display:none">
@@ -1035,6 +1083,81 @@ function renderGroupStandings(groups) {
   }).join("");
 }
 
+
+/* ── Draft Board ── */
+const DRAFT_ORDER = ["Devin","Joe Ricc","Matt","Nolan","Reid","Spark","Joe Klim","Joe Kasz","Luke"];
+
+// Pre-compute overall pick number per player per round (snake draft)
+const PICK_NUMS = {};
+(function() {
+  let overall = 1;
+  for (let r = 0; r < 4; r++) {
+    const seq = r % 2 === 0 ? DRAFT_ORDER : [...DRAFT_ORDER].reverse();
+    for (const p of seq) {
+      if (!PICK_NUMS[p]) PICK_NUMS[p] = [];
+      PICK_NUMS[p].push(overall++);
+    }
+  }
+})();
+
+const ROUND_PICK_RANGE = ["Picks 1–9","Picks 10–18","Picks 19–27","Picks 28–36"];
+
+function renderDraftBoard() {
+  const container = document.getElementById("draft-board-body");
+  if (!cachedStandingsData) {
+    container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Loading…</div>';
+    return;
+  }
+
+  // Build lookup: player name → teams array
+  const teamsByPlayer = {};
+  for (const p of cachedStandingsData.standings) {
+    teamsByPlayer[p.name] = p.teams || [];
+  }
+
+  const rows = DRAFT_ORDER.map((playerName, idx) => {
+    const teams = teamsByPlayer[playerName] || [];
+    const pickNums = PICK_NUMS[playerName] || [0,0,0,0];
+
+    const cells = [0,1,2,3].map(r => {
+      const t = teams[r];
+      const teamName = (!t || t.team === "TODO" || t.team === "TBD") ? null : t.team;
+      const pickNum  = pickNums[r];
+      if (!teamName) {
+        return `<td class="db-cell db-tbd">
+          <span class="db-pick">#${pickNum}</span>
+          <span class="db-team-tbd">TBD</span>
+        </td>`;
+      }
+      return `<td class="db-cell">
+        <span class="db-pick">#${pickNum}</span>
+        <div class="db-team">
+          <span class="db-flag">${flag(teamName)}</span>
+          <span class="db-name">${teamName}</span>
+        </div>
+      </td>`;
+    }).join("");
+
+    return `<tr>
+      <td class="db-rank">${idx + 1}</td>
+      <td class="db-player">${playerName}</td>
+      ${cells}
+    </tr>`;
+  }).join("");
+
+  container.innerHTML = `<table class="draft-table">
+    <thead><tr>
+      <th class="db-h-rank">#</th>
+      <th class="db-h-player">Player</th>
+      <th class="db-h-round">Round 1<span>${ROUND_PICK_RANGE[0]}</span></th>
+      <th class="db-h-round">Round 2<span>${ROUND_PICK_RANGE[1]}</span></th>
+      <th class="db-h-round">Round 3<span>${ROUND_PICK_RANGE[2]}</span></th>
+      <th class="db-h-round">Round 4<span>${ROUND_PICK_RANGE[3]}</span></th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
 /* ── View toggle ── */
 let currentView = "challenge";
 let cachedBracketEvents = [];
@@ -1043,9 +1166,12 @@ function switchView(view) {
   currentView = view;
   document.getElementById("btn-challenge").classList.toggle("active", view === "challenge");
   document.getElementById("btn-bracket").classList.toggle("active",   view === "bracket");
+  document.getElementById("btn-draft").classList.toggle("active",     view === "draft");
   document.getElementById("content").style.display       = view === "challenge" ? "block" : "none";
   document.getElementById("bracket-view").style.display  = view === "bracket"   ? "block" : "none";
+  document.getElementById("draft-view").style.display    = view === "draft"     ? "block" : "none";
   if (view === "bracket") renderBracket(cachedBracketEvents);
+  if (view === "draft")   renderDraftBoard();
 }
 
 /* ── Bracket ── */
