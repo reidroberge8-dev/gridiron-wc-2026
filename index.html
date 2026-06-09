@@ -1153,10 +1153,16 @@ function renderLiveScores(events) {
   // Re-render standings cells to reflect live scores
   if (cachedStandingsData) buildStandings(cachedStandingsData);
 
-  const todayStr  = new Date().toISOString().slice(0,10);
+  // All World Cup games are played in US cities — use Eastern time (EDT = UTC-4)
+  // for date grouping so late-evening games (e.g. 9pm ET) don't spill into the next UTC day.
+  function toETDay(isoStr) {
+    return new Date(new Date(isoStr).getTime() - 4 * 3600 * 1000).toISOString().slice(0, 10);
+  }
+
+  const todayStr  = toETDay(new Date().toISOString());
 
   const live      = events.filter(e => { const s=e.competitions[0].status.type.name; return s==="STATUS_IN_PROGRESS"||s==="STATUS_HALFTIME"; });
-  const todayDone = events.filter(e => { const s=e.competitions[0].status.type.name; return (s==="STATUS_FINAL"||s==="STATUS_FULL_TIME") && e.date.slice(0,10)===todayStr; });
+  const todayDone = events.filter(e => { const s=e.competitions[0].status.type.name; return (s==="STATUS_FINAL"||s==="STATUS_FULL_TIME") && toETDay(e.date)===todayStr; });
   const upcoming  = events.filter(e => e.competitions[0].status.type.name==="STATUS_SCHEDULED");
 
   dot.className = live.length ? "live-dot" : "live-dot inactive";
@@ -1172,20 +1178,20 @@ function renderLiveScores(events) {
   // Todays completed games only
   if (todayDone.length) {
     html += `<div class="section-divider done-hdr">Final — Today</div>`;
-    html += todayDone.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(gameCard).join("");
+    html += todayDone.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(gameCard).join("");
   }
 
-  // Upcoming — grouped by day, soonest first
+  // Upcoming — grouped by Eastern day, soonest first
   if (upcoming.length) {
     html += `<div class="section-divider next-hdr">Upcoming Schedule</div>`;
     const byDay = {};
     for (const e of upcoming) {
-      const day = e.date.slice(0,10);
+      const day = toETDay(e.date);          // Eastern date key, not UTC
       if (!byDay[day]) byDay[day] = [];
       byDay[day].push(e);
     }
     for (const day of Object.keys(byDay).sort()) {
-      html += `<div class="day-header">${dayLabel(day+"T12:00Z")}</div>`;
+      html += `<div class="day-header">${dayLabel(day+"T16:00:00Z")}</div>`;  // noon ET = 4pm UTC for label
       html += byDay[day].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(gameCard).join("");
     }
   }
