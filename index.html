@@ -563,8 +563,13 @@
     #scores-view #live-games { max-height: 80vh; }
     #scores-view #group-standings-body { max-height: 80vh; }
     @media (max-width: 900px) {
-      .scores-layout { flex-direction: column; }
+      .scores-layout { flex-direction: column; align-items: stretch; }
+      .scores-main  { width: 100%; }
       .scores-aside { width: 100%; }
+    }
+    @media (max-width: 700px) {
+      #scores-view { padding: 12px 6px 40px; }
+      #scores-view #live-games { max-height: none; }
     }
 
     /* ── Draft Board v2 (mobile-first round cards) ── */
