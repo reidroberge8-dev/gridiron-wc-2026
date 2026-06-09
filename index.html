@@ -965,6 +965,7 @@ async function refreshLiveScores() {
     const data = await res.json();
     cachedLiveEvents = data.events || [];
     renderLiveScores(cachedLiveEvents);
+    refreshBracket();  // update bracket with fresh events
     document.getElementById("live-updated").textContent = new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
   } catch(e) {
     console.warn("Live score fetch failed:", e);
@@ -1343,9 +1344,28 @@ const ROUND_LABEL = {
   "semifinals":    "Semifinals",
   "final":         "Final",
 };
+// How many matchups per round (2026 WC: 48 teams, new Round of 32)
+const ROUND_SIZES = { "round-of-32":16, "round-of-16":8, "quarterfinals":4, "semifinals":2, "final":1 };
+
+// ESPN stores round info in different fields depending on competition —
+// try multiple locations before giving up.
+function getEventRoundSlug(e) {
+  const direct = e.season?.slug || "";
+  if (ROUND_ORDER.includes(direct)) return direct;
+  // season.type.name e.g. "Round of 32" → "round-of-32"
+  const typeName = (e.season?.type?.name || "")
+    .toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  if (ROUND_ORDER.includes(typeName)) return typeName;
+  // competition notes headline
+  const note = (e.competitions?.[0]?.notes?.[0]?.text || "").toLowerCase();
+  for (const slug of ROUND_ORDER) {
+    if (note.includes(slug) || note.includes(ROUND_LABEL[slug].toLowerCase())) return slug;
+  }
+  return null;
+}
 
 function bracketTeamRow(name, score, won, isFinished) {
-  const isTbd    = !name || name.toLowerCase().includes("winner") || name.toLowerCase().includes("place");
+  const isTbd    = !name || name === "TBD" || name.toLowerCase().includes("winner") || name.toLowerCase().includes("place");
   const owned    = !isTbd && !!playerTeamMap[name];
   const nameClass = won ? "winner-name" : (owned ? "owned-name" : "");
   const scoreClass = won ? "winner-score" : "";
@@ -1361,37 +1381,46 @@ function bracketTeamRow(name, score, won, isFinished) {
 
 function renderBracket(events) {
   const container = document.getElementById("bracket-rounds");
-  if (!events.length) {
-    container.innerHTML = `<div style="color:var(--muted);padding:40px;text-align:center">Bracket loading…</div>`;
-    return;
-  }
 
   container.innerHTML = ROUND_ORDER.map(slug => {
     const matches = events
-      .filter(e => e.season?.slug === slug)
+      .filter(e => getEventRoundSlug(e) === slug)
       .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    const isFinal  = slug === "final";
-    const cards = matches.map(e => {
-      const comp       = e.competitions[0];
-      const statusName = comp.status.type.name;
-      const isFinished = statusName === "STATUS_FINAL" || statusName === "STATUS_FULL_TIME";
-      const home = comp.competitors.find(c => c.homeAway === "home");
-      const away = comp.competitors.find(c => c.homeAway === "away");
-      const homeName = home?.team?.displayName || "TBD";
-      const awayName = away?.team?.displayName || "TBD";
-      const homeScore = home?.score ?? 0;
-      const awayScore = away?.score ?? 0;
-      const homeWon   = home?.winner || false;
-      const awayWon   = away?.winner || false;
+    const isFinal = slug === "final";
+    let cards;
 
-      return `<div class="bracket-slot">
-        <div class="bracket-match ${isFinished ? "has-winner" : ""}">
-          ${bracketTeamRow(homeName, homeScore, homeWon, isFinished)}
-          ${bracketTeamRow(awayName, awayScore, awayWon, isFinished)}
-        </div>
-      </div>`;
-    }).join("");
+    if (matches.length) {
+      cards = matches.map(e => {
+        const comp       = e.competitions[0];
+        const statusName = comp.status.type.name;
+        const isFinished = statusName === "STATUS_FINAL" || statusName === "STATUS_FULL_TIME";
+        const home = comp.competitors.find(c => c.homeAway === "home");
+        const away = comp.competitors.find(c => c.homeAway === "away");
+        const homeName = home?.team?.displayName || "TBD";
+        const awayName = away?.team?.displayName || "TBD";
+        const homeScore = home?.score ?? 0;
+        const awayScore = away?.score ?? 0;
+        const homeWon   = home?.winner || false;
+        const awayWon   = away?.winner || false;
+
+        return `<div class="bracket-slot">
+          <div class="bracket-match ${isFinished ? "has-winner" : ""}">
+            ${bracketTeamRow(homeName, homeScore, homeWon, isFinished)}
+            ${bracketTeamRow(awayName, awayScore, awayWon, isFinished)}
+          </div>
+        </div>`;
+      }).join("");
+    } else {
+      // Placeholder TBD slots — teams not yet determined
+      const n = ROUND_SIZES[slug];
+      cards = Array(n).fill(null).map(() => `<div class="bracket-slot">
+          <div class="bracket-match">
+            ${bracketTeamRow("TBD", 0, false, false)}
+            ${bracketTeamRow("TBD", 0, false, false)}
+          </div>
+        </div>`).join("");
+    }
 
     return `<div class="bracket-round">
       <div class="bracket-round-label ${isFinal ? "final-lbl" : ""}">${ROUND_LABEL[slug]}</div>
@@ -1401,16 +1430,14 @@ function renderBracket(events) {
 }
 
 function refreshBracket() {
-  // Reuses cachedLiveEvents populated by refreshLiveScores — no extra fetch
   cachedBracketEvents = cachedLiveEvents;
   if (currentView === "bracket") renderBracket(cachedBracketEvents);
 }
 
 // Initial load
 loadScores();
-refreshLiveScores();
+refreshLiveScores();   // also calls refreshBracket() after data loads
 refreshGroupStandings();
-refreshBracket();
 
 // Standings: every 5 min
 setInterval(loadScores, 5 * 60 * 1000);
