@@ -153,7 +153,12 @@
     .live-dot.inactive { background: var(--muted); animation: none; }
     .live-updated { margin-left: auto; font-size: 0.6rem; color: var(--muted); }
 
-    #live-games { padding: 8px 0; }
+    #live-games { padding: 8px 0; max-height: 72vh; overflow-y: auto; }
+    .day-header { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); padding: 8px 14px 4px; background: var(--surface2); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1; }
+    .section-divider { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 6px 14px; background: var(--surface2); border-bottom: 1px solid var(--border); border-top: 1px solid var(--border); }
+    .section-divider.live-hdr { color: #22c55e; }
+    .section-divider.done-hdr { color: var(--muted); }
+    .section-divider.next-hdr { color: var(--blue); }
 
     .live-game {
       padding: 10px 14px;
@@ -280,7 +285,7 @@
       <div class="live-panel">
         <div class="live-panel-header">
           <div class="live-dot inactive" id="live-dot"></div>
-          <span class="live-panel-title" id="live-title">Today's Matches</span>
+          <span class="live-panel-title" id="live-title">Live Scores</span>
           <span class="live-updated" id="live-updated"></span>
         </div>
         <div id="live-games"><div class="live-empty">Loading…</div></div>
@@ -425,9 +430,11 @@ function buildPlayerTeamMap(standings) {
   }
 }
 
+const ESPN_ALL = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20260611-20260719&limit=200";
+
 async function refreshLiveScores() {
   try {
-    const res  = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?t=${Date.now()}`);
+    const res  = await fetch(ESPN_ALL + "&t=" + Date.now());
     const data = await res.json();
     renderLiveScores(data.events || []);
     document.getElementById("live-updated").textContent = new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
@@ -436,93 +443,109 @@ async function refreshLiveScores() {
   }
 }
 
+function gameCard(e) {
+  const comp       = e.competitions[0];
+  const statusName = comp.status.type.name;
+  const clock      = comp.status.displayClock;
+  const home = comp.competitors.find(c => c.homeAway === "home");
+  const away = comp.competitors.find(c => c.homeAway === "away");
+  const homeName = home.team.displayName;
+  const awayName = away.team.displayName;
+  const homeScore = home.score ?? 0;
+  const awayScore = away.score ?? 0;
+  const homeWon   = home.winner;
+  const awayWon   = away.winner;
+  const isFinished = statusName === "STATUS_FINAL" || statusName === "STATUS_FULL_TIME";
+  const isLive     = statusName === "STATUS_IN_PROGRESS" || statusName === "STATUS_HALFTIME";
+
+  let statusHTML = "";
+  if (statusName === "STATUS_IN_PROGRESS")
+    statusHTML = `<span class="status-live">● LIVE</span><span class="live-clock">${clock}</span>`;
+  else if (statusName === "STATUS_HALFTIME")
+    statusHTML = `<span class="status-ht">◑ HT</span>`;
+  else if (isFinished)
+    statusHTML = `<span class="status-final">Final</span>`;
+  else
+    statusHTML = `<span class="status-sched">${fmtTime(e.date)}</span>`;
+
+  function teamRow(name, score, won) {
+    const loser = isFinished && !won && (homeWon || awayWon);
+    return `<div class="live-team ${loser?"loser":""}">
+      <span class="live-team-flag">${flag(name)}</span>
+      <span class="live-team-name">${name}</span>
+      <span class="live-team-score ${won?"winner":""}">${isFinished||isLive ? score : ""}</span>
+    </div>`;
+  }
+
+  const owners = new Set([...(playerTeamMap[homeName]||[]),...(playerTeamMap[awayName]||[])]);
+  const ownerHTML = owners.size
+    ? `<div class="live-owners">${[...owners].map(o=>`<span class="owner-chip">⭐ ${o}</span>`).join("")}</div>`
+    : "";
+
+  return `<div class="live-game">
+    <div class="live-status">${statusHTML}</div>
+    <div class="live-matchup">${teamRow(homeName,homeScore,homeWon)}${teamRow(awayName,awayScore,awayWon)}</div>
+    ${ownerHTML}
+  </div>`;
+}
+
+function dayLabel(iso) {
+  const d = new Date(iso);
+  const today = new Date();
+  const diff  = Math.round((new Date(d.toDateString()) - new Date(today.toDateString())) / 86400000);
+  const base  = d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
+  if (diff === 0) return "Today — " + base;
+  if (diff === 1) return "Tomorrow — " + base;
+  if (diff === -1) return "Yesterday — " + base;
+  return base;
+}
+
 function renderLiveScores(events) {
   const container = document.getElementById("live-games");
   const dot       = document.getElementById("live-dot");
-  const title     = document.getElementById("live-title");
 
-  if (!events.length) {
-    dot.className = "live-dot inactive";
-    title.textContent = "Today's Matches";
-    container.innerHTML = `<div class="live-empty">No matches scheduled today.<br>Tournament begins June 11.</div>`;
-    return;
+  const todayStr  = new Date().toISOString().slice(0,10);
+
+  const live      = events.filter(e => { const s=e.competitions[0].status.type.name; return s==="STATUS_IN_PROGRESS"||s==="STATUS_HALFTIME"; });
+  const todayDone = events.filter(e => { const s=e.competitions[0].status.type.name; return (s==="STATUS_FINAL"||s==="STATUS_FULL_TIME") && e.date.slice(0,10)===todayStr; });
+  const upcoming  = events.filter(e => e.competitions[0].status.type.name==="STATUS_SCHEDULED");
+
+  dot.className = live.length ? "live-dot" : "live-dot inactive";
+
+  let html = "";
+
+  // Live games
+  if (live.length) {
+    html += `<div class="section-divider live-hdr">● Live Now (${live.length})</div>`;
+    html += live.map(gameCard).join("");
   }
 
-  const hasLive = events.some(e => {
-    const s = e.competitions[0].status.type.name;
-    return s === "STATUS_IN_PROGRESS" || s === "STATUS_HALFTIME";
-  });
+  // Todays completed games only
+  if (todayDone.length) {
+    html += `<div class="section-divider done-hdr">Final — Today</div>`;
+    html += todayDone.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(gameCard).join("");
+  }
 
-  dot.className   = hasLive ? "live-dot" : "live-dot inactive";
-  title.textContent = hasLive ? "Live Now" : "Today's Matches";
-
-  // Sort: live first, then finished, then scheduled
-  const order = { "STATUS_IN_PROGRESS":0, "STATUS_HALFTIME":0, "STATUS_FINAL":1, "STATUS_FULL_TIME":1, "STATUS_SCHEDULED":2 };
-  events.sort((a,b) => {
-    const sa = order[a.competitions[0].status.type.name] ?? 3;
-    const sb = order[b.competitions[0].status.type.name] ?? 3;
-    return sa - sb || new Date(a.date) - new Date(b.date);
-  });
-
-  container.innerHTML = events.map(e => {
-    const comp        = e.competitions[0];
-    const statusType  = comp.status.type;
-    const statusName  = statusType.name;
-    const clock       = comp.status.displayClock;
-    const competitors = comp.competitors;
-    const home = competitors.find(c => c.homeAway === "home");
-    const away = competitors.find(c => c.homeAway === "away");
-    const homeName = home.team.displayName;
-    const awayName = away.team.displayName;
-    const homeScore = home.score ?? 0;
-    const awayScore = away.score ?? 0;
-    const homeWon   = home.winner;
-    const awayWon   = away.winner;
-
-    // Status label
-    let statusHTML = "";
-    if (statusName === "STATUS_IN_PROGRESS") {
-      statusHTML = `<span class="status-live">● LIVE</span><span class="live-clock">${clock}</span>`;
-    } else if (statusName === "STATUS_HALFTIME") {
-      statusHTML = `<span class="status-ht">◑ Half Time</span>`;
-    } else if (statusName === "STATUS_FINAL" || statusName === "STATUS_FULL_TIME") {
-      statusHTML = `<span class="status-final">Final</span>`;
-    } else {
-      statusHTML = `<span class="status-sched">${fmtTime(e.date)}</span>`;
+  // Upcoming — grouped by day, soonest first
+  if (upcoming.length) {
+    html += `<div class="section-divider next-hdr">Upcoming Schedule</div>`;
+    const byDay = {};
+    for (const e of upcoming) {
+      const day = e.date.slice(0,10);
+      if (!byDay[day]) byDay[day] = [];
+      byDay[day].push(e);
     }
-
-    const isFinished = statusName === "STATUS_FINAL" || statusName === "STATUS_FULL_TIME";
-
-    // Team rows
-    function teamRow(name, score, won, isHome) {
-      const loser = isFinished && !won && (homeWon || awayWon);
-      return `
-        <div class="live-team ${loser ? 'loser' : ''}">
-          <span class="live-team-flag">${flag(name)}</span>
-          <span class="live-team-name">${name}</span>
-          <span class="live-team-score ${won ? 'winner' : ''}">${score}</span>
-        </div>`;
+    for (const day of Object.keys(byDay).sort()) {
+      html += `<div class="day-header">${dayLabel(day+"T12:00Z")}</div>`;
+      html += byDay[day].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(gameCard).join("");
     }
+  }
 
-    // Owner chips
-    const owners = new Set([
-      ...(playerTeamMap[homeName] || []),
-      ...(playerTeamMap[awayName] || [])
-    ]);
-    const ownerHTML = [...owners].length
-      ? `<div class="live-owners">${[...owners].map(o => `<span class="owner-chip">⭐ ${o}</span>`).join("")}</div>`
-      : "";
+  if (!html) {
+    html = `<div class="live-empty">No match data available.</div>`;
+  }
 
-    return `
-      <div class="live-game">
-        <div class="live-status">${statusHTML}</div>
-        <div class="live-matchup">
-          ${teamRow(homeName, homeScore, homeWon, true)}
-          ${teamRow(awayName, awayScore, awayWon, false)}
-        </div>
-        ${ownerHTML}
-      </div>`;
-  }).join("");
+  container.innerHTML = html;
 }
 
 /* ── Main load ── */
