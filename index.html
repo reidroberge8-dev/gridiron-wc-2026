@@ -264,6 +264,75 @@
 
     footer { text-align: center; color: var(--muted); font-size: 0.7rem; padding: 0 16px 24px; }
 
+    /* ── View toggle ── */
+    .view-toggle {
+      display: flex; justify-content: center; gap: 8px;
+      padding: 14px 16px 0;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .toggle-btn {
+      padding: 7px 20px; border-radius: 8px; font-size: 0.78rem;
+      font-weight: 700; cursor: pointer; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-dim);
+      transition: all 0.15s; letter-spacing: 0.3px;
+    }
+    .toggle-btn:hover { border-color: #3b82f6; color: var(--text); }
+    .toggle-btn.active { background: #1e3a5f; border-color: #3b82f6; color: #93c5fd; }
+
+    /* ── Bracket view ── */
+    #bracket-view { display: none; max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
+    .bracket-scroll { overflow-x: auto; padding-bottom: 12px; }
+    .bracket-rounds {
+      display: flex; gap: 0; align-items: stretch;
+      min-width: 900px;
+    }
+    .bracket-round { flex: 1; display: flex; flex-direction: column; min-width: 160px; }
+    .bracket-round-label {
+      text-align: center; font-size: 0.62rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px; color: var(--muted);
+      padding: 0 6px 10px;
+    }
+    .bracket-round-label.final-lbl { color: var(--gold); }
+    .bracket-matches {
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: space-around; gap: 0; position: relative;
+    }
+    .bracket-slot {
+      position: relative; padding: 4px 6px;
+      display: flex; align-items: stretch;
+    }
+    /* connector lines */
+    .bracket-slot::after {
+      content: ; position: absolute;
+      right: 0; top: 50%; width: 6px; height: 1px;
+      background: var(--border);
+    }
+    .bracket-round:last-child .bracket-slot::after { display: none; }
+
+    .bracket-match {
+      flex: 1; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 8px;
+      overflow: hidden; font-size: 0.75rem;
+    }
+    .bracket-match.has-winner { border-color: #2d4a7a; }
+    .bracket-team {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 8px; border-bottom: 1px solid var(--border);
+      min-height: 28px;
+    }
+    .bracket-team:last-child { border-bottom: none; }
+    .bracket-team.winner { background: rgba(240,180,41,0.08); }
+    .bracket-team.loser  { opacity: 0.45; }
+    .bracket-team.owned  { }
+    .bracket-team-flag   { font-size: 0.85rem; width: 18px; text-align: center; flex-shrink: 0; }
+    .bracket-team-name   { flex: 1; font-weight: 500; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bracket-team-name.winner-name { color: var(--gold); font-weight: 700; }
+    .bracket-team-name.owned-name  { color: var(--text); font-weight: 700; }
+    .bracket-team-score  { font-weight: 800; font-size: 0.85rem; min-width: 14px; text-align: right; color: var(--text-dim); }
+    .bracket-team-score.winner-score { color: var(--gold); }
+    .bracket-tbd { color: var(--muted); font-style: italic; font-size: 0.68rem; }
+    .owned-pip { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
     /* ── Responsive ── */
     @media (max-width: 900px) {
       .page-body { flex-direction: column; }
@@ -286,8 +355,19 @@
   <div class="last-updated"><span id="status-dot"></span><span id="updated-text">Loading…</span></div>
 </header>
 
+<div class="view-toggle">
+  <button class="toggle-btn active" id="btn-challenge" onclick="switchView('challenge')">🏆 Gridiron Challenge</button>
+  <button class="toggle-btn"        id="btn-bracket"   onclick="switchView('bracket')">📊 World Cup Bracket</button>
+</div>
+
 <div id="loading" style="padding:60px 24px;text-align:center;color:var(--muted)">⚽ Loading scores…</div>
 <div id="error-msg"></div>
+
+<div id="bracket-view">
+  <div class="bracket-scroll">
+    <div class="bracket-rounds" id="bracket-rounds"></div>
+  </div>
+</div>
 
 <div id="content" style="display:none">
   <div class="page-body">
@@ -731,17 +811,107 @@ function renderGroupStandings(groups) {
   }).join("");
 }
 
+/* ── View toggle ── */
+let currentView = "challenge";
+let cachedBracketEvents = [];
+
+function switchView(view) {
+  currentView = view;
+  document.getElementById("btn-challenge").classList.toggle("active", view === "challenge");
+  document.getElementById("btn-bracket").classList.toggle("active",   view === "bracket");
+  document.getElementById("content").style.display       = view === "challenge" ? "block" : "none";
+  document.getElementById("bracket-view").style.display  = view === "bracket"   ? "block" : "none";
+  if (view === "bracket") renderBracket(cachedBracketEvents);
+}
+
+/* ── Bracket ── */
+const ROUND_ORDER = ["round-of-32","round-of-16","quarterfinals","semifinals","final"];
+const ROUND_LABEL = {
+  "round-of-32":   "Round of 32",
+  "round-of-16":   "Round of 16",
+  "quarterfinals": "Quarterfinals",
+  "semifinals":    "Semifinals",
+  "final":         "Final",
+};
+
+function bracketTeamRow(name, score, won, isFinished) {
+  const isTbd    = !name || name.toLowerCase().includes("winner") || name.toLowerCase().includes("place");
+  const owned    = !isTbd && !!playerTeamMap[name];
+  const nameClass = won ? "winner-name" : (owned ? "owned-name" : "");
+  const scoreClass = won ? "winner-score" : "";
+  const rowClass = isFinished ? (won ? "winner" : "loser") : (owned ? "owned" : "");
+
+  return `<div class="bracket-team ${rowClass}">
+    <span class="bracket-team-flag">${isTbd ? "" : flag(name)}</span>
+    <span class="bracket-team-name ${nameClass} ${isTbd ? "bracket-tbd" : ""}">${name || "TBD"}</span>
+    ${owned ? `<span class="owned-pip"></span>` : ""}
+    <span class="bracket-team-score ${scoreClass}">${isFinished ? score : ""}</span>
+  </div>`;
+}
+
+function renderBracket(events) {
+  const container = document.getElementById("bracket-rounds");
+  if (!events.length) {
+    container.innerHTML = `<div style="color:var(--muted);padding:40px;text-align:center">Bracket loading…</div>`;
+    return;
+  }
+
+  container.innerHTML = ROUND_ORDER.map(slug => {
+    const matches = events
+      .filter(e => e.season?.slug === slug)
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    const isFinal  = slug === "final";
+    const cards = matches.map(e => {
+      const comp       = e.competitions[0];
+      const statusName = comp.status.type.name;
+      const isFinished = statusName === "STATUS_FINAL" || statusName === "STATUS_FULL_TIME";
+      const home = comp.competitors.find(c => c.homeAway === "home");
+      const away = comp.competitors.find(c => c.homeAway === "away");
+      const homeName = home?.team?.displayName || "TBD";
+      const awayName = away?.team?.displayName || "TBD";
+      const homeScore = home?.score ?? 0;
+      const awayScore = away?.score ?? 0;
+      const homeWon   = home?.winner || false;
+      const awayWon   = away?.winner || false;
+
+      return `<div class="bracket-slot">
+        <div class="bracket-match ${isFinished ? "has-winner" : ""}">
+          ${bracketTeamRow(homeName, homeScore, homeWon, isFinished)}
+          ${bracketTeamRow(awayName, awayScore, awayWon, isFinished)}
+        </div>
+      </div>`;
+    }).join("");
+
+    return `<div class="bracket-round">
+      <div class="bracket-round-label ${isFinal ? "final-lbl" : ""}">${ROUND_LABEL[slug]}</div>
+      <div class="bracket-matches">${cards}</div>
+    </div>`;
+  }).join("");
+}
+
+async function refreshBracket() {
+  try {
+    const res  = await fetch(ESPN_ALL + "&t=" + Date.now());
+    const data = await res.json();
+    cachedBracketEvents = data.events || [];
+    if (currentView === "bracket") renderBracket(cachedBracketEvents);
+  } catch(e) { console.warn("Bracket fetch failed:", e); }
+}
+
 // Initial load
 loadScores();
 refreshLiveScores();
 refreshGroupStandings();
+refreshBracket();
 
 // Standings: every 5 min
 setInterval(loadScores, 5 * 60 * 1000);
 // Live scores: every 60 sec
 setInterval(refreshLiveScores, 60 * 1000);
-// Group standings: every 5 min
+// Group standings + bracket: every 5 min
 setInterval(refreshGroupStandings, 5 * 60 * 1000);
+setInterval(refreshBracket, 5 * 60 * 1000);
 </script>
 </body>
 </html>
