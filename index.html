@@ -304,7 +304,7 @@
     }
     /* connector lines */
     .bracket-slot::after {
-      content: ; position: absolute;
+      content: ''; position: absolute;
       right: 0; top: 50%; width: 6px; height: 1px;
       background: var(--border);
     }
@@ -553,12 +553,6 @@ const RESULT_CLASS = { W:"result-w", D:"result-d", L:"result-l" };
 
 function flag(name) { return FLAGS[name] || "🏳️"; }
 
-function fmtDate(iso) {
-  if (!iso) return "";
-  const d = new Date(iso);
-  return d.toLocaleDateString("en-US",{month:"short",day:"numeric"})
-       + " " + d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZoneName:"short"});
-}
 function fmtDateOnly(iso) {
   if (!iso) return "";
   return new Date(iso).toLocaleDateString("en-US",{month:"short",day:"numeric"});
@@ -757,7 +751,8 @@ function buildLocked(data) {
 /* ── Live scores ── */
 let playerTeamMap = {};
 let liveGamesMap = {};      // teamName -> { opponent, myScore, oppScore, clock, isHT }
-let cachedStandingsData = null;   // "Spain" -> ["Devin"], "Brazil" -> ["Reid","Nolan"]
+let cachedStandingsData = null;
+let cachedLiveEvents = [];
 
 function buildPlayerTeamMap(standings) {
   playerTeamMap = {};
@@ -777,7 +772,8 @@ async function refreshLiveScores() {
   try {
     const res  = await fetch(ESPN_ALL + "&t=" + Date.now());
     const data = await res.json();
-    renderLiveScores(data.events || []);
+    cachedLiveEvents = data.events || [];
+    renderLiveScores(cachedLiveEvents);
     document.getElementById("live-updated").textContent = new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
   } catch(e) {
     console.warn("Live score fetch failed:", e);
@@ -912,8 +908,6 @@ function renderLiveScores(events) {
 }
 
 /* ── Main load ── */
-let liveInterval = null;
-
 async function loadScores() {
   try {
     const res  = await fetch(`data/scores.json?t=${Date.now()}`);
@@ -1094,13 +1088,10 @@ function renderBracket(events) {
   }).join("");
 }
 
-async function refreshBracket() {
-  try {
-    const res  = await fetch(ESPN_ALL + "&t=" + Date.now());
-    const data = await res.json();
-    cachedBracketEvents = data.events || [];
-    if (currentView === "bracket") renderBracket(cachedBracketEvents);
-  } catch(e) { console.warn("Bracket fetch failed:", e); }
+function refreshBracket() {
+  // Reuses cachedLiveEvents populated by refreshLiveScores — no extra fetch
+  cachedBracketEvents = cachedLiveEvents;
+  if (currentView === "bracket") renderBracket(cachedBracketEvents);
 }
 
 // Initial load
@@ -1113,9 +1104,8 @@ refreshBracket();
 setInterval(loadScores, 5 * 60 * 1000);
 // Live scores: every 60 sec
 setInterval(refreshLiveScores, 60 * 1000);
-// Group standings + bracket: every 5 min
+// Group standings: every 5 min
 setInterval(refreshGroupStandings, 5 * 60 * 1000);
-setInterval(refreshBracket, 5 * 60 * 1000);
 </script>
 </body>
 </html>
