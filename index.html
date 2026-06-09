@@ -496,9 +496,9 @@
 
     /* ── Draft Board ── */
     #draft-view { display: none; max-width: 1200px; margin: 0 auto; padding: 20px 16px 48px; }
-    .draft-layout { display: flex; gap: 20px; align-items: flex-start; }
+    .draft-layout { display: flex; gap: 20px; align-items: stretch; }
     .draft-main   { flex: 1; min-width: 0; }
-    .draft-sidebar { width: 200px; flex-shrink: 0; }
+    .draft-sidebar { width: 200px; flex-shrink: 0; display: flex; flex-direction: column; }
     .draft-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
     /* Available teams panel */
@@ -506,7 +506,7 @@
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 12px; overflow: hidden;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      position: sticky; top: 16px;
+      height: 100%; display: flex; flex-direction: column;
     }
     .avail-header {
       padding: 10px 14px; background: var(--surface2);
@@ -516,7 +516,7 @@
       display: flex; align-items: center; justify-content: space-between;
     }
     .avail-header span { font-size: 0.6rem; color: var(--muted); font-weight: 400; text-transform: none; letter-spacing: 0; }
-    .avail-list { max-height: 72vh; overflow-y: auto; padding: 4px 0; }
+    .avail-list { flex: 1; overflow-y: auto; max-height: none; padding: 4px 0; }
     .avail-item {
       display: flex; align-items: center; gap: 8px;
       padding: 6px 14px; border-bottom: 1px solid var(--border);
