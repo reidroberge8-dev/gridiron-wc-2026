@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-11T12:17:11.486210+00:00",
+  "last_updated": "2026-06-11T21:09:58.046059+00:00",
   "standings": [
     {
       "name": "Joe Klim",
@@ -427,32 +427,55 @@
   ],
   "team_data": {
     "Mexico": {
-      "wins": [],
+      "wins": [
+        {
+          "stage": "group-stage",
+          "opponent": "South Africa",
+          "pts": 3
+        }
+      ],
       "ties": [],
       "losses": [],
-      "total": 0,
-      "last_result": null,
-      "next_game": {
+      "total": 3,
+      "last_result": {
+        "result": "W",
+        "score": "2-0",
         "opponent": "South Africa",
-        "date": "2026-06-11T19:00Z",
+        "stage": "group-stage",
+        "date": "2026-06-11T19:00Z"
+      },
+      "next_game": {
+        "opponent": "South Korea",
+        "date": "2026-06-19T01:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
-      "record": "0W-0D-0L"
+      "record": "1W-0D-0L"
     },
     "South Africa": {
       "wins": [],
       "ties": [],
-      "losses": [],
+      "losses": [
+        {
+          "stage": "group-stage",
+          "opponent": "Mexico"
+        }
+      ],
       "total": 0,
-      "last_result": null,
-      "next_game": {
+      "last_result": {
+        "result": "L",
+        "score": "0-2",
         "opponent": "Mexico",
-        "date": "2026-06-11T19:00Z",
+        "stage": "group-stage",
+        "date": "2026-06-11T19:00Z"
+      },
+      "next_game": {
+        "opponent": "Czechia",
+        "date": "2026-06-18T16:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
-      "record": "0W-0D-0L"
+      "record": "0W-0D-1L"
     },
     "South Korea": {
       "wins": [],
