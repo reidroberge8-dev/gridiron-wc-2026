@@ -222,6 +222,42 @@
       background: rgba(0,98,177,0.09); color: #0062b1;
       border: 1px solid rgba(0,98,177,0.2);
     }
+    .team-owner-tag {
+      font-size: 0.58rem; font-weight: 600; color: var(--blue); opacity: 0.75;
+      margin-left: 5px; white-space: nowrap; flex-shrink: 0;
+    }
+    /* ── Leaderboard live-games strip ── */
+    .lb-live-strip {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 14px;
+    }
+    .lb-live-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      min-width: 170px;
+      flex: 1 1 170px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .lb-live-status {
+      font-size: 0.58rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; color: var(--green); margin-bottom: 5px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .lb-live-row {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; line-height: 1.5;
+    }
+    .lb-live-score {
+      font-weight: 800; font-size: 0.9rem; margin-left: auto;
+      min-width: 16px; text-align: right;
+    }
+    .lb-live-score.winner { color: var(--gold); }
+    .lb-live-owners {
+      margin-top: 4px; font-size: 0.58rem; color: var(--blue);
+      font-weight: 600; line-height: 1.4;
+    }
 
     .live-empty {
       padding: 24px 14px;
@@ -790,6 +826,8 @@
         <div class="snapshot-list" id="snapshot-list"></div>
       </div>
 
+      <div id="lb-live-games" style="display:none; margin-bottom:0"></div>
+
       <div class="scoring-key">
         <h3>Point Values</h3>
         <span class="key-item"><span class="key-pts">+3</span> Group Win</span>
@@ -1150,22 +1188,19 @@ function gameCard(e) {
 
   function teamRow(name, score, won) {
     const loser = isFinished && !won && (homeWon || awayWon);
+    const owner = (playerTeamMap[name] || [])[0];
+    const ownerTag = owner ? `<span class="team-owner-tag">${owner}</span>` : "";
     return `<div class="live-team ${loser?"loser":""}">
       <span class="live-team-flag">${flag(name)}</span>
       <span class="live-team-name">${name}</span>
+      ${ownerTag}
       <span class="live-team-score ${won?"winner":""}">${isFinished||isLive ? score : ""}</span>
     </div>`;
   }
 
-  const owners = new Set([...(playerTeamMap[homeName]||[]),...(playerTeamMap[awayName]||[])]);
-  const ownerHTML = owners.size
-    ? `<div class="live-owners">${[...owners].map(o=>`<span class="owner-chip">⭐ ${o}</span>`).join("")}</div>`
-    : "";
-
   return `<div class="live-game">
     <div class="live-status">${statusHTML}</div>
     <div class="live-matchup">${teamRow(homeName,homeScore,homeWon)}${teamRow(awayName,awayScore,awayWon)}</div>
-    ${ownerHTML}
   </div>`;
 }
 
@@ -1178,6 +1213,54 @@ function dayLabel(iso) {
   if (diff === 1) return "Tomorrow — " + base;
   if (diff === -1) return "Yesterday — " + base;
   return base;
+}
+
+function renderLbLiveGames(liveEvents) {
+  const el = document.getElementById("lb-live-games");
+  if (!el) return;
+  if (!liveEvents.length) { el.style.display = "none"; return; }
+
+  const cards = liveEvents.map(e => {
+    const comp   = e.competitions[0];
+    const status = comp.status.type.name;
+    const clock  = comp.status.displayClock || "";
+    const isHT   = status === "STATUS_HALFTIME";
+    const home   = comp.competitors.find(c => c.homeAway === "home");
+    const away   = comp.competitors.find(c => c.homeAway === "away");
+    const hName  = home?.team?.displayName || "";
+    const aName  = away?.team?.displayName || "";
+    const hScore = home?.score ?? 0;
+    const aScore = away?.score ?? 0;
+    const hWon   = home?.winner;
+    const aWon   = away?.winner;
+
+    const statusLabel = isHT
+      ? `<span class="status-ht" style="font-size:0.58rem">◑ HT</span>`
+      : `<span style="color:var(--green)">● LIVE</span>${clock ? `<span style="color:var(--muted);font-size:0.58rem;margin-left:3px">${clock}</span>` : ""}`;
+
+    function lbRow(name, score, won) {
+      const owner = (playerTeamMap[name] || [])[0];
+      const ownerSpan = owner ? `<span style="color:var(--blue);font-size:0.58rem;font-weight:600;margin-left:4px">${owner}</span>` : "";
+      return `<div class="lb-live-row">
+        <span>${flag(name)}</span>
+        <span style="font-weight:600">${name}</span>${ownerSpan}
+        <span class="lb-live-score ${won?"winner":""}">${score}</span>
+      </div>`;
+    }
+
+    // Only show card if at least one team is owned
+    const hOwned = !!(playerTeamMap[hName]||[]).length;
+    const aOwned = !!(playerTeamMap[aName]||[]).length;
+
+    return `<div class="lb-live-card">
+      <div class="lb-live-status">${statusLabel}</div>
+      ${lbRow(hName, hScore, hWon)}
+      ${lbRow(aName, aScore, aWon)}
+    </div>`;
+  });
+
+  el.innerHTML = `<div class="lb-live-strip">${cards.join("")}</div>`;
+  el.style.display = "block";
 }
 
 function renderLiveScores(events) {
@@ -1199,6 +1282,9 @@ function renderLiveScores(events) {
     if (hName) liveGamesMap[hName] = { opponent: aName, myScore: hScore, oppScore: aScore, clock, isHT };
     if (aName) liveGamesMap[aName] = { opponent: hName, myScore: aScore, oppScore: hScore, clock, isHT };
   }
+  // Render live games strip on Leaderboard tab
+  renderLbLiveGames(liveNow);
+
   // Re-render standings cells to reflect live scores
   if (cachedStandingsData) buildStandings(cachedStandingsData);
 
