@@ -1550,7 +1550,14 @@ function gameCard(e) {
       statRow(hFoul,  "Fouls",      aFoul,  false),
     ].filter(Boolean).join("");
 
-    if (rows) statsHTML = rows;   // outer div added in card return
+    if (rows) {
+      const teamHeader = `<div class="stat-row" style="display:grid;grid-template-columns:1fr auto 1fr;gap:4px;margin-bottom:2px;padding-bottom:4px;border-bottom:1px solid var(--border)">
+        <span style="font-size:0.62rem;color:var(--muted);text-align:left">${flag(homeName)} ${homeName}</span>
+        <span></span>
+        <span style="font-size:0.62rem;color:var(--muted);text-align:right">${awayName} ${flag(awayName)}</span>
+      </div>`;
+      statsHTML = teamHeader + rows;   // outer div added in card return
+    }
   }
 
   // ── DraftKings odds (scheduled only) ──
@@ -1577,18 +1584,16 @@ function gameCard(e) {
         aML ? `<span class="odds-pill ${aML.plus?"plus":"minus"}"><span class="odds-team">${awayName.split(" ").pop()}</span>${aML.val}</span>` : "",
       ].filter(Boolean).join("");
 
-      let ouLine = "";
+      let ouStr = "";
       if (ou) {
-        const overO  = ou.over?.close?.odds  ?? ou.over?.open?.odds  ?? "";
-        const underO = ou.under?.close?.odds ?? ou.under?.open?.odds ?? "";
-        const line   = odd.overUnder ?? ou.over?.close?.line?.replace("o","") ?? "";
-        if (line) ouLine = `<div class="odds-ou-row">O/U <span>${line}</span>&nbsp;· Over <span>${overO.startsWith("-")?overO:"+"+overO}</span> &nbsp;Under <span>${underO.startsWith("-")?underO:"+"+underO}</span></div>`;
+        const line = odd.overUnder ?? ou.over?.close?.line?.replace("o","") ?? "";
+        if (line) ouStr = ` · O/U ${line}`;
       }
 
-      if (pills) oddsHTML = `<div class="game-odds">
-        <div class="odds-header">DraftKings Odds</div>
-        <div class="odds-ml-row">${pills}</div>
-        ${ouLine}
+      if (pills) oddsHTML = `<div class="game-odds" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:5px 0">
+        <span class="odds-header" style="margin:0;white-space:nowrap">DK</span>
+        ${pills}
+        ${ouStr ? `<span class="odds-ou-row" style="margin-left:auto;white-space:nowrap">${ouStr}</span>` : ""}
       </div>`;
     }
   }
