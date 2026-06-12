@@ -181,6 +181,7 @@
 
     #live-games { padding: 8px 0; max-height: 72vh; overflow-y: auto; }
     .day-header { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); padding: 8px 14px 4px; background: var(--surface2); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1; }
+    .day-header.sched-hdr { background: #eef4fb; color: #0062b1; border-bottom: 1px solid #bdd3ed; border-top: 1px solid #bdd3ed; }
     .section-divider { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 6px 14px; background: var(--surface2); border-bottom: 1px solid var(--border); border-top: 1px solid var(--border); }
     .section-divider.live-hdr { color: #00873c; }
     .section-divider.done-hdr { color: var(--muted); }
@@ -1807,7 +1808,7 @@ function renderLiveScores(events) {
       byDay[day].push(e);
     }
     for (const day of Object.keys(byDay).sort()) {
-      schedHtml += `<div class="day-header">${dayLabel(day+"T16:00:00Z")}</div>`;
+      schedHtml += `<div class="day-header sched-hdr">📅 ${dayLabel(day+"T16:00:00Z")}</div>`;
       schedHtml += byDay[day].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(gameCard).join("");
     }
   }
