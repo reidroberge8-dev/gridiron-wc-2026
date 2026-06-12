@@ -172,9 +172,14 @@ def build_standings(players, team_data):
             team_details.append({"team": team_name, **td})
         standings.append({"name": p["name"], "teams": team_details, "total": total})
 
-    standings.sort(key=lambda x: x["total"], reverse=True)
+    TIEBREAKER = {
+        "Luke": 1, "Nolan": 2, "Devin": 3, "Joe Ricc": 4,
+        "Joe Kasz": 5, "Joe Klim": 6, "Matt": 7, "Spark": 8, "Reid": 9,
+    }
+    standings.sort(key=lambda x: (-x["total"], TIEBREAKER.get(x["name"], 99)))
     for i, s in enumerate(standings):
-        s["draft_pick"] = i + 1
+        s["draft_pick"]  = i + 1
+        s["tiebreaker"]  = TIEBREAKER.get(s["name"], 99)
     return standings
 
 

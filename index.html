@@ -313,6 +313,12 @@
       font-size: 0.58rem; font-weight: 600; color: var(--blue); opacity: 0.75;
       margin-left: 5px; white-space: nowrap; flex-shrink: 0;
     }
+    .tb-badge {
+      font-size: 0.55rem; font-weight: 700; padding: 1px 5px; border-radius: 8px;
+      background: rgba(204,85,0,0.1); color: var(--gold);
+      border: 1px solid rgba(204,85,0,0.25); margin-left: 5px;
+      white-space: nowrap; vertical-align: middle;
+    }
     .pts-chip {
       font-size: 0.55rem; font-weight: 700; padding: 1px 5px; border-radius: 8px;
       margin-left: 3px; white-space: nowrap; flex-shrink: 0;
@@ -1033,6 +1039,16 @@ const FLAGS = {
   "Congo DR":"🇨🇩","Algeria":"🇩🇿","Austria":"🇦🇹","Panama":"🇵🇦","Ghana":"🇬🇭",
 };
 
+// Tiebreaker rank (lower = wins tiebreaker). Used when players tied on total pts.
+// Based on aggregate FIFA world rankings of all 4 drafted teams (June 11 2026)
+// Higher aggregate = drafted weaker teams = wins tiebreaker
+const TIEBREAKER = {
+  "Luke":1,"Nolan":2,"Devin":3,"Joe Ricc":4,
+  "Joe Kasz":5,"Joe Klim":6,"Matt":7,"Spark":8,"Reid":9
+};
+// Aggregate ranking totals for reference (lower number shown as TB info):
+// Luke=161, Nolan=120, Devin=107, JR=92, Joe Kasz=86, Joe Klim=81, Matt=81, Spark=76, Reid=69
+
 const STAGE_SHORT = {
   "group-stage":"GS","round-of-32":"R32","round-of-16":"R16",
   "quarterfinals":"QF","semifinals":"SF","final":"F"
@@ -1143,10 +1159,14 @@ function buildTeamCell(t, slotLabel) {
 
 function buildMobileCards(standings) {
   const container = document.getElementById("mobile-cards");
+  const totals = standings.map(p => p.total);
   container.innerHTML = standings.map(p => {
     const rank = p.draft_pick;
     const rankClass   = rank <= 3 ? `rank-${rank}` : "rank-other";
     const rankDisplay = rank <= 3 ? ["🥇","🥈","🥉"][rank-1] : rank;
+    const isTied  = totals.filter(t => t === p.total).length > 1;
+    const tbRank  = TIEBREAKER[p.name] || "";
+    const tbBadge = isTied && tbRank ? `<span class="tb-badge" title="Tiebreaker rank ${tbRank}">TB #${tbRank}</span>` : "";
     const teams = (p.teams && p.teams.length >= 1) ? [...p.teams, null, null, null, null].slice(0,4) : [null,null,null,null];
 
     const teamRows = teams.map((t, i) => {
@@ -1200,7 +1220,7 @@ function buildMobileCards(standings) {
         <div class="m-rank-badge ${rankClass}">${rankDisplay}</div>
         <div class="m-player-info">
           <div class="m-player-name">${p.name}</div>
-          <div class="m-pick-badge">Pick #${rank}</div>
+          <div class="m-pick-badge">Pick #${rank}</div>${tbBadge}
         </div>
         <div class="m-total">
           <span class="m-total-pts">${p.total}</span>
@@ -1233,22 +1253,35 @@ function buildSnapshot(standings) {
   }).join('');
 }
 
+function sortedStandings(standings) {
+  return [...standings].sort((a, b) =>
+    b.total !== a.total
+      ? b.total - a.total
+      : (TIEBREAKER[a.name]||99) - (TIEBREAKER[b.name]||99)
+  ).map((p, i) => ({ ...p, draft_pick: i + 1 }));
+}
+
 function buildStandings(data) {
   cachedStandingsData = data;
   const tbody = document.getElementById("standings-body");
   tbody.innerHTML = "";
-  buildSnapshot(data.standings);
-  buildMobileCards(data.standings);
-  for (const p of data.standings) {
+  const standings = sortedStandings(data.standings);
+  buildSnapshot(standings);
+  buildMobileCards(standings);
+  const totals = standings.map(p => p.total);
+  for (const p of standings) {
     const rank = p.draft_pick;
     const rankClass   = rank <= 3 ? `rank-${rank}` : "rank-other";
     const rankDisplay = rank <= 3 ? ["🥇","🥈","🥉"][rank-1] : rank;
     const teams = (p.teams && p.teams.length >= 1) ? [...p.teams, null, null, null, null].slice(0,4) : [null,null,null,null];
+    const isTied  = totals.filter(t => t === p.total).length > 1;
+    const tbRank  = TIEBREAKER[p.name] || "";
+    const tbBadge = isTied && tbRank ? `<span class="tb-badge" title="Tiebreaker rank ${tbRank} (lower wins)">TB #${tbRank}</span>` : "";
     const tr = document.createElement("tr");
     tr.dataset.rank = rank;
     tr.innerHTML = `
       <td class="rank-cell"><div class="rank-badge ${rankClass}">${rankDisplay}</div></td>
-      <td class="name-cell"><div class="player-name">${p.name}</div><span class="pick-badge">Pick #${rank}</span></td>
+      <td class="name-cell"><div class="player-name">${p.name}</div><span class="pick-badge">Pick #${rank}</span>${tbBadge}</td>
       <td class="name-div-cell"></td>
       ${buildTeamCell(teams[0],"Team 1")}
       <td class="divider-cell"></td>
