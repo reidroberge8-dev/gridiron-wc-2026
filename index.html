@@ -222,6 +222,14 @@
       background: rgba(0,98,177,0.09); color: #0062b1;
       border: 1px solid rgba(0,98,177,0.2);
     }
+    .live-venue {
+      font-size: 0.6rem; color: var(--muted); margin-top: 4px;
+      padding-left: 2px; letter-spacing: 0.2px;
+    }
+    .bracket-venue {
+      font-size: 0.58rem; color: var(--muted); text-align: center;
+      margin-top: 3px; padding: 0 4px;
+    }
     .team-owner-tag {
       font-size: 0.58rem; font-weight: 600; color: var(--blue); opacity: 0.75;
       margin-left: 5px; white-space: nowrap; flex-shrink: 0;
@@ -828,17 +836,6 @@
 
       <div id="lb-live-games" style="display:none; margin-bottom:0"></div>
 
-      <div class="scoring-key">
-        <h3>Point Values</h3>
-        <span class="key-item"><span class="key-pts">+3</span> Group Win</span>
-        <span class="key-item"><span class="key-pts">+1</span> Group Draw</span>
-        <span class="key-item"><span class="key-pts">+4</span> R32 Win</span>
-        <span class="key-item"><span class="key-pts">+5</span> R16 Win</span>
-        <span class="key-item"><span class="key-pts">+6</span> QF Win</span>
-        <span class="key-item"><span class="key-pts">+7</span> SF Win</span>
-        <span class="key-item"><span class="key-pts">+8</span> Final Win</span>
-      </div>
-
       <div class="section-label">Live Standings — Picks 1–9</div>
 
       <!-- Desktop table -->
@@ -866,6 +863,17 @@
         <table class="standings-table">
           <tbody id="locked-body"></tbody>
         </table>
+      </div>
+
+      <div class="scoring-key" style="margin-top:18px">
+        <h3>Point Values</h3>
+        <span class="key-item"><span class="key-pts">+3</span> Group Win</span>
+        <span class="key-item"><span class="key-pts">+1</span> Group Draw</span>
+        <span class="key-item"><span class="key-pts">+4</span> R32 Win</span>
+        <span class="key-item"><span class="key-pts">+5</span> R16 Win</span>
+        <span class="key-item"><span class="key-pts">+6</span> QF Win</span>
+        <span class="key-item"><span class="key-pts">+7</span> SF Win</span>
+        <span class="key-item"><span class="key-pts">+8</span> Final Win</span>
       </div>
     </div>
 
@@ -972,8 +980,7 @@ function buildTeamCell(t, slotLabel) {
     lastLine = `
       <div class="meta-line">
         <span class="meta-label">Last</span>
-        <span class="${cls}">${last.result}</span>
-        <span>${last.score} vs ${last.opponent}${last.date ? `, ${fmtFullDateTime(last.date)}` : ""}</span>
+        <span>vs ${last.opponent}, ${last.score}</span>
       </div>`;
   }
 
@@ -1036,7 +1043,7 @@ function buildMobileCards(standings) {
       } else {
         if (last) {
           const cls = RESULT_CLASS[last.result] || "";
-          meta += `<div class="m-meta-line"><span class="m-meta-lbl">Last</span><span class="${cls}">${last.result}</span><span>${last.score} vs ${last.opponent}${last.date ? `, ${fmtFullDateTime(last.date)}` : ""}</span></div>`;
+          meta += `<div class="m-meta-line"><span class="m-meta-lbl">Last</span><span>vs ${last.opponent}, ${last.score}</span></div>`;
         }
         if (elim) {
           meta += `<div class="eliminated-badge" style="margin-top:4px">☠ Eliminated${record ? ` · ${record}` : ""}</div>`;
@@ -1186,6 +1193,8 @@ function gameCard(e) {
   const awayWon   = away.winner;
   const isFinished = FINAL_STATUSES.has(statusName);
   const isLive     = LIVE_STATUSES.has(statusName);
+  const venue    = comp.venue;
+  const venueStr = venue ? [venue.address?.city, venue.address?.country].filter(Boolean).join(", ") : "";
 
   let statusHTML = "";
   if (statusName === "STATUS_HALFTIME")
@@ -1212,6 +1221,7 @@ function gameCard(e) {
   return `<div class="live-game">
     <div class="live-status">${statusHTML}</div>
     <div class="live-matchup">${teamRow(homeName,homeScore,homeWon)}${teamRow(awayName,awayScore,awayWon)}</div>
+    ${venueStr ? `<div class="live-venue">📍 ${venueStr}</div>` : ""}
   </div>`;
 }
 
@@ -1681,12 +1691,15 @@ function renderBracket(events) {
         const awayScore = away?.score ?? 0;
         const homeWon   = home?.winner || false;
         const awayWon   = away?.winner || false;
+        const bVenue    = comp.venue;
+        const bVenueStr = bVenue ? [bVenue.address?.city, bVenue.address?.country].filter(Boolean).join(", ") : "";
 
         return `<div class="bracket-slot">
           <div class="bracket-match ${isFinished ? "has-winner" : ""}">
             ${bracketTeamRow(homeName, homeScore, homeWon, isFinished)}
             ${bracketTeamRow(awayName, awayScore, awayWon, isFinished)}
           </div>
+          ${bVenueStr ? `<div class="bracket-venue">📍 ${bVenueStr}</div>` : ""}
         </div>`;
       }).join("");
     } else {
