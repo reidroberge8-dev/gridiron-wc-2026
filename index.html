@@ -918,6 +918,17 @@ function fmtTime(iso) {
   if (!iso) return "";
   return new Date(iso).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZoneName:"short"});
 }
+function fmtFullDateTime(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const day   = d.toLocaleDateString("en-US",{weekday:"long",timeZone:"America/New_York"});
+  const month = d.toLocaleDateString("en-US",{month:"long",timeZone:"America/New_York"});
+  const date  = d.toLocaleDateString("en-US",{day:"numeric",timeZone:"America/New_York"});
+  const time  = d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZone:"America/New_York"}).replace(" ","").toLowerCase();
+  const n = parseInt(date);
+  const suffix = n===1||n===21||n===31?"st":n===2||n===22?"nd":n===3||n===23?"rd":"th";
+  return `${day} ${month} ${n}${suffix} at ${time}`;
+}
 function formatUpdated(iso) {
   return new Date(iso).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
 }
@@ -962,7 +973,7 @@ function buildTeamCell(t, slotLabel) {
       <div class="meta-line">
         <span class="meta-label">Last</span>
         <span class="${cls}">${last.result}</span>
-        <span>${last.score} vs ${last.opponent}</span>
+        <span>${last.score} vs ${last.opponent}${last.date ? `, ${fmtFullDateTime(last.date)}` : ""}</span>
       </div>`;
   }
 
@@ -976,7 +987,7 @@ function buildTeamCell(t, slotLabel) {
       nextLine = `
         <div class="meta-line">
           <span class="meta-label">Next</span>
-          <span>vs ${next.opponent}, ${fmtDateOnly(next.date)}</span>
+          <span>vs ${next.opponent}, ${fmtFullDateTime(next.date)}</span>
         </div>`;
     }
   }
@@ -1025,12 +1036,12 @@ function buildMobileCards(standings) {
       } else {
         if (last) {
           const cls = RESULT_CLASS[last.result] || "";
-          meta += `<div class="m-meta-line"><span class="m-meta-lbl">Last</span><span class="${cls}">${last.result}</span><span>${last.score} vs ${last.opponent}</span></div>`;
+          meta += `<div class="m-meta-line"><span class="m-meta-lbl">Last</span><span class="${cls}">${last.result}</span><span>${last.score} vs ${last.opponent}${last.date ? `, ${fmtFullDateTime(last.date)}` : ""}</span></div>`;
         }
         if (elim) {
           meta += `<div class="eliminated-badge" style="margin-top:4px">☠ Eliminated${record ? ` · ${record}` : ""}</div>`;
         } else if (next) {
-          meta += `<div class="m-meta-line"><span class="m-meta-lbl">Next</span><span>vs ${next.opponent}, ${fmtDateOnly(next.date)}</span></div>`;
+          meta += `<div class="m-meta-line"><span class="m-meta-lbl">Next</span><span>vs ${next.opponent}, ${fmtFullDateTime(next.date)}</span></div>`;
         }
       }
 
