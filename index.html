@@ -315,8 +315,8 @@
     }
     .tb-badge {
       font-size: 0.55rem; font-weight: 700; padding: 1px 5px; border-radius: 8px;
-      background: rgba(204,85,0,0.1); color: var(--gold);
-      border: 1px solid rgba(204,85,0,0.25); margin-left: 5px;
+      background: rgba(0,98,177,0.1); color: var(--blue);
+      border: 1px solid rgba(0,98,177,0.25); margin-left: 5px;
       white-space: nowrap; vertical-align: middle;
     }
     .pts-chip {
@@ -1220,7 +1220,7 @@ function buildMobileCards(standings) {
         <div class="m-rank-badge ${rankClass}">${rankDisplay}</div>
         <div class="m-player-info">
           <div class="m-player-name">${p.name}</div>
-          <div class="m-pick-badge">Pick #${rank}</div>${tbBadge}
+          <div class="m-pick-badge">Pick #${rank} ${tbBadge}</div>
         </div>
         <div class="m-total">
           <span class="m-total-pts">${p.total}</span>
@@ -1281,7 +1281,7 @@ function buildStandings(data) {
     tr.dataset.rank = rank;
     tr.innerHTML = `
       <td class="rank-cell"><div class="rank-badge ${rankClass}">${rankDisplay}</div></td>
-      <td class="name-cell"><div class="player-name">${p.name}</div><span class="pick-badge">Pick #${rank}</span>${tbBadge}</td>
+      <td class="name-cell"><div class="player-name">${p.name}</div><span class="pick-badge">Pick #${rank} ${tbBadge}</span></td>
       <td class="name-div-cell"></td>
       ${buildTeamCell(teams[0],"Team 1")}
       <td class="divider-cell"></td>
