@@ -227,8 +227,20 @@
       padding-left: 2px; letter-spacing: 0.2px;
     }
     /* ── Game stats block ── */
+    .stats-toggle-row {
+      display: flex; gap: 6px; margin-top: 8px; padding-top: 7px;
+      border-top: 1px solid var(--border);
+    }
+    .stats-toggle-btn {
+      flex: 1; font-size: 0.62rem; font-weight: 600; padding: 4px 8px;
+      border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--muted); cursor: pointer;
+      transition: all 0.15s; text-align: center;
+    }
+    .stats-toggle-btn:hover { border-color: var(--blue); color: var(--text); }
+    .stats-toggle-btn.active { background: #013369; border-color: #013369; color: #fff; }
     .game-stats {
-      margin-top: 8px; padding-top: 7px; border-top: 1px solid var(--border);
+      margin-top: 7px;
     }
     .stat-row {
       display: grid; grid-template-columns: 1fr auto 1fr;
@@ -244,6 +256,31 @@
     }
     .stat-bar-h { height: 4px; background: var(--blue); border-radius: 2px 0 0 2px; }
     .stat-bar-a { height: 4px; background: #c0cad8; border-radius: 0 2px 2px 0; }
+    /* ── Player stats panel ── */
+    .player-stats { margin-top: 7px; }
+    .pstats-team-hdr {
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; color: var(--muted); margin: 8px 0 4px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .pstats-team-hdr:first-child { margin-top: 0; }
+    .pstats-table { width: 100%; border-collapse: collapse; }
+    .pstats-table th {
+      font-size: 0.55rem; font-weight: 600; color: var(--muted);
+      text-align: right; padding: 2px 3px; border-bottom: 1px solid var(--border);
+    }
+    .pstats-table th:first-child { text-align: left; }
+    .pstats-table td {
+      font-size: 0.62rem; padding: 2px 3px; text-align: right;
+      color: var(--text-dim); border-bottom: 1px solid var(--surface2);
+    }
+    .pstats-table td:first-child { text-align: left; color: var(--text); }
+    .pstats-table tr:last-child td { border-bottom: none; }
+    .pstats-table tr.sub-row td { color: var(--muted); font-style: italic; }
+    .pstat-hi { color: var(--text); font-weight: 700; }
+    .pstat-card-y { color: #c8a000; font-weight: 700; }
+    .pstat-card-r { color: var(--red); font-weight: 700; }
+    .pstats-loading { font-size: 0.65rem; color: var(--muted); padding: 8px 0; text-align: center; }
     /* ── DraftKings odds block ── */
     .game-odds {
       margin-top: 8px; padding-top: 7px; border-top: 1px solid var(--border);
@@ -1271,6 +1308,97 @@ async function refreshLiveScores() {
   }
 }
 
+const summaryCache = {};
+
+async function toggleStats(cardId, type) {
+  const card     = document.getElementById(cardId);
+  if (!card) return;
+  const teamDiv   = card.querySelector(".game-stats");
+  const playerDiv = card.querySelector(".player-stats");
+  const teamBtn   = card.querySelector(".btn-team-stats");
+  const playerBtn = card.querySelector(".btn-player-stats");
+  const eventId   = card.dataset.eventId;
+
+  // Toggle logic: clicking active button closes it
+  const teamActive   = teamDiv   && teamDiv.style.display   !== "none";
+  const playerActive = playerDiv && playerDiv.style.display !== "none";
+
+  if (type === "team") {
+    const open = !teamActive;
+    if (teamDiv)   teamDiv.style.display   = open ? "" : "none";
+    if (playerDiv) playerDiv.style.display = "none";
+    if (teamBtn)   teamBtn.classList.toggle("active", open);
+    if (playerBtn) playerBtn.classList.remove("active");
+  } else {
+    const open = !playerActive;
+    if (teamDiv)   teamDiv.style.display   = "none";
+    if (playerDiv) playerDiv.style.display = open ? "" : "none";
+    if (teamBtn)   teamBtn.classList.remove("active");
+    if (playerBtn) playerBtn.classList.toggle("active", open);
+
+    if (open && playerDiv && !playerDiv.dataset.loaded) {
+      playerDiv.innerHTML = `<div class="pstats-loading">Loading player stats…</div>`;
+      try {
+        const data = summaryCache[eventId] ||
+          await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/summary?event=${eventId}&t=${Date.now()}`)
+            .then(r => r.json());
+        summaryCache[eventId] = data;
+        playerDiv.innerHTML = buildPlayerStatsHTML(data);
+        playerDiv.dataset.loaded = "1";
+      } catch(err) {
+        playerDiv.innerHTML = `<div class="pstats-loading">Could not load player stats.</div>`;
+      }
+    }
+  }
+}
+
+function buildPlayerStatsHTML(data) {
+  const rosters = data.rosters || [];
+  if (!rosters.length) return `<div class="pstats-loading">No player data available.</div>`;
+
+  const SHOW = ["totalGoals","goalAssists","totalShots","shotsOnTarget","foulsCommitted","yellowCards","redCards","saves"];
+  const HDR  = ["G","A","SH","SOG","FC","YC","RC","SV"];
+
+  return `<div class="player-stats-inner">${rosters.map(team => {
+    const tName   = team.team?.displayName || "";
+    const players = (team.roster || []).filter(p => p.starter || p.subbedIn);
+    const starters = players.filter(p => p.starter);
+    const subs     = players.filter(p => !p.starter && p.subbedIn);
+
+    function playerRow(p, isSub) {
+      const name = p.athlete?.displayName || "?";
+      const pos  = p.position?.abbreviation || "";
+      const getStat = abbr => p.stats?.find(s => s.name === abbr)?.value ?? 0;
+      const cells = SHOW.map((abbr, i) => {
+        const v = getStat(abbr);
+        if (abbr === "yellowCards" && v > 0) return `<td class="pstat-card-y">${v}</td>`;
+        if (abbr === "redCards"    && v > 0) return `<td class="pstat-card-r">${v}</td>`;
+        const hi = v > 0 && !["foulsCommitted"].includes(abbr);
+        return `<td class="${hi?"pstat-hi":""}">${v||""}</td>`;
+      }).join("");
+      const subIn  = p.subbedIn  ? `<span title="Subbed in"  style="color:var(--green);font-size:0.55rem">↑</span>` : "";
+      const subOut = p.subbedOut ? `<span title="Subbed out" style="color:var(--red);font-size:0.55rem">↓</span>` : "";
+      return `<tr class="${isSub?"sub-row":""}">
+        <td>${subIn}${subOut}<span style="color:var(--muted);font-size:0.55rem;margin-right:3px">${pos}</span>${name}</td>
+        ${cells}
+      </tr>`;
+    }
+
+    const rows = [
+      ...starters.map(p => playerRow(p, false)),
+      ...subs.map(p => playerRow(p, true)),
+    ].join("");
+
+    return `<div class="pstats-team-hdr">${flag(tName)} ${tName}</div>
+      <table class="pstats-table">
+        <thead><tr>
+          <th>Player</th>${HDR.map(h=>`<th>${h}</th>`).join("")}
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  }).join("")}</div>`;
+}
+
 function calcMatchPts(e, teamName) {
   const comp       = e.competitions[0];
   const statusName = comp.status.type.name;
@@ -1388,7 +1516,7 @@ function gameCard(e) {
       statRow(hFoul,  "Fouls",      aFoul,  false),
     ].filter(Boolean).join("");
 
-    if (rows) statsHTML = `<div class="game-stats">${rows}</div>`;
+    if (rows) statsHTML = rows;   // outer div added in card return
   }
 
   // ── DraftKings odds (scheduled only) ──
@@ -1431,11 +1559,20 @@ function gameCard(e) {
     }
   }
 
-  return `<div class="live-game">
+  const cardId = `gc-${e.id}`;
+  const toggleBtns = (isLive || isFinished) ? `
+    <div class="stats-toggle-row">
+      <button class="stats-toggle-btn btn-team-stats"   onclick="toggleStats('${cardId}','team')">📊 Team Stats</button>
+      <button class="stats-toggle-btn btn-player-stats" onclick="toggleStats('${cardId}','player')">👤 Player Stats</button>
+    </div>` : "";
+
+  return `<div class="live-game" id="${cardId}" data-event-id="${e.id}">
     <div class="live-status">${statusHTML}</div>
     <div class="live-matchup">${teamRow(homeName,homeScore,homeWon)}${teamRow(awayName,awayScore,awayWon)}</div>
     ${venueStr ? `<div class="live-venue">📍 ${venueStr}</div>` : ""}
-    ${statsHTML}
+    ${toggleBtns}
+    ${statsHTML ? `<div class="game-stats" style="display:none">${statsHTML}</div>` : ""}
+    <div class="player-stats" style="display:none"></div>
     ${oddsHTML}
   </div>`;
 }
