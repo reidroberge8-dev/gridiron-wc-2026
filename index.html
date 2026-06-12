@@ -226,6 +226,47 @@
       font-size: 0.6rem; color: var(--muted); margin-top: 4px;
       padding-left: 2px; letter-spacing: 0.2px;
     }
+    /* ── Game stats block ── */
+    .game-stats {
+      margin-top: 8px; padding-top: 7px; border-top: 1px solid var(--border);
+    }
+    .stat-row {
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      align-items: center; gap: 4px; margin-bottom: 3px;
+    }
+    .stat-hv { font-size: 0.72rem; font-weight: 700; text-align: right; }
+    .stat-av { font-size: 0.72rem; font-weight: 700; text-align: left; }
+    .stat-nm { font-size: 0.58rem; color: var(--muted); text-align: center;
+               white-space: nowrap; padding: 0 6px; }
+    .stat-bar-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2px; margin-bottom: 5px; height: 4px;
+    }
+    .stat-bar-h { height: 4px; background: var(--blue); border-radius: 2px 0 0 2px; }
+    .stat-bar-a { height: 4px; background: #c0cad8; border-radius: 0 2px 2px 0; }
+    /* ── DraftKings odds block ── */
+    .game-odds {
+      margin-top: 8px; padding-top: 7px; border-top: 1px solid var(--border);
+    }
+    .odds-header {
+      font-size: 0.55rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--muted); margin-bottom: 5px;
+    }
+    .odds-ml-row {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px;
+    }
+    .odds-pill {
+      font-size: 0.68rem; font-weight: 700; padding: 3px 9px;
+      border-radius: 20px; border: 1px solid var(--border);
+      background: var(--surface2); white-space: nowrap;
+    }
+    .odds-pill .odds-team { font-weight: 400; color: var(--muted); font-size: 0.6rem; margin-right: 3px; }
+    .odds-pill.plus  { color: var(--green); }
+    .odds-pill.minus { color: var(--text); }
+    .odds-ou-row {
+      font-size: 0.62rem; color: var(--muted);
+    }
+    .odds-ou-row span { color: var(--text); font-weight: 600; }
     .bracket-venue {
       font-size: 0.58rem; color: var(--muted); text-align: center;
       margin-top: 3px; padding: 0 4px;
@@ -234,6 +275,13 @@
       font-size: 0.58rem; font-weight: 600; color: var(--blue); opacity: 0.75;
       margin-left: 5px; white-space: nowrap; flex-shrink: 0;
     }
+    .pts-chip {
+      font-size: 0.55rem; font-weight: 700; padding: 1px 5px; border-radius: 8px;
+      margin-left: 3px; white-space: nowrap; flex-shrink: 0;
+    }
+    .pts-chip.earned { background: rgba(0,135,60,0.12); color: var(--green); border: 1px solid rgba(0,135,60,0.25); }
+    .pts-chip.potential { background: rgba(204,85,0,0.1); color: var(--gold); border: 1px solid rgba(204,85,0,0.25); }
+    .pts-chip.draw-pts { background: rgba(122,143,166,0.1); color: var(--muted); border: 1px solid rgba(122,143,166,0.25); }
     /* ── Leaderboard live-games strip ── */
     .lb-live-strip {
       display: flex; flex-direction: column; gap: 6px;
@@ -951,6 +999,10 @@ const STAGE_SHORT = {
   "group-stage":"GS","round-of-32":"R32","round-of-16":"R16",
   "quarterfinals":"QF","semifinals":"SF","final":"F"
 };
+const WIN_PTS = {
+  "group-stage":3,"round-of-32":4,"round-of-16":5,
+  "quarterfinals":6,"semifinals":7,"final":8
+};
 const LIVE_STATUSES  = new Set(["STATUS_FIRST_HALF","STATUS_SECOND_HALF","STATUS_HALFTIME",
   "STATUS_IN_PROGRESS","STATUS_EXTRA_TIME","STATUS_OVERTIME","STATUS_PENALTIES"]);
 const FINAL_STATUSES = new Set(["STATUS_FINAL","STATUS_FULL_TIME"]);
@@ -1219,6 +1271,38 @@ async function refreshLiveScores() {
   }
 }
 
+function calcMatchPts(e, teamName) {
+  const comp       = e.competitions[0];
+  const statusName = comp.status.type.name;
+  const isFinished = FINAL_STATUSES.has(statusName);
+  const isLiveNow  = LIVE_STATUSES.has(statusName);
+  if (!isFinished && !isLiveNow) return null;
+
+  const home = comp.competitors.find(c => c.homeAway === "home");
+  const away = comp.competitors.find(c => c.homeAway === "away");
+  const isHome = home?.team?.displayName === teamName;
+  const isAway = away?.team?.displayName === teamName;
+  if (!isHome && !isAway) return null;
+
+  const mine  = isHome ? home : away;
+  const other = isHome ? away : home;
+  const slug  = e.season?.slug || "group-stage";
+  const winPts = WIN_PTS[slug] ?? 3;
+  const isGroup = slug === "group-stage";
+
+  if (isFinished) {
+    if (mine.winner) return { pts: winPts, type: "earned" };
+    if (!other.winner && isGroup) return { pts: 1, type: "draw-pts" };
+    return null;
+  }
+  // Live: potential based on current score
+  const myScore  = parseInt(mine.score  ?? 0);
+  const oppScore = parseInt(other.score ?? 0);
+  if (myScore > oppScore)  return { pts: winPts, type: "potential" };
+  if (myScore === oppScore && isGroup) return { pts: 1, type: "draw-pts" };
+  return null;
+}
+
 function gameCard(e) {
   const comp       = e.competitions[0];
   const statusName = comp.status.type.name;
@@ -1250,18 +1334,109 @@ function gameCard(e) {
     const loser = isFinished && !won && (homeWon || awayWon);
     const owner = (playerTeamMap[name] || [])[0];
     const ownerTag = owner ? `<span class="team-owner-tag">${owner}</span>` : "";
+    const matchPts = owner ? calcMatchPts(e, name) : null;
+    const ptsChip  = matchPts ? `<span class="pts-chip ${matchPts.type}">+${matchPts.pts}</span>` : "";
     return `<div class="live-team ${loser?"loser":""}">
       <span class="live-team-flag">${flag(name)}</span>
       <span class="live-team-name">${name}</span>
-      ${ownerTag}
+      ${ownerTag}${ptsChip}
       <span class="live-team-score ${won?"winner":""}">${isFinished||isLive ? score : ""}</span>
     </div>`;
+  }
+
+  // ── Stats (live + completed) ──
+  let statsHTML = "";
+  if (isLive || isFinished) {
+    const getStat = (comp, abbr) => {
+      const s = comp.statistics?.find(s => s.abbreviation === abbr);
+      return s ? parseFloat(s.displayValue) : null;
+    };
+    const hPoss  = getStat(home, "PP");
+    const hShots = getStat(home, "SHOT");
+    const hSog   = getStat(home, "SOG");
+    const hCorn  = getStat(home, "CW");
+    const hFoul  = getStat(home, "FC");
+    const aPoss  = getStat(away, "PP");
+    const aShots = getStat(away, "SHOT");
+    const aSog   = getStat(away, "SOG");
+    const aCorn  = getStat(away, "CW");
+    const aFoul  = getStat(away, "FC");
+
+    function statRow(hv, label, av, isPercent) {
+      if (hv === null && av === null) return "";
+      const hd = hv !== null ? (isPercent ? hv.toFixed(1)+"%" : hv) : "–";
+      const ad = av !== null ? (isPercent ? av.toFixed(1)+"%" : av) : "–";
+      const total = (hv||0) + (av||0);
+      const hPct = total > 0 ? (hv||0)/total*100 : 50;
+      const aPct = total > 0 ? (av||0)/total*100 : 50;
+      return `<div class="stat-row">
+          <span class="stat-hv">${hd}</span>
+          <span class="stat-nm">${label}</span>
+          <span class="stat-av">${ad}</span>
+        </div>
+        <div class="stat-bar-row">
+          <div class="stat-bar-h" style="width:${hPct.toFixed(1)}%;margin-left:auto"></div>
+          <div class="stat-bar-a" style="width:${aPct.toFixed(1)}%"></div>
+        </div>`;
+    }
+
+    const rows = [
+      statRow(hPoss,  "Possession", aPoss,  true),
+      statRow(hShots, "Shots",      aShots, false),
+      statRow(hSog,   "On Target",  aSog,   false),
+      statRow(hCorn,  "Corners",    aCorn,  false),
+      statRow(hFoul,  "Fouls",      aFoul,  false),
+    ].filter(Boolean).join("");
+
+    if (rows) statsHTML = `<div class="game-stats">${rows}</div>`;
+  }
+
+  // ── DraftKings odds (scheduled only) ──
+  let oddsHTML = "";
+  if (!isLive && !isFinished) {
+    const odd = (comp.odds || []).find(o => o && o.provider);
+    if (odd) {
+      const ml = odd.moneyline;
+      const ou = odd.total;
+      function fmtML(o) {
+        if (!o) return null;
+        const odds = o.close?.odds ?? o.open?.odds;
+        if (!odds) return null;
+        const n = parseInt(odds);
+        return { val: (n > 0 ? "+"+n : ""+n), plus: n > 0 };
+      }
+      const hML = ml ? fmtML(ml.home) : null;
+      const aML = ml ? fmtML(ml.away) : null;
+      const dML = ml ? fmtML(ml.draw || odd.drawOdds) : null;
+
+      const pills = [
+        hML ? `<span class="odds-pill ${hML.plus?"plus":"minus"}"><span class="odds-team">${homeName.split(" ").pop()}</span>${hML.val}</span>` : "",
+        dML ? `<span class="odds-pill ${dML.plus?"plus":"minus"}"><span class="odds-team">Draw</span>${dML.val}</span>` : "",
+        aML ? `<span class="odds-pill ${aML.plus?"plus":"minus"}"><span class="odds-team">${awayName.split(" ").pop()}</span>${aML.val}</span>` : "",
+      ].filter(Boolean).join("");
+
+      let ouLine = "";
+      if (ou) {
+        const overO  = ou.over?.close?.odds  ?? ou.over?.open?.odds  ?? "";
+        const underO = ou.under?.close?.odds ?? ou.under?.open?.odds ?? "";
+        const line   = odd.overUnder ?? ou.over?.close?.line?.replace("o","") ?? "";
+        if (line) ouLine = `<div class="odds-ou-row">O/U <span>${line}</span>&nbsp;· Over <span>${overO.startsWith("-")?overO:"+"+overO}</span> &nbsp;Under <span>${underO.startsWith("-")?underO:"+"+underO}</span></div>`;
+      }
+
+      if (pills) oddsHTML = `<div class="game-odds">
+        <div class="odds-header">DraftKings Odds</div>
+        <div class="odds-ml-row">${pills}</div>
+        ${ouLine}
+      </div>`;
+    }
   }
 
   return `<div class="live-game">
     <div class="live-status">${statusHTML}</div>
     <div class="live-matchup">${teamRow(homeName,homeScore,homeWon)}${teamRow(awayName,awayScore,awayWon)}</div>
     ${venueStr ? `<div class="live-venue">📍 ${venueStr}</div>` : ""}
+    ${statsHTML}
+    ${oddsHTML}
   </div>`;
 }
 
@@ -1328,9 +1503,11 @@ function renderLbLiveGames(allEvents) {
       const owner = (playerTeamMap[name] || [])[0];
       const ownerSpan = owner ? `<span style="color:var(--blue);font-size:0.58rem;font-weight:600;margin-left:4px">${owner}</span>` : "";
       const loser = isFinal && !won && (hWon || aWon) && name === (won === hWon ? aName : hName);
+      const matchPts = (owner && isFinal) ? calcMatchPts(e, name) : null;
+      const ptsSpan  = matchPts ? `<span class="pts-chip ${matchPts.type}" style="margin-left:3px">+${matchPts.pts}</span>` : "";
       return `<div class="lb-live-row${loser ? " loser" : ""}">
         <span>${flag(name)}</span>
-        <span style="font-weight:600${loser ? ";opacity:0.5" : ""}">${name}</span>${ownerSpan}
+        <span style="font-weight:600${loser ? ";opacity:0.5" : ""}">${name}</span>${ownerSpan}${ptsSpan}
         <span class="lb-live-score ${won && showScore ? "winner" : ""}">${showScore ? score : ""}</span>
       </div>`;
     }
