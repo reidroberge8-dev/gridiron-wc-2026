@@ -1,99 +1,45 @@
 {
   "players": [
     {
-      "name": "Joe Klim",
-      "teams": [
-        "TODO",
-        "TODO",
-        "TODO",
-        "TODO"
-      ]
-    },
-    {
-      "name": "Joe Kasz",
-      "teams": [
-        "TODO",
-        "TODO",
-        "TODO",
-        "TODO"
-      ]
+      "name": "Devin",
+      "teams": ["Spain", "Japan", "Ecuador", "Bosnia-Herzegovina"]
     },
     {
       "name": "Joe Ricc",
-      "teams": [
-        "France",
-        "TODO",
-        "TODO",
-        "TODO"
-      ]
-    },
-    {
-      "name": "Reid",
-      "teams": [
-        "England",
-        "TODO",
-        "TODO",
-        "TODO"
-      ]
-    },
-    {
-      "name": "Nolan",
-      "teams": [
-        "Brazil",
-        "TODO",
-        "TODO",
-        "TODO"
-      ]
+      "teams": ["France", "Switzerland", "Canada", "Czechia"]
     },
     {
       "name": "Matt",
-      "teams": [
-        "Argentina",
-        "TODO",
-        "TODO",
-        "TODO"
-      ]
+      "teams": ["Argentina", "Norway", "Senegal", "Panama"]
     },
     {
-      "name": "Luke",
-      "teams": [
-        "TODO",
-        "TODO",
-        "TODO",
-        "TODO"
-      ]
+      "name": "Nolan",
+      "teams": ["Brazil", "Uruguay", "South Korea", "Ghana"]
     },
     {
-      "name": "Devin",
-      "teams": [
-        "Spain",
-        "TODO",
-        "TODO",
-        "TODO"
-      ]
+      "name": "Reid",
+      "teams": ["England", "United States", "Iran", "Algeria"]
     },
     {
       "name": "Spark",
-      "teams": [
-        "Portugal",
-        "TODO",
-        "TODO",
-        "TODO"
-      ]
+      "teams": ["Portugal", "Croatia", "Türkiye", "Sweden"]
+    },
+    {
+      "name": "Joe Klim",
+      "teams": ["Netherlands", "Morocco", "Austria", "Scotland"]
+    },
+    {
+      "name": "Joe Kasz",
+      "teams": ["Germany", "Mexico", "Egypt", "Ivory Coast"]
+    },
+    {
+      "name": "Luke",
+      "teams": ["Belgium", "Colombia", "Iraq", "Curaçao"]
     }
   ],
   "locked_picks": [
-    {
-      "pick": 10,
-      "name": "Baker"
-    },
-    {
-      "pick": 11,
-      "name": "Pel"
-    },
-    {
-      "pick": 12,
-      "name": "Walter"
-    }
+    { "pick": 10, "name": "Baker" },
+    { "pick": 11, "name": "Pel" },
+    { "pick": 12, "name": "Walter" }
   ]
 }

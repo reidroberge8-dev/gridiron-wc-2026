@@ -865,6 +865,9 @@ const STAGE_SHORT = {
   "group-stage":"GS","round-of-32":"R32","round-of-16":"R16",
   "quarterfinals":"QF","semifinals":"SF","final":"F"
 };
+const LIVE_STATUSES  = new Set(["STATUS_FIRST_HALF","STATUS_SECOND_HALF","STATUS_HALFTIME",
+  "STATUS_IN_PROGRESS","STATUS_EXTRA_TIME","STATUS_OVERTIME","STATUS_PENALTIES"]);
+const FINAL_STATUSES = new Set(["STATUS_FINAL","STATUS_FULL_TIME"]);
 const RESULT_CLASS = { W:"result-w", D:"result-d", L:"result-l" };
 
 function flag(name) { return FLAGS[name] || "🏳️"; }
@@ -1132,14 +1135,14 @@ function gameCard(e) {
   const awayScore = away.score ?? 0;
   const homeWon   = home.winner;
   const awayWon   = away.winner;
-  const isFinished = statusName === "STATUS_FINAL" || statusName === "STATUS_FULL_TIME";
-  const isLive     = statusName === "STATUS_IN_PROGRESS" || statusName === "STATUS_HALFTIME";
+  const isFinished = FINAL_STATUSES.has(statusName);
+  const isLive     = LIVE_STATUSES.has(statusName);
 
   let statusHTML = "";
-  if (statusName === "STATUS_IN_PROGRESS")
-    statusHTML = `<span class="status-live">● LIVE</span><span class="live-clock">${clock}</span>`;
-  else if (statusName === "STATUS_HALFTIME")
+  if (statusName === "STATUS_HALFTIME")
     statusHTML = `<span class="status-ht">◑ HT</span>`;
+  else if (isLive)
+    statusHTML = `<span class="status-live">● LIVE</span><span class="live-clock">${clock}</span>`;
   else if (isFinished)
     statusHTML = `<span class="status-final">Final</span>`;
   else
@@ -1182,13 +1185,10 @@ function renderLiveScores(events) {
 
   // Build liveGamesMap from currently live events
   liveGamesMap = {};
-  const liveNow = events.filter(e => {
-    const s = e.competitions[0].status.type.name;
-    return s === "STATUS_IN_PROGRESS" || s === "STATUS_HALFTIME";
-  });
+  const liveNow = events.filter(e => LIVE_STATUSES.has(e.competitions[0].status.type.name));
   for (const e of liveNow) {
     const comp   = e.competitions[0];
-    const isHT   = comp.status.type.name === "STATUS_HALFTIME";
+    const isHT   = comp.status.type.name === "STATUS_HALFTIME";  // HT = no clock
     const clock  = comp.status.displayClock || "";
     const home   = comp.competitors.find(c => c.homeAway === "home");
     const away   = comp.competitors.find(c => c.homeAway === "away");
@@ -1207,9 +1207,9 @@ function renderLiveScores(events) {
     return new Date(new Date(isoStr).getTime() - 4 * 3600 * 1000).toISOString().slice(0, 10);
   }
 
-  const live      = events.filter(e => { const s=e.competitions[0].status.type.name; return s==="STATUS_IN_PROGRESS"||s==="STATUS_HALFTIME"; });
-  const completed = events.filter(e => { const s=e.competitions[0].status.type.name; return s==="STATUS_FINAL"||s==="STATUS_FULL_TIME"; });
-  const upcoming  = events.filter(e => e.competitions[0].status.type.name==="STATUS_SCHEDULED");
+  const live      = events.filter(e => LIVE_STATUSES.has(e.competitions[0].status.type.name));
+  const completed = events.filter(e => FINAL_STATUSES.has(e.competitions[0].status.type.name));
+  const upcoming  = events.filter(e => e.competitions[0].status.type.name === "STATUS_SCHEDULED");
 
   dot.className = live.length ? "live-dot" : "live-dot inactive";
 
