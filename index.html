@@ -635,6 +635,28 @@
     .scores-tab.active { background: #013369; border-color: #013369; color: #fff; }
     /* Panels */
     .scores-panel { }
+    .scores-filter-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px 6px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .scores-filter-lbl {
+      font-size: 0.65rem; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.8px; white-space: nowrap;
+    }
+    .scores-filter-select {
+      font-size: 0.72rem; padding: 4px 8px; border-radius: 7px;
+      border: 1px solid var(--border); background: var(--surface2);
+      color: var(--text); cursor: pointer; outline: none;
+      transition: border-color 0.15s;
+    }
+    .scores-filter-select:focus { border-color: var(--blue); }
+    .scores-filter-clear {
+      font-size: 0.65rem; color: var(--blue); cursor: pointer;
+      background: none; border: none; padding: 2px 4px;
+      text-decoration: underline;
+    }
     #live-games   { max-height: 80vh; overflow-y: auto; }
     #schedule-games { max-height: 80vh; overflow-y: auto; }
     #group-standings-body { max-height: 80vh; overflow-y: auto; }
@@ -798,6 +820,16 @@
         <span class="live-panel-title" id="live-title">Live Scores</span>
         <span class="live-updated" id="live-updated"></span>
       </div>
+      <div class="scores-filter-bar" id="scores-filter-bar">
+        <span class="scores-filter-lbl">Filter by</span>
+        <select class="scores-filter-select" id="scores-filter-type" onchange="onFilterTypeChange('scores')">
+          <option value="all">All Games</option>
+          <option value="owner">Owner</option>
+          <option value="team">Team</option>
+        </select>
+        <select class="scores-filter-select" id="scores-filter-value" style="display:none" onchange="applyScoresFilter()"></select>
+        <button class="scores-filter-clear" id="scores-filter-clear" style="display:none" onclick="clearScoresFilter()">✕ Clear</button>
+      </div>
       <div id="live-games"><div class="live-empty">Loading…</div></div>
     </div>
   </div>
@@ -807,6 +839,16 @@
     <div class="live-panel">
       <div class="live-panel-header">
         <span class="live-panel-title">Upcoming</span>
+      </div>
+      <div class="scores-filter-bar" id="sched-filter-bar">
+        <span class="scores-filter-lbl">Filter by</span>
+        <select class="scores-filter-select" id="sched-filter-type" onchange="onFilterTypeChange('sched')">
+          <option value="all">All Games</option>
+          <option value="owner">Owner</option>
+          <option value="team">Team</option>
+        </select>
+        <select class="scores-filter-select" id="sched-filter-value" style="display:none" onchange="applyScoresFilter()"></select>
+        <button class="scores-filter-clear" id="sched-filter-clear" style="display:none" onclick="clearScoresFilter()">✕ Clear</button>
       </div>
       <div id="schedule-games"><div class="live-empty">Loading…</div></div>
     </div>
@@ -1306,6 +1348,85 @@ function renderLbLiveGames(allEvents) {
   el.style.display = "block";
 }
 
+/* ── Scores / Schedule filter ── */
+let scoresFilter = { type: "all", value: "" };
+
+function onFilterTypeChange(panel) {
+  const typeEl  = document.getElementById(`${panel}-filter-type`);
+  const valEl   = document.getElementById(`${panel}-filter-value`);
+  const clearEl = document.getElementById(`${panel}-filter-clear`);
+  const type    = typeEl.value;
+
+  if (type === "all") {
+    valEl.style.display  = "none";
+    clearEl.style.display = "none";
+    scoresFilter = { type: "all", value: "" };
+    if (cachedLiveEvents) renderLiveScores(cachedLiveEvents);
+    return;
+  }
+
+  // Build option list from playerTeamMap
+  let options = [];
+  if (type === "owner") {
+    const seen = new Set();
+    Object.values(playerTeamMap).forEach(owners => owners.forEach(o => seen.add(o)));
+    options = [...seen].sort();
+  } else {
+    options = Object.keys(playerTeamMap).sort();
+  }
+
+  valEl.innerHTML = `<option value="">Select ${type === "owner" ? "owner" : "team"}…</option>` +
+    options.map(o => `<option value="${escHtml(o)}">${escHtml(o)}</option>`).join("");
+  valEl.style.display  = "";
+  clearEl.style.display = "none";
+  valEl.value = "";
+  scoresFilter = { type: "all", value: "" };   // reset until value chosen
+  if (cachedLiveEvents) renderLiveScores(cachedLiveEvents);
+}
+
+function applyScoresFilter() {
+  // Determine which panel is active
+  const sPanel = document.getElementById("scores-panel");
+  const panel  = (sPanel && sPanel.style.display !== "none") ? "scores" : "sched";
+  const typeEl = document.getElementById(`${panel}-filter-type`);
+  const valEl  = document.getElementById(`${panel}-filter-value`);
+  const clearEl = document.getElementById(`${panel}-filter-clear`);
+  const value  = valEl?.value || "";
+  scoresFilter = { type: typeEl?.value || "all", value };
+  clearEl.style.display = value ? "" : "none";
+  if (cachedLiveEvents) renderLiveScores(cachedLiveEvents);
+}
+
+function clearScoresFilter() {
+  ["scores","sched"].forEach(panel => {
+    const t = document.getElementById(`${panel}-filter-type`);
+    const v = document.getElementById(`${panel}-filter-value`);
+    const c = document.getElementById(`${panel}-filter-clear`);
+    if (t) t.value = "all";
+    if (v) { v.style.display = "none"; v.innerHTML = ""; }
+    if (c) c.style.display = "none";
+  });
+  scoresFilter = { type: "all", value: "" };
+  if (cachedLiveEvents) renderLiveScores(cachedLiveEvents);
+}
+
+function escHtml(s) { return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function filterEvents(events) {
+  if (scoresFilter.type === "all" || !scoresFilter.value) return events;
+  return events.filter(e => {
+    const comp = e.competitions[0];
+    const home = comp.competitors.find(c => c.homeAway === "home")?.team?.displayName || "";
+    const away = comp.competitors.find(c => c.homeAway === "away")?.team?.displayName || "";
+    if (scoresFilter.type === "team")
+      return home === scoresFilter.value || away === scoresFilter.value;
+    if (scoresFilter.type === "owner")
+      return (playerTeamMap[home]||[]).includes(scoresFilter.value) ||
+             (playerTeamMap[away]||[]).includes(scoresFilter.value);
+    return true;
+  });
+}
+
 function renderLiveScores(events) {
   const dot = document.getElementById("live-dot");
 
@@ -1336,9 +1457,10 @@ function renderLiveScores(events) {
     return new Date(new Date(isoStr).getTime() - 4 * 3600 * 1000).toISOString().slice(0, 10);
   }
 
-  const live      = events.filter(e => LIVE_STATUSES.has(e.competitions[0].status.type.name));
-  const completed = events.filter(e => FINAL_STATUSES.has(e.competitions[0].status.type.name));
-  const upcoming  = events.filter(e => e.competitions[0].status.type.name === "STATUS_SCHEDULED");
+  const filtered  = filterEvents(events);
+  const live      = filtered.filter(e => LIVE_STATUSES.has(e.competitions[0].status.type.name));
+  const completed = filtered.filter(e => FINAL_STATUSES.has(e.competitions[0].status.type.name));
+  const upcoming  = filtered.filter(e => e.competitions[0].status.type.name === "STATUS_SCHEDULED");
 
   dot.className = live.length ? "live-dot" : "live-dot inactive";
 
