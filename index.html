@@ -1691,15 +1691,11 @@ function renderBracket(events) {
         const awayScore = away?.score ?? 0;
         const homeWon   = home?.winner || false;
         const awayWon   = away?.winner || false;
-        const bVenue    = comp.venue;
-        const bVenueStr = bVenue ? [bVenue.address?.city, bVenue.address?.country].filter(Boolean).join(", ") : "";
-
         return `<div class="bracket-slot">
           <div class="bracket-match ${isFinished ? "has-winner" : ""}">
             ${bracketTeamRow(homeName, homeScore, homeWon, isFinished)}
             ${bracketTeamRow(awayName, awayScore, awayWon, isFinished)}
           </div>
-          ${bVenueStr ? `<div class="bracket-venue">📍 ${bVenueStr}</div>` : ""}
         </div>`;
       }).join("");
     } else {
