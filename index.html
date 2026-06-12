@@ -1236,42 +1236,64 @@ function dayLabel(iso) {
   return base;
 }
 
-function renderLbLiveGames(liveEvents) {
+function renderLbLiveGames(allEvents) {
   const el = document.getElementById("lb-live-games");
   if (!el) return;
-  if (!liveEvents.length) { el.style.display = "none"; return; }
 
-  const cards = liveEvents.map(e => {
-    const comp   = e.competitions[0];
-    const status = comp.status.type.name;
-    const clock  = comp.status.displayClock || "";
-    const isHT   = status === "STATUS_HALFTIME";
-    const home   = comp.competitors.find(c => c.homeAway === "home");
-    const away   = comp.competitors.find(c => c.homeAway === "away");
-    const hName  = home?.team?.displayName || "";
-    const aName  = away?.team?.displayName || "";
-    const hScore = home?.score ?? 0;
-    const aScore = away?.score ?? 0;
-    const hWon   = home?.winner;
-    const aWon   = away?.winner;
+  // Filter to today's matches (ET = UTC-4)
+  const todayET = new Date(Date.now() - 4 * 3600 * 1000).toISOString().slice(0, 10);
+  const todayEvents = allEvents.filter(e =>
+    new Date(new Date(e.date).getTime() - 4 * 3600 * 1000).toISOString().slice(0, 10) === todayET
+  );
 
-    const statusLabel = isHT
-      ? `<span class="status-ht" style="font-size:0.58rem">◑ HT</span>`
-      : `<span style="color:var(--green)">● LIVE</span>${clock ? `<span style="color:var(--muted);font-size:0.58rem;margin-left:3px">${clock}</span>` : ""}`;
+  if (!todayEvents.length) { el.style.display = "none"; return; }
+
+  // Sort: live first, then final, then scheduled
+  const order = e => {
+    const s = e.competitions[0].status.type.name;
+    if (LIVE_STATUSES.has(s)) return 0;
+    if (FINAL_STATUSES.has(s)) return 1;
+    return 2;
+  };
+  todayEvents.sort((a, b) => order(a) - order(b));
+
+  const cards = todayEvents.map(e => {
+    const comp     = e.competitions[0];
+    const status   = comp.status.type.name;
+    const clock    = comp.status.displayClock || "";
+    const isLive   = LIVE_STATUSES.has(status);
+    const isFinal  = FINAL_STATUSES.has(status);
+    const isHT     = status === "STATUS_HALFTIME";
+    const home     = comp.competitors.find(c => c.homeAway === "home");
+    const away     = comp.competitors.find(c => c.homeAway === "away");
+    const hName    = home?.team?.displayName || "";
+    const aName    = away?.team?.displayName || "";
+    const hScore   = home?.score ?? 0;
+    const aScore   = away?.score ?? 0;
+    const hWon     = home?.winner;
+    const aWon     = away?.winner;
+    const showScore = isLive || isFinal;
+
+    let statusLabel;
+    if (isHT)
+      statusLabel = `<span class="status-ht" style="font-size:0.58rem">◑ HT</span>`;
+    else if (isLive)
+      statusLabel = `<span style="color:var(--green)">● LIVE</span>${clock ? `<span style="color:var(--muted);font-size:0.58rem;margin-left:3px">${clock}</span>` : ""}`;
+    else if (isFinal)
+      statusLabel = `<span class="status-final" style="font-size:0.58rem">Final</span>`;
+    else
+      statusLabel = `<span style="color:var(--muted);font-size:0.58rem">${fmtTime(e.date)}</span>`;
 
     function lbRow(name, score, won) {
       const owner = (playerTeamMap[name] || [])[0];
       const ownerSpan = owner ? `<span style="color:var(--blue);font-size:0.58rem;font-weight:600;margin-left:4px">${owner}</span>` : "";
-      return `<div class="lb-live-row">
+      const loser = isFinal && !won && (hWon || aWon) && name === (won === hWon ? aName : hName);
+      return `<div class="lb-live-row${loser ? " loser" : ""}">
         <span>${flag(name)}</span>
-        <span style="font-weight:600">${name}</span>${ownerSpan}
-        <span class="lb-live-score ${won?"winner":""}">${score}</span>
+        <span style="font-weight:600${loser ? ";opacity:0.5" : ""}">${name}</span>${ownerSpan}
+        <span class="lb-live-score ${won && showScore ? "winner" : ""}">${showScore ? score : ""}</span>
       </div>`;
     }
-
-    // Only show card if at least one team is owned
-    const hOwned = !!(playerTeamMap[hName]||[]).length;
-    const aOwned = !!(playerTeamMap[aName]||[]).length;
 
     return `<div class="lb-live-card">
       <div class="lb-live-status">${statusLabel}</div>
@@ -1280,7 +1302,7 @@ function renderLbLiveGames(liveEvents) {
     </div>`;
   });
 
-  el.innerHTML = `<div class="section-label" style="margin-bottom:8px">● Live Now</div><div class="lb-live-strip">${cards.join("")}</div>`;
+  el.innerHTML = `<div class="section-label" style="margin-bottom:8px">Today's Matches</div><div class="lb-live-strip">${cards.join("")}</div>`;
   el.style.display = "block";
 }
 
@@ -1304,7 +1326,7 @@ function renderLiveScores(events) {
     if (aName) liveGamesMap[aName] = { opponent: hName, myScore: aScore, oppScore: hScore, clock, isHT };
   }
   // Render live games strip on Leaderboard tab
-  renderLbLiveGames(liveNow);
+  renderLbLiveGames(events);
 
   // Re-render standings cells to reflect live scores
   if (cachedStandingsData) buildStandings(cachedStandingsData);
