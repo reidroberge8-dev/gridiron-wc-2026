@@ -1408,7 +1408,7 @@ function renderGroupStandings(groups) {
         <td>
           <div class="group-team-name ${owned ? "owned" : ""}">
             ${flag(team)} ${team}
-            ${owned ? `<span class="owned-dot" title="${playerTeamMap[team].join(", ")}"></span>` : ""}
+            ${owned ? `<span class="team-owner-tag">${playerTeamMap[team][0]}</span>` : ""}
           </div>
         </td>
         <td class="g-num">${gp}</td>
