@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-12T18:29:56.530596+00:00",
+  "last_updated": "2026-06-12T21:19:58.447170+00:00",
   "standings": [
     {
       "name": "Nolan",
@@ -210,20 +210,32 @@
         {
           "team": "Bosnia-Herzegovina",
           "wins": [],
-          "ties": [],
+          "ties": [
+            {
+              "stage": "group-stage",
+              "opponent": "Canada",
+              "pts": 1
+            }
+          ],
           "losses": [],
-          "total": 0,
-          "last_result": null,
-          "next_game": {
+          "total": 1,
+          "last_result": {
+            "result": "D",
+            "score": "1-1",
             "opponent": "Canada",
-            "date": "2026-06-12T19:00Z",
+            "stage": "group-stage",
+            "date": "2026-06-12T19:00Z"
+          },
+          "next_game": {
+            "opponent": "Switzerland",
+            "date": "2026-06-18T19:00Z",
             "stage": "group-stage"
           },
           "eliminated": false,
-          "record": "0W-0D-0L"
+          "record": "0W-1D-0L"
         }
       ],
-      "total": 0,
+      "total": 1,
       "draft_pick": 3
     },
     {
@@ -262,17 +274,29 @@
         {
           "team": "Canada",
           "wins": [],
-          "ties": [],
+          "ties": [
+            {
+              "stage": "group-stage",
+              "opponent": "Bosnia-Herzegovina",
+              "pts": 1
+            }
+          ],
           "losses": [],
-          "total": 0,
-          "last_result": null,
-          "next_game": {
+          "total": 1,
+          "last_result": {
+            "result": "D",
+            "score": "1-1",
             "opponent": "Bosnia-Herzegovina",
-            "date": "2026-06-12T19:00Z",
+            "stage": "group-stage",
+            "date": "2026-06-12T19:00Z"
+          },
+          "next_game": {
+            "opponent": "Qatar",
+            "date": "2026-06-18T22:00Z",
             "stage": "group-stage"
           },
           "eliminated": false,
-          "record": "0W-0D-0L"
+          "record": "0W-1D-0L"
         },
         {
           "team": "Czechia",
@@ -301,7 +325,7 @@
           "record": "0W-0D-1L"
         }
       ],
-      "total": 0,
+      "total": 1,
       "draft_pick": 4
     },
     {
@@ -745,31 +769,55 @@
     },
     "Canada": {
       "wins": [],
-      "ties": [],
+      "ties": [
+        {
+          "stage": "group-stage",
+          "opponent": "Bosnia-Herzegovina",
+          "pts": 1
+        }
+      ],
       "losses": [],
-      "total": 0,
-      "last_result": null,
-      "next_game": {
+      "total": 1,
+      "last_result": {
+        "result": "D",
+        "score": "1-1",
         "opponent": "Bosnia-Herzegovina",
-        "date": "2026-06-12T19:00Z",
+        "stage": "group-stage",
+        "date": "2026-06-12T19:00Z"
+      },
+      "next_game": {
+        "opponent": "Qatar",
+        "date": "2026-06-18T22:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
-      "record": "0W-0D-0L"
+      "record": "0W-1D-0L"
     },
     "Bosnia-Herzegovina": {
       "wins": [],
-      "ties": [],
+      "ties": [
+        {
+          "stage": "group-stage",
+          "opponent": "Canada",
+          "pts": 1
+        }
+      ],
       "losses": [],
-      "total": 0,
-      "last_result": null,
-      "next_game": {
+      "total": 1,
+      "last_result": {
+        "result": "D",
+        "score": "1-1",
         "opponent": "Canada",
-        "date": "2026-06-12T19:00Z",
+        "stage": "group-stage",
+        "date": "2026-06-12T19:00Z"
+      },
+      "next_game": {
+        "opponent": "Switzerland",
+        "date": "2026-06-18T19:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
-      "record": "0W-0D-0L"
+      "record": "0W-1D-0L"
     },
     "United States": {
       "wins": [],
