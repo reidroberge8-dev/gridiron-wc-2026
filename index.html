@@ -2348,7 +2348,7 @@ setInterval(refreshGroupStandings, 5 * 60 * 1000);
             + _step(3, 'Tap <strong>Add</strong> to confirm');
     } else {
       // Desktop Chrome/Edge fallback
-      steps = _step(1, 'Click the <strong>install icon ⊕</strong> in your browser's address bar')
+      steps = _step(1, "Click the <strong>install icon ⊕</strong> in your browser's address bar")
             + _step(2, 'Click <strong>Install</strong> in the popup to confirm');
     }
     if (_installSteps) _installSteps.innerHTML = steps;
