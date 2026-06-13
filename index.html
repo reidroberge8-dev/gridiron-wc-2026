@@ -60,23 +60,51 @@
     .refresh-btn:active { transform: rotate(180deg); }
     .refresh-btn svg { width: 16px; height: 16px; }
     .install-btn {
-      position: absolute; top: 14px; left: 16px;
-      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 50%; width: 34px; height: 34px;
-      display: none; align-items: center; justify-content: center;
-      cursor: pointer; color: rgba(255,255,255,0.75);
+      position: absolute; top: 12px; left: 12px;
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px; padding: 5px 11px;
+      display: none; align-items: center; gap: 5px;
+      cursor: pointer; color: rgba(255,255,255,0.85);
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.2px;
       transition: background 0.15s;
+      font-family: inherit;
     }
-    .install-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
-    .install-btn svg { width: 16px; height: 16px; }
-    .install-tip {
-      position: absolute; top: 56px; left: 10px;
-      background: rgba(1,51,105,0.97); border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 8px; padding: 7px 11px; font-size: 0.7rem; color: rgba(255,255,255,0.9);
-      white-space: nowrap; pointer-events: none; z-index: 99;
-      opacity: 0; transition: opacity 0.2s;
+    .install-btn:hover { background: rgba(255,255,255,0.22); color: #fff; }
+    /* ── Install modal ── */
+    .install-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+      z-index: 1000; display: flex; align-items: center; justify-content: center;
+      padding: 20px;
     }
-    .install-tip.visible { opacity: 1; }
+    .install-card {
+      background: #fff; border-radius: 14px; width: 100%; max-width: 340px;
+      overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    }
+    .install-card-hdr {
+      background: linear-gradient(135deg, #013369 0%, #002654 100%);
+      padding: 16px 18px 14px; color: #fff;
+      font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 8px;
+    }
+    .install-card-body { padding: 16px 18px 6px; }
+    .install-step {
+      display: flex; align-items: flex-start; gap: 11px;
+      padding: 8px 0; border-bottom: 1px solid #eee;
+      font-size: 0.82rem; color: #1a2332; line-height: 1.4;
+    }
+    .install-step:last-child { border-bottom: none; }
+    .install-step-num {
+      background: #013369; color: #fff; border-radius: 50%;
+      width: 22px; height: 22px; font-size: 0.7rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .install-card-footer { padding: 10px 18px 16px; display: flex; justify-content: flex-end; }
+    .install-card-close {
+      background: #013369; color: #fff; border: none; border-radius: 8px;
+      padding: 8px 20px; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+    }
+    .install-card-close:hover { background: #0062b1; }
     #status-dot {
       display: inline-block; width: 7px; height: 7px; border-radius: 50%;
       background: var(--green); margin-right: 5px; vertical-align: middle;
@@ -874,15 +902,19 @@
       <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
     </svg>
   </button>
-  <button class="install-btn" id="install-btn" onclick="handleInstall()" title="Add to Home Screen">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/>
-      <polyline points="9 21 9 13 15 13 15 21"/>
-      <line x1="19" y1="5" x2="23" y2="5"/>
-      <line x1="21" y1="3" x2="21" y2="7"/>
-    </svg>
+  <button class="install-btn" id="install-btn" onclick="handleInstall()">
+    📲 Add to Home Screen
   </button>
-  <div class="install-tip" id="install-tip"></div>
+  <!-- Install instructions modal -->
+  <div class="install-backdrop" id="install-modal" style="display:none" onclick="closeInstallModal()">
+    <div class="install-card" onclick="event.stopPropagation()">
+      <div class="install-card-hdr">📲 Add to Home Screen</div>
+      <div class="install-card-body" id="install-steps"></div>
+      <div class="install-card-footer">
+        <button class="install-card-close" onclick="closeInstallModal()">Got it</button>
+      </div>
+    </div>
+  </div>
   <span class="trophy">🏆</span>
   <h1>Gridiron World Cup Challenge</h1>
   <p class="subtitle">2026 FIFA World Cup &nbsp;·&nbsp; Fantasy Draft Order</p>
@@ -2258,10 +2290,15 @@ setInterval(refreshGroupStandings, 5 * 60 * 1000);
   // ── PWA Install ──
   let _installPrompt = null;
   const _installBtn  = document.getElementById('install-btn');
-  const _installTip  = document.getElementById('install-tip');
-  const _isIOS       = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const _installModal = document.getElementById('install-modal');
+  const _installSteps = document.getElementById('install-steps');
+  const _ua          = navigator.userAgent;
+  const _isIOS       = /iphone|ipad|ipod/i.test(_ua);
+  const _isChromeIOS = _isIOS && /crios/i.test(_ua);
+  const _isSafari    = _isIOS && !_isChromeIOS;
+  const _isAndroid   = /android/i.test(_ua);
   const _isStandalone = window.matchMedia('(display-mode: standalone)').matches
-                     || ('standalone' in navigator && navigator.standalone);
+                      || ('standalone' in navigator && navigator.standalone);
 
   function _showInstallBtn() {
     if (_installBtn && !_isStandalone) _installBtn.style.display = 'flex';
@@ -2278,22 +2315,48 @@ setInterval(refreshGroupStandings, 5 * 60 * 1000);
     if (_installBtn) _installBtn.style.display = 'none';
   });
 
-  // iOS: show button always (no beforeinstallprompt fires)
   if (_isIOS && !_isStandalone) _showInstallBtn();
+
+  function _step(num, html) {
+    return `<div class="install-step"><div class="install-step-num">${num}</div><div>${html}</div></div>`;
+  }
 
   function handleInstall() {
     if (_installPrompt) {
+      // Chrome/Edge native prompt — no modal needed
       _installPrompt.prompt();
       _installPrompt.userChoice.then(() => {
         _installPrompt = null;
         if (_installBtn) _installBtn.style.display = 'none';
       });
-    } else if (_isIOS) {
-      // Show tip pointing to iOS share flow
-      _installTip.textContent = "Tap ⬆ Share → Add to Home Screen";
-      _installTip.classList.add('visible');
-      setTimeout(() => _installTip.classList.remove('visible'), 3500);
+      return;
     }
+    // Build step-by-step instructions for manual install
+    let steps = "";
+    if (_isChromeIOS) {
+      steps = _step(1, 'Tap <strong>···</strong> in the bottom-right corner of Chrome')
+            + _step(2, 'Tap <strong>Share…</strong>')
+            + _step(3, 'Scroll down and tap <strong>Add to Home Screen</strong>')
+            + _step(4, 'Tap <strong>Add</strong> to confirm');
+    } else if (_isSafari) {
+      steps = _step(1, 'Tap the <strong>Share ⬆</strong> button at the bottom of Safari')
+            + _step(2, 'Scroll down in the share sheet and tap <strong>Add to Home Screen</strong>')
+            + _step(3, 'Tap <strong>Add</strong> in the top-right corner to confirm');
+    } else if (_isAndroid) {
+      steps = _step(1, 'Tap <strong>⋮</strong> in the top-right corner of Chrome')
+            + _step(2, 'Tap <strong>Add to Home Screen</strong>')
+            + _step(3, 'Tap <strong>Add</strong> to confirm');
+    } else {
+      // Desktop Chrome/Edge fallback
+      steps = _step(1, 'Click the <strong>install icon ⊕</strong> in your browser's address bar')
+            + _step(2, 'Click <strong>Install</strong> in the popup to confirm');
+    }
+    if (_installSteps) _installSteps.innerHTML = steps;
+    if (_installModal) _installModal.style.display = 'flex';
+  }
+
+  function closeInstallModal() {
+    if (_installModal) _installModal.style.display = 'none';
   }
 </script>
 </body>
