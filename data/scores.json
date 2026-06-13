@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-13T20:49:59.196348+00:00",
+  "last_updated": "2026-06-13T22:02:14.639746+00:00",
   "standings": [
     {
       "name": "Nolan",
@@ -242,6 +242,109 @@
       "tiebreaker": 9
     },
     {
+      "name": "Joe Ricc",
+      "teams": [
+        {
+          "team": "France",
+          "wins": [],
+          "ties": [],
+          "losses": [],
+          "total": 0,
+          "last_result": null,
+          "next_game": {
+            "opponent": "Senegal",
+            "date": "2026-06-16T19:00Z",
+            "stage": "group-stage"
+          },
+          "eliminated": false,
+          "record": "0W-0D-0L"
+        },
+        {
+          "team": "Switzerland",
+          "wins": [],
+          "ties": [
+            {
+              "stage": "group-stage",
+              "opponent": "Qatar",
+              "pts": 1
+            }
+          ],
+          "losses": [],
+          "total": 1,
+          "last_result": {
+            "result": "D",
+            "score": "1-1",
+            "opponent": "Qatar",
+            "stage": "group-stage",
+            "date": "2026-06-13T19:00Z"
+          },
+          "next_game": {
+            "opponent": "Bosnia-Herzegovina",
+            "date": "2026-06-18T19:00Z",
+            "stage": "group-stage"
+          },
+          "eliminated": false,
+          "record": "0W-1D-0L"
+        },
+        {
+          "team": "Canada",
+          "wins": [],
+          "ties": [
+            {
+              "stage": "group-stage",
+              "opponent": "Bosnia-Herzegovina",
+              "pts": 1
+            }
+          ],
+          "losses": [],
+          "total": 1,
+          "last_result": {
+            "result": "D",
+            "score": "1-1",
+            "opponent": "Bosnia-Herzegovina",
+            "stage": "group-stage",
+            "date": "2026-06-12T19:00Z"
+          },
+          "next_game": {
+            "opponent": "Qatar",
+            "date": "2026-06-18T22:00Z",
+            "stage": "group-stage"
+          },
+          "eliminated": false,
+          "record": "0W-1D-0L"
+        },
+        {
+          "team": "Czechia",
+          "wins": [],
+          "ties": [],
+          "losses": [
+            {
+              "stage": "group-stage",
+              "opponent": "South Korea"
+            }
+          ],
+          "total": 0,
+          "last_result": {
+            "result": "L",
+            "score": "1-2",
+            "opponent": "South Korea",
+            "stage": "group-stage",
+            "date": "2026-06-12T02:00Z"
+          },
+          "next_game": {
+            "opponent": "South Africa",
+            "date": "2026-06-18T16:00Z",
+            "stage": "group-stage"
+          },
+          "eliminated": false,
+          "record": "0W-0D-1L"
+        }
+      ],
+      "total": 2,
+      "draft_pick": 4,
+      "tiebreaker": 4
+    },
+    {
       "name": "Devin",
       "teams": [
         {
@@ -318,99 +421,8 @@
         }
       ],
       "total": 1,
-      "draft_pick": 4,
-      "tiebreaker": 3
-    },
-    {
-      "name": "Joe Ricc",
-      "teams": [
-        {
-          "team": "France",
-          "wins": [],
-          "ties": [],
-          "losses": [],
-          "total": 0,
-          "last_result": null,
-          "next_game": {
-            "opponent": "Senegal",
-            "date": "2026-06-16T19:00Z",
-            "stage": "group-stage"
-          },
-          "eliminated": false,
-          "record": "0W-0D-0L"
-        },
-        {
-          "team": "Switzerland",
-          "wins": [],
-          "ties": [],
-          "losses": [],
-          "total": 0,
-          "last_result": null,
-          "next_game": {
-            "opponent": "Bosnia-Herzegovina",
-            "date": "2026-06-18T19:00Z",
-            "stage": "group-stage"
-          },
-          "eliminated": false,
-          "record": "0W-0D-0L"
-        },
-        {
-          "team": "Canada",
-          "wins": [],
-          "ties": [
-            {
-              "stage": "group-stage",
-              "opponent": "Bosnia-Herzegovina",
-              "pts": 1
-            }
-          ],
-          "losses": [],
-          "total": 1,
-          "last_result": {
-            "result": "D",
-            "score": "1-1",
-            "opponent": "Bosnia-Herzegovina",
-            "stage": "group-stage",
-            "date": "2026-06-12T19:00Z"
-          },
-          "next_game": {
-            "opponent": "Qatar",
-            "date": "2026-06-18T22:00Z",
-            "stage": "group-stage"
-          },
-          "eliminated": false,
-          "record": "0W-1D-0L"
-        },
-        {
-          "team": "Czechia",
-          "wins": [],
-          "ties": [],
-          "losses": [
-            {
-              "stage": "group-stage",
-              "opponent": "South Korea"
-            }
-          ],
-          "total": 0,
-          "last_result": {
-            "result": "L",
-            "score": "1-2",
-            "opponent": "South Korea",
-            "stage": "group-stage",
-            "date": "2026-06-12T02:00Z"
-          },
-          "next_game": {
-            "opponent": "South Africa",
-            "date": "2026-06-18T16:00Z",
-            "stage": "group-stage"
-          },
-          "eliminated": false,
-          "record": "0W-0D-1L"
-        }
-      ],
-      "total": 1,
       "draft_pick": 5,
-      "tiebreaker": 4
+      "tiebreaker": 3
     },
     {
       "name": "Luke",
@@ -893,31 +905,55 @@
     },
     "Qatar": {
       "wins": [],
-      "ties": [],
+      "ties": [
+        {
+          "stage": "group-stage",
+          "opponent": "Switzerland",
+          "pts": 1
+        }
+      ],
       "losses": [],
-      "total": 0,
-      "last_result": null,
+      "total": 1,
+      "last_result": {
+        "result": "D",
+        "score": "1-1",
+        "opponent": "Switzerland",
+        "stage": "group-stage",
+        "date": "2026-06-13T19:00Z"
+      },
       "next_game": {
         "opponent": "Canada",
         "date": "2026-06-18T22:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
-      "record": "0W-0D-0L"
+      "record": "0W-1D-0L"
     },
     "Switzerland": {
       "wins": [],
-      "ties": [],
+      "ties": [
+        {
+          "stage": "group-stage",
+          "opponent": "Qatar",
+          "pts": 1
+        }
+      ],
       "losses": [],
-      "total": 0,
-      "last_result": null,
+      "total": 1,
+      "last_result": {
+        "result": "D",
+        "score": "1-1",
+        "opponent": "Qatar",
+        "stage": "group-stage",
+        "date": "2026-06-13T19:00Z"
+      },
       "next_game": {
         "opponent": "Bosnia-Herzegovina",
         "date": "2026-06-18T19:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
-      "record": "0W-0D-0L"
+      "record": "0W-1D-0L"
     },
     "Brazil": {
       "wins": [],
