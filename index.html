@@ -59,6 +59,24 @@
     .refresh-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
     .refresh-btn:active { transform: rotate(180deg); }
     .refresh-btn svg { width: 16px; height: 16px; }
+    .install-btn {
+      position: absolute; top: 14px; left: 16px;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%; width: 34px; height: 34px;
+      display: none; align-items: center; justify-content: center;
+      cursor: pointer; color: rgba(255,255,255,0.75);
+      transition: background 0.15s;
+    }
+    .install-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+    .install-btn svg { width: 16px; height: 16px; }
+    .install-tip {
+      position: absolute; top: 56px; left: 10px;
+      background: rgba(1,51,105,0.97); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 8px; padding: 7px 11px; font-size: 0.7rem; color: rgba(255,255,255,0.9);
+      white-space: nowrap; pointer-events: none; z-index: 99;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .install-tip.visible { opacity: 1; }
     #status-dot {
       display: inline-block; width: 7px; height: 7px; border-radius: 50%;
       background: var(--green); margin-right: 5px; vertical-align: middle;
@@ -856,6 +874,15 @@
       <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
     </svg>
   </button>
+  <button class="install-btn" id="install-btn" onclick="handleInstall()" title="Add to Home Screen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/>
+      <polyline points="9 21 9 13 15 13 15 21"/>
+      <line x1="19" y1="5" x2="23" y2="5"/>
+      <line x1="21" y1="3" x2="21" y2="7"/>
+    </svg>
+  </button>
+  <div class="install-tip" id="install-tip"></div>
   <span class="trophy">🏆</span>
   <h1>Gridiron World Cup Challenge</h1>
   <p class="subtitle">2026 FIFA World Cup &nbsp;·&nbsp; Fantasy Draft Order</p>
@@ -2227,6 +2254,47 @@ setInterval(loadScores, 5 * 60 * 1000);
 setInterval(refreshLiveScores, 60 * 1000);
 // Group standings: every 5 min
 setInterval(refreshGroupStandings, 5 * 60 * 1000);
+
+  // ── PWA Install ──
+  let _installPrompt = null;
+  const _installBtn  = document.getElementById('install-btn');
+  const _installTip  = document.getElementById('install-tip');
+  const _isIOS       = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const _isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                     || ('standalone' in navigator && navigator.standalone);
+
+  function _showInstallBtn() {
+    if (_installBtn && !_isStandalone) _installBtn.style.display = 'flex';
+  }
+
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    _installPrompt = e;
+    _showInstallBtn();
+  });
+
+  window.addEventListener('appinstalled', () => {
+    _installPrompt = null;
+    if (_installBtn) _installBtn.style.display = 'none';
+  });
+
+  // iOS: show button always (no beforeinstallprompt fires)
+  if (_isIOS && !_isStandalone) _showInstallBtn();
+
+  function handleInstall() {
+    if (_installPrompt) {
+      _installPrompt.prompt();
+      _installPrompt.userChoice.then(() => {
+        _installPrompt = null;
+        if (_installBtn) _installBtn.style.display = 'none';
+      });
+    } else if (_isIOS) {
+      // Show tip pointing to iOS share flow
+      _installTip.textContent = "Tap ⬆ Share → Add to Home Screen";
+      _installTip.classList.add('visible');
+      setTimeout(() => _installTip.classList.remove('visible'), 3500);
+    }
+  }
 </script>
 </body>
 </html>
