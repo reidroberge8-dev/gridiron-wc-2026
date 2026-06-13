@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-13T22:02:14.639746+00:00",
+  "last_updated": "2026-06-13T23:02:21.570205+00:00",
   "standings": [
     {
       "name": "Nolan",
@@ -12,8 +12,8 @@
           "total": 0,
           "last_result": null,
           "next_game": {
-            "opponent": "Morocco",
-            "date": "2026-06-13T22:00Z",
+            "opponent": "Haiti",
+            "date": "2026-06-20T00:30Z",
             "stage": "group-stage"
           },
           "eliminated": false,
@@ -518,8 +518,8 @@
           "total": 0,
           "last_result": null,
           "next_game": {
-            "opponent": "Brazil",
-            "date": "2026-06-13T22:00Z",
+            "opponent": "Scotland",
+            "date": "2026-06-19T22:00Z",
             "stage": "group-stage"
           },
           "eliminated": false,
@@ -962,8 +962,8 @@
       "total": 0,
       "last_result": null,
       "next_game": {
-        "opponent": "Morocco",
-        "date": "2026-06-13T22:00Z",
+        "opponent": "Haiti",
+        "date": "2026-06-20T00:30Z",
         "stage": "group-stage"
       },
       "eliminated": false,
@@ -976,8 +976,8 @@
       "total": 0,
       "last_result": null,
       "next_game": {
-        "opponent": "Brazil",
-        "date": "2026-06-13T22:00Z",
+        "opponent": "Scotland",
+        "date": "2026-06-19T22:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
