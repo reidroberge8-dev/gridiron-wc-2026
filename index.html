@@ -1067,10 +1067,10 @@
           <div class="snap-hdr-bar"></div>
           <span class="snap-hdr-pts">Pts</span>
           <div class="snap-match-hdr">
-            <span class="snap-match-title">Matches</span>
+            <span class="snap-match-title" style="color:var(--blue)">Matches</span>
             <div class="snap-match-subs">
-              <span class="snap-hdr-stat">Done</span>
-              <span class="snap-hdr-stat">Left</span>
+              <span class="snap-hdr-stat">✓ Done</span>
+              <span class="snap-hdr-stat">📅 Left</span>
             </div>
           </div>
         </div>
@@ -1399,8 +1399,8 @@ function buildSnapshot(standings) {
       + `<div class="snap-bar-wrap"><div class="snap-bar-fill" style="width:${pct}%"></div></div>`
       + `<span class="snap-pts">${p.total || 0}<span class="snap-pts-lbl">pts</span></span>`
       + `<div class="snap-match-group">`
-      + `<span class="snap-stat">${totalDone}<span class="snap-stat-lbl"> Done</span></span>`
-      + `<span class="snap-stat ${anyLive ? 'has-live' : ''}">${leftDisplay}<span class="snap-stat-lbl"> Left</span></span>`
+      + `<span class="snap-stat">${totalDone}<span class="snap-stat-lbl"> ✓</span></span>`
+      + `<span class="snap-stat ${anyLive ? 'has-live' : ''}">${leftDisplay}<span class="snap-stat-lbl"> 📅</span></span>`
       + `</div>`
       + `</div>`;
   }).join('');
