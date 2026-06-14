@@ -1388,11 +1388,86 @@ function buildPlayerTeamMap(standings) {
 
 const ESPN_ALL = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20260611-20260719&limit=200";
 
+// Re-derives every player's points directly from completed ESPN events.
+// Called on every live poll so the leaderboard updates the moment ESPN marks a match final —
+// no dependency on GitHub Actions timing.
+function applyESPNPoints(events) {
+  if (!cachedStandingsData) return;
+  const OMIT = new Set(["3rd-place-match"]);
+  const TIE_PTS = { "group-stage": 1 };
+
+  // Build per-team: wins[], ties[], total from completed events
+  const teamWins  = {};
+  const teamTies  = {};
+  const teamTotals = {};
+
+  for (const e of events) {
+    const slug = e.season?.slug || "";
+    if (OMIT.has(slug)) continue;
+    const comp = e.competitions[0];
+    if (!comp.status.type.completed) continue;
+
+    const home  = comp.competitors.find(c => c.homeAway === "home");
+    const away  = comp.competitors.find(c => c.homeAway === "away");
+    if (!home || !away) continue;
+
+    const hName = home.team.displayName;
+    const aName = away.team.displayName;
+    const hWon  = home.winner;
+    const aWon  = away.winner;
+    const draw  = !hWon && !aWon;
+
+    [hName, aName].forEach(n => {
+      if (!teamWins[n])   teamWins[n]   = [];
+      if (!teamTies[n])   teamTies[n]   = [];
+      if (!teamTotals[n]) teamTotals[n] = 0;
+    });
+
+    if (draw) {
+      const pts = TIE_PTS[slug] || 0;
+      const opp = (n) => n === hName ? aName : hName;
+      [hName, aName].forEach(n => {
+        teamTies[n].push({ stage: slug, opponent: opp(n), pts });
+        teamTotals[n] += pts;
+      });
+    } else {
+      const winner = hWon ? hName : aName;
+      const loser  = hWon ? aName : hName;
+      const pts    = WIN_PTS[slug] || 3;
+      teamWins[winner].push({ stage: slug, opponent: loser, pts });
+      teamTotals[winner] += pts;
+    }
+  }
+
+  // Patch each player's team entries and recompute player total
+  for (const p of cachedStandingsData.standings) {
+    p.total = 0;
+    for (const t of p.teams) {
+      if (teamTotals[t.team] !== undefined) {
+        t.wins  = teamWins[t.team]  || [];
+        t.ties  = teamTies[t.team]  || [];
+        t.total = teamTotals[t.team] || 0;
+      }
+      p.total += t.total;
+    }
+  }
+
+  // Re-sort by points → tiebreaker
+  cachedStandingsData.standings.sort((a, b) =>
+    b.total !== a.total
+      ? b.total - a.total
+      : (TIEBREAKER[a.name] || 99) - (TIEBREAKER[b.name] || 99)
+  );
+  cachedStandingsData.standings.forEach((s, i) => s.draft_pick = i + 1);
+}
+
 async function refreshLiveScores() {
   try {
     const res  = await fetch(ESPN_ALL + "&t=" + Date.now());
     const data = await res.json();
     cachedLiveEvents = data.events || [];
+    applyESPNPoints(cachedLiveEvents);   // recompute standings live — no GH Actions dependency
+    buildStandings(cachedStandingsData);
     renderLiveScores(cachedLiveEvents);
     refreshBracket();  // update bracket with fresh events
     document.getElementById("live-updated").textContent = new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
@@ -1859,8 +1934,7 @@ function renderLiveScores(events) {
   // Render live games strip on Leaderboard tab
   renderLbLiveGames(events);
 
-  // Re-render standings cells to reflect live scores
-  if (cachedStandingsData) buildStandings(cachedStandingsData);
+  // standings already updated by applyESPNPoints above
 
   // EDT = UTC-4 throughout the World Cup (Jun-Jul 2026)
   function toETDay(isoStr) {
