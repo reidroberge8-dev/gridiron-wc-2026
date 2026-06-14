@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-14T03:20:34.602784+00:00",
+  "last_updated": "2026-06-14T08:56:15.527546+00:00",
   "standings": [
     {
       "name": "Nolan",
@@ -701,16 +701,27 @@
           "team": "T\u00fcrkiye",
           "wins": [],
           "ties": [],
-          "losses": [],
+          "losses": [
+            {
+              "stage": "group-stage",
+              "opponent": "Australia"
+            }
+          ],
           "total": 0,
-          "last_result": null,
-          "next_game": {
+          "last_result": {
+            "result": "L",
+            "score": "0-2",
             "opponent": "Australia",
-            "date": "2026-06-14T04:00Z",
+            "stage": "group-stage",
+            "date": "2026-06-14T04:00Z"
+          },
+          "next_game": {
+            "opponent": "Paraguay",
+            "date": "2026-06-20T03:00Z",
             "stage": "group-stage"
           },
           "eliminated": false,
-          "record": "0W-0D-0L"
+          "record": "0W-0D-1L"
         },
         {
           "team": "Sweden",
@@ -1095,32 +1106,55 @@
       "record": "1W-0D-0L"
     },
     "Australia": {
-      "wins": [],
+      "wins": [
+        {
+          "stage": "group-stage",
+          "opponent": "T\u00fcrkiye",
+          "pts": 3
+        }
+      ],
       "ties": [],
       "losses": [],
-      "total": 0,
-      "last_result": null,
-      "next_game": {
+      "total": 3,
+      "last_result": {
+        "result": "W",
+        "score": "2-0",
         "opponent": "T\u00fcrkiye",
-        "date": "2026-06-14T04:00Z",
+        "stage": "group-stage",
+        "date": "2026-06-14T04:00Z"
+      },
+      "next_game": {
+        "opponent": "United States",
+        "date": "2026-06-19T19:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
-      "record": "0W-0D-0L"
+      "record": "1W-0D-0L"
     },
     "T\u00fcrkiye": {
       "wins": [],
       "ties": [],
-      "losses": [],
+      "losses": [
+        {
+          "stage": "group-stage",
+          "opponent": "Australia"
+        }
+      ],
       "total": 0,
-      "last_result": null,
-      "next_game": {
+      "last_result": {
+        "result": "L",
+        "score": "0-2",
         "opponent": "Australia",
-        "date": "2026-06-14T04:00Z",
+        "stage": "group-stage",
+        "date": "2026-06-14T04:00Z"
+      },
+      "next_game": {
+        "opponent": "Paraguay",
+        "date": "2026-06-20T03:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
-      "record": "0W-0D-0L"
+      "record": "0W-0D-1L"
     },
     "Germany": {
       "wins": [],
