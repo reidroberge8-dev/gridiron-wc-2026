@@ -762,7 +762,7 @@
       font-size: 0.55rem; font-weight: 600; color: var(--muted);
       letter-spacing: 0.4px; text-transform: uppercase;
     }
-    .snap-hdr-pts   { min-width: 38px; text-align: right; font-size: 0.55rem; font-weight: 600; color: var(--muted); letter-spacing: 0.4px; text-transform: uppercase; }
+    .snap-hdr-pts   { min-width: 38px; text-align: right; font-size: 0.55rem; font-weight: 600; color: var(--muted); letter-spacing: 0.4px; text-transform: uppercase; flex-shrink: 0; }
     .snap-match-hdr {
       display: flex; flex-direction: column; align-items: center;
       border-left: 1px solid var(--border); padding-left: 10px; margin-left: 2px;
@@ -772,9 +772,9 @@
       font-size: 0.55rem; font-weight: 600; color: var(--muted);
       letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 2px; white-space: nowrap;
     }
-    .snap-match-subs { display: flex; gap: 4px; }
+    .snap-match-subs { display: flex; flex-direction: column; gap: 2px; align-items: center; }
     .snap-match-group {
-      display: flex; gap: 4px; align-items: center;
+      display: flex; flex-direction: column; gap: 2px; align-items: center;
       border-left: 1px solid var(--border); padding-left: 10px; margin-left: 2px;
       flex-shrink: 0;
     }
