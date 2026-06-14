@@ -763,8 +763,23 @@
       letter-spacing: 0.4px; text-transform: uppercase;
     }
     .snap-hdr-pts   { min-width: 38px; text-align: right; font-size: 0.55rem; font-weight: 600; color: var(--muted); letter-spacing: 0.4px; text-transform: uppercase; }
+    .snap-match-hdr {
+      display: flex; flex-direction: column; align-items: center;
+      border-left: 1px solid var(--border); padding-left: 10px; margin-left: 2px;
+      flex-shrink: 0;
+    }
+    .snap-match-title {
+      font-size: 0.55rem; font-weight: 600; color: var(--muted);
+      letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 2px; white-space: nowrap;
+    }
+    .snap-match-subs { display: flex; gap: 4px; }
+    .snap-match-group {
+      display: flex; gap: 4px; align-items: center;
+      border-left: 1px solid var(--border); padding-left: 10px; margin-left: 2px;
+      flex-shrink: 0;
+    }
     .snap-stat {
-      min-width: 40px; text-align: center; font-size: 0.85rem;
+      min-width: 38px; text-align: center; font-size: 0.85rem;
       font-weight: 700; color: var(--text); flex-shrink: 0;
     }
     .snap-stat-lbl { font-size: 0.58rem; color: var(--muted); font-weight: 400; }
@@ -1051,8 +1066,13 @@
           <span class="snap-hdr-fill"></span>
           <div class="snap-hdr-bar"></div>
           <span class="snap-hdr-pts">Pts</span>
-          <span class="snap-hdr-stat">✓ Done</span>
-          <span class="snap-hdr-stat">⏱ Left</span>
+          <div class="snap-match-hdr">
+            <span class="snap-match-title">Matches</span>
+            <div class="snap-match-subs">
+              <span class="snap-hdr-stat">Done</span>
+              <span class="snap-hdr-stat">Left</span>
+            </div>
+          </div>
         </div>
         <div class="snapshot-list" id="snapshot-list"></div>
       </div>
@@ -1378,8 +1398,10 @@ function buildSnapshot(standings) {
       + `<span class="snap-name">${p.name}</span>`
       + `<div class="snap-bar-wrap"><div class="snap-bar-fill" style="width:${pct}%"></div></div>`
       + `<span class="snap-pts">${p.total || 0}<span class="snap-pts-lbl">pts</span></span>`
-      + `<span class="snap-stat">${totalDone}<span class="snap-stat-lbl"> ✓</span></span>`
-      + `<span class="snap-stat ${anyLive ? 'has-live' : ''}">${leftDisplay}<span class="snap-stat-lbl"> ⏱</span></span>`
+      + `<div class="snap-match-group">`
+      + `<span class="snap-stat">${totalDone}<span class="snap-stat-lbl"> Done</span></span>`
+      + `<span class="snap-stat ${anyLive ? 'has-live' : ''}">${leftDisplay}<span class="snap-stat-lbl"> Left</span></span>`
+      + `</div>`
       + `</div>`;
   }).join('');
 }
