@@ -1,6 +1,98 @@
 {
-  "last_updated": "2026-06-14T15:29:53.399293+00:00",
+  "last_updated": "2026-06-14T19:45:52.266488+00:00",
   "standings": [
+    {
+      "name": "Joe Kasz",
+      "teams": [
+        {
+          "team": "Germany",
+          "wins": [
+            {
+              "stage": "group-stage",
+              "opponent": "Cura\u00e7ao",
+              "pts": 3
+            }
+          ],
+          "ties": [],
+          "losses": [],
+          "total": 3,
+          "last_result": {
+            "result": "W",
+            "score": "7-1",
+            "opponent": "Cura\u00e7ao",
+            "stage": "group-stage",
+            "date": "2026-06-14T17:00Z"
+          },
+          "next_game": {
+            "opponent": "Ivory Coast",
+            "date": "2026-06-20T20:00Z",
+            "stage": "group-stage"
+          },
+          "eliminated": false,
+          "record": "1W-0D-0L"
+        },
+        {
+          "team": "Mexico",
+          "wins": [
+            {
+              "stage": "group-stage",
+              "opponent": "South Africa",
+              "pts": 3
+            }
+          ],
+          "ties": [],
+          "losses": [],
+          "total": 3,
+          "last_result": {
+            "result": "W",
+            "score": "2-0",
+            "opponent": "South Africa",
+            "stage": "group-stage",
+            "date": "2026-06-11T19:00Z"
+          },
+          "next_game": {
+            "opponent": "South Korea",
+            "date": "2026-06-19T01:00Z",
+            "stage": "group-stage"
+          },
+          "eliminated": false,
+          "record": "1W-0D-0L"
+        },
+        {
+          "team": "Egypt",
+          "wins": [],
+          "ties": [],
+          "losses": [],
+          "total": 0,
+          "last_result": null,
+          "next_game": {
+            "opponent": "Belgium",
+            "date": "2026-06-15T19:00Z",
+            "stage": "group-stage"
+          },
+          "eliminated": false,
+          "record": "0W-0D-0L"
+        },
+        {
+          "team": "Ivory Coast",
+          "wins": [],
+          "ties": [],
+          "losses": [],
+          "total": 0,
+          "last_result": null,
+          "next_game": {
+            "opponent": "Ecuador",
+            "date": "2026-06-14T23:00Z",
+            "stage": "group-stage"
+          },
+          "eliminated": false,
+          "record": "0W-0D-0L"
+        }
+      ],
+      "total": 6,
+      "draft_pick": 1,
+      "tiebreaker": 5
+    },
     {
       "name": "Nolan",
       "teams": [
@@ -90,7 +182,7 @@
         }
       ],
       "total": 4,
-      "draft_pick": 1,
+      "draft_pick": 2,
       "tiebreaker": 2
     },
     {
@@ -182,88 +274,8 @@
         }
       ],
       "total": 4,
-      "draft_pick": 2,
-      "tiebreaker": 6
-    },
-    {
-      "name": "Joe Kasz",
-      "teams": [
-        {
-          "team": "Germany",
-          "wins": [],
-          "ties": [],
-          "losses": [],
-          "total": 0,
-          "last_result": null,
-          "next_game": {
-            "opponent": "Cura\u00e7ao",
-            "date": "2026-06-14T17:00Z",
-            "stage": "group-stage"
-          },
-          "eliminated": false,
-          "record": "0W-0D-0L"
-        },
-        {
-          "team": "Mexico",
-          "wins": [
-            {
-              "stage": "group-stage",
-              "opponent": "South Africa",
-              "pts": 3
-            }
-          ],
-          "ties": [],
-          "losses": [],
-          "total": 3,
-          "last_result": {
-            "result": "W",
-            "score": "2-0",
-            "opponent": "South Africa",
-            "stage": "group-stage",
-            "date": "2026-06-11T19:00Z"
-          },
-          "next_game": {
-            "opponent": "South Korea",
-            "date": "2026-06-19T01:00Z",
-            "stage": "group-stage"
-          },
-          "eliminated": false,
-          "record": "1W-0D-0L"
-        },
-        {
-          "team": "Egypt",
-          "wins": [],
-          "ties": [],
-          "losses": [],
-          "total": 0,
-          "last_result": null,
-          "next_game": {
-            "opponent": "Belgium",
-            "date": "2026-06-15T19:00Z",
-            "stage": "group-stage"
-          },
-          "eliminated": false,
-          "record": "0W-0D-0L"
-        },
-        {
-          "team": "Ivory Coast",
-          "wins": [],
-          "ties": [],
-          "losses": [],
-          "total": 0,
-          "last_result": null,
-          "next_game": {
-            "opponent": "Ecuador",
-            "date": "2026-06-14T23:00Z",
-            "stage": "group-stage"
-          },
-          "eliminated": false,
-          "record": "0W-0D-0L"
-        }
-      ],
-      "total": 3,
       "draft_pick": 3,
-      "tiebreaker": 5
+      "tiebreaker": 6
     },
     {
       "name": "Reid",
@@ -580,16 +592,27 @@
           "team": "Cura\u00e7ao",
           "wins": [],
           "ties": [],
-          "losses": [],
+          "losses": [
+            {
+              "stage": "group-stage",
+              "opponent": "Germany"
+            }
+          ],
           "total": 0,
-          "last_result": null,
-          "next_game": {
+          "last_result": {
+            "result": "L",
+            "score": "1-7",
             "opponent": "Germany",
-            "date": "2026-06-14T17:00Z",
+            "stage": "group-stage",
+            "date": "2026-06-14T17:00Z"
+          },
+          "next_game": {
+            "opponent": "Ecuador",
+            "date": "2026-06-21T00:00Z",
             "stage": "group-stage"
           },
           "eliminated": false,
-          "record": "0W-0D-0L"
+          "record": "0W-0D-1L"
         }
       ],
       "total": 0,
@@ -1157,32 +1180,55 @@
       "record": "0W-0D-1L"
     },
     "Germany": {
-      "wins": [],
+      "wins": [
+        {
+          "stage": "group-stage",
+          "opponent": "Cura\u00e7ao",
+          "pts": 3
+        }
+      ],
       "ties": [],
       "losses": [],
-      "total": 0,
-      "last_result": null,
-      "next_game": {
+      "total": 3,
+      "last_result": {
+        "result": "W",
+        "score": "7-1",
         "opponent": "Cura\u00e7ao",
-        "date": "2026-06-14T17:00Z",
+        "stage": "group-stage",
+        "date": "2026-06-14T17:00Z"
+      },
+      "next_game": {
+        "opponent": "Ivory Coast",
+        "date": "2026-06-20T20:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
-      "record": "0W-0D-0L"
+      "record": "1W-0D-0L"
     },
     "Cura\u00e7ao": {
       "wins": [],
       "ties": [],
-      "losses": [],
+      "losses": [
+        {
+          "stage": "group-stage",
+          "opponent": "Germany"
+        }
+      ],
       "total": 0,
-      "last_result": null,
-      "next_game": {
+      "last_result": {
+        "result": "L",
+        "score": "1-7",
         "opponent": "Germany",
-        "date": "2026-06-14T17:00Z",
+        "stage": "group-stage",
+        "date": "2026-06-14T17:00Z"
+      },
+      "next_game": {
+        "opponent": "Ecuador",
+        "date": "2026-06-21T00:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
-      "record": "0W-0D-0L"
+      "record": "0W-0D-1L"
     },
     "Netherlands": {
       "wins": [],
