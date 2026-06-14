@@ -750,9 +750,33 @@
     .snap-bar-fill { height: 100%; border-radius: 3px; background: var(--gold); transition: width 0.4s ease; }
     .snap-pts { font-size: 0.88rem; font-weight: 800; color: var(--gold); min-width: 38px; text-align: right; flex-shrink: 0; }
     .snap-pts-lbl { font-size: 0.6rem; color: var(--muted); margin-left: 2px; }
+    .snap-hdr-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 8px 6px; margin-bottom: 2px;
+      border-bottom: 1px solid var(--border);
+    }
+    .snap-hdr-fill  { flex: 1; }
+    .snap-hdr-bar   { flex: 2; }
+    .snap-hdr-stat  {
+      min-width: 40px; text-align: center;
+      font-size: 0.55rem; font-weight: 600; color: var(--muted);
+      letter-spacing: 0.4px; text-transform: uppercase;
+    }
+    .snap-hdr-pts   { min-width: 38px; text-align: right; font-size: 0.55rem; font-weight: 600; color: var(--muted); letter-spacing: 0.4px; text-transform: uppercase; }
+    .snap-stat {
+      min-width: 40px; text-align: center; font-size: 0.85rem;
+      font-weight: 700; color: var(--text); flex-shrink: 0;
+    }
+    .snap-stat-lbl { font-size: 0.58rem; color: var(--muted); font-weight: 400; }
+    .snap-stat.has-live { color: var(--green); }
     @media (max-width: 700px) {
       .snap-bar-wrap { flex: 1.5; }
       .snap-name { font-size: 0.82rem; }
+      .snap-hdr-bar  { flex: 1.5; }
+    }
+    @media (max-width: 420px) {
+      .snap-hdr-bar, .snap-bar-wrap { display: none; }
+      .snap-hdr-bar { display: none; }
     }
 
     /* ── Scores & Schedule view ── */
@@ -1022,6 +1046,14 @@
     <div class="main-col">
       <div class="snapshot-bar" id="snapshot-bar" style="display:none">
         <div class="snapshot-title">Live Standings</div>
+        <div class="snap-hdr-row">
+          <div style="width:26px;flex-shrink:0"></div>
+          <span class="snap-hdr-fill"></span>
+          <div class="snap-hdr-bar"></div>
+          <span class="snap-hdr-pts">Pts</span>
+          <span class="snap-hdr-stat">✓ Done</span>
+          <span class="snap-hdr-stat">⏱ Left</span>
+        </div>
         <div class="snapshot-list" id="snapshot-list"></div>
       </div>
 
@@ -1298,16 +1330,56 @@ function buildSnapshot(standings) {
   bar.style.display = 'block';
   const medals = ['🥇','🥈','🥉'];
   const maxPts = Math.max(...standings.map(p => p.total || 0), 1);
+  const OMIT   = new Set(["3rd-place-match"]);
+
+  // Count completed / upcoming+live matches per team from live ESPN events
+  function teamCounts(teamName) {
+    let done = 0, left = 0, live = 0;
+    for (const e of (cachedLiveEvents || [])) {
+      if (OMIT.has(e.season?.slug)) continue;
+      const comp = e.competitions[0];
+      if (!comp.competitors.some(c => c.team.displayName === teamName)) continue;
+      const st = comp.status.type.name;
+      if (FINAL_STATUSES.has(st))        done++;
+      else if (LIVE_STATUSES.has(st))  { left++; live++; }
+      else if (st === "STATUS_SCHEDULED") left++;
+    }
+    return { done, left, live };
+  }
+
   list.innerHTML = standings.map(p => {
     const rank  = p.draft_pick;
     const rc    = rank <= 3 ? `rank-${rank}` : 'rank-other';
     const label = rank <= 3 ? medals[rank - 1] : rank;
     const pct   = Math.round(((p.total || 0) / maxPts) * 100);
+
+    // Sum match counts across all 4 teams
+    let totalDone = 0, totalLeft = 0, anyLive = false;
+    for (const t of (p.teams || [])) {
+      const c = teamCounts(t.team);
+      totalDone += c.done;
+      totalLeft += c.left;
+      if (c.live) anyLive = true;
+    }
+
+    // Fallback to wins+ties+losses from scores.json if ESPN events not loaded yet
+    if (totalDone === 0 && totalLeft === 0) {
+      for (const t of (p.teams || [])) {
+        totalDone += (t.wins||[]).length + (t.ties||[]).length + (t.losses||[]).length;
+      }
+    }
+
+    const leftDisplay = anyLive
+      ? `<span style="color:var(--green)">●</span>${totalLeft}`
+      : totalLeft;
+
     return `<div class="snap-row">`
       + `<div class="snap-rank ${rc}">${label}</div>`
       + `<span class="snap-name">${p.name}</span>`
       + `<div class="snap-bar-wrap"><div class="snap-bar-fill" style="width:${pct}%"></div></div>`
       + `<span class="snap-pts">${p.total || 0}<span class="snap-pts-lbl">pts</span></span>`
+      + `<span class="snap-stat">${totalDone}<span class="snap-stat-lbl"> ✓</span></span>`
+      + `<span class="snap-stat ${anyLive ? 'has-live' : ''}">${leftDisplay}<span class="snap-stat-lbl"> ⏱</span></span>`
       + `</div>`;
   }).join('');
 }
