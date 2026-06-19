@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-18T21:14:48.862786+00:00",
+  "last_updated": "2026-06-19T12:35:28.542404+00:00",
   "standings": [
     {
       "name": "Joe Kasz",
@@ -38,25 +38,30 @@
               "stage": "group-stage",
               "opponent": "South Africa",
               "pts": 3
+            },
+            {
+              "stage": "group-stage",
+              "opponent": "South Korea",
+              "pts": 3
             }
           ],
           "ties": [],
           "losses": [],
-          "total": 3,
+          "total": 6,
           "last_result": {
             "result": "W",
-            "score": "2-0",
-            "opponent": "South Africa",
+            "score": "1-0",
+            "opponent": "South Korea",
             "stage": "group-stage",
-            "date": "2026-06-11T19:00Z"
+            "date": "2026-06-19T01:00Z"
           },
           "next_game": {
-            "opponent": "South Korea",
-            "date": "2026-06-19T01:00Z",
+            "opponent": "Czechia",
+            "date": "2026-06-25T01:00Z",
             "stage": "group-stage"
           },
           "eliminated": false,
-          "record": "1W-0D-0L"
+          "record": "2W-0D-0L"
         },
         {
           "team": "Egypt",
@@ -113,7 +118,7 @@
           "record": "1W-0D-0L"
         }
       ],
-      "total": 10,
+      "total": 13,
       "draft_pick": 1,
       "tiebreaker": 5
     },
@@ -182,7 +187,13 @@
         },
         {
           "team": "Canada",
-          "wins": [],
+          "wins": [
+            {
+              "stage": "group-stage",
+              "opponent": "Qatar",
+              "pts": 3
+            }
+          ],
           "ties": [
             {
               "stage": "group-stage",
@@ -191,21 +202,21 @@
             }
           ],
           "losses": [],
-          "total": 1,
+          "total": 4,
           "last_result": {
-            "result": "D",
-            "score": "1-1",
-            "opponent": "Bosnia-Herzegovina",
+            "result": "W",
+            "score": "6-0",
+            "opponent": "Qatar",
             "stage": "group-stage",
-            "date": "2026-06-12T19:00Z"
+            "date": "2026-06-18T22:00Z"
           },
           "next_game": {
-            "opponent": "Qatar",
-            "date": "2026-06-18T22:00Z",
+            "opponent": "Switzerland",
+            "date": "2026-06-24T19:00Z",
             "stage": "group-stage"
           },
           "eliminated": false,
-          "record": "0W-1D-0L"
+          "record": "1W-1D-0L"
         },
         {
           "team": "Czechia",
@@ -240,7 +251,7 @@
           "record": "0W-1D-1L"
         }
       ],
-      "total": 9,
+      "total": 12,
       "draft_pick": 2,
       "tiebreaker": 4
     },
@@ -311,22 +322,27 @@
             }
           ],
           "ties": [],
-          "losses": [],
+          "losses": [
+            {
+              "stage": "group-stage",
+              "opponent": "Mexico"
+            }
+          ],
           "total": 3,
           "last_result": {
-            "result": "W",
-            "score": "2-1",
-            "opponent": "Czechia",
+            "result": "L",
+            "score": "0-1",
+            "opponent": "Mexico",
             "stage": "group-stage",
-            "date": "2026-06-12T02:00Z"
+            "date": "2026-06-19T01:00Z"
           },
           "next_game": {
-            "opponent": "Mexico",
-            "date": "2026-06-19T01:00Z",
+            "opponent": "South Africa",
+            "date": "2026-06-25T01:00Z",
             "stage": "group-stage"
           },
           "eliminated": false,
-          "record": "1W-0D-0L"
+          "record": "1W-0D-1L"
         },
         {
           "team": "Ghana",
@@ -1061,25 +1077,30 @@
           "stage": "group-stage",
           "opponent": "South Africa",
           "pts": 3
+        },
+        {
+          "stage": "group-stage",
+          "opponent": "South Korea",
+          "pts": 3
         }
       ],
       "ties": [],
       "losses": [],
-      "total": 3,
+      "total": 6,
       "last_result": {
         "result": "W",
-        "score": "2-0",
-        "opponent": "South Africa",
+        "score": "1-0",
+        "opponent": "South Korea",
         "stage": "group-stage",
-        "date": "2026-06-11T19:00Z"
+        "date": "2026-06-19T01:00Z"
       },
       "next_game": {
-        "opponent": "South Korea",
-        "date": "2026-06-19T01:00Z",
+        "opponent": "Czechia",
+        "date": "2026-06-25T01:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
-      "record": "1W-0D-0L"
+      "record": "2W-0D-0L"
     },
     "South Africa": {
       "wins": [],
@@ -1121,22 +1142,27 @@
         }
       ],
       "ties": [],
-      "losses": [],
+      "losses": [
+        {
+          "stage": "group-stage",
+          "opponent": "Mexico"
+        }
+      ],
       "total": 3,
       "last_result": {
-        "result": "W",
-        "score": "2-1",
-        "opponent": "Czechia",
+        "result": "L",
+        "score": "0-1",
+        "opponent": "Mexico",
         "stage": "group-stage",
-        "date": "2026-06-12T02:00Z"
+        "date": "2026-06-19T01:00Z"
       },
       "next_game": {
-        "opponent": "Mexico",
-        "date": "2026-06-19T01:00Z",
+        "opponent": "South Africa",
+        "date": "2026-06-25T01:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
-      "record": "1W-0D-0L"
+      "record": "1W-0D-1L"
     },
     "Czechia": {
       "wins": [],
@@ -1170,7 +1196,13 @@
       "record": "0W-1D-1L"
     },
     "Canada": {
-      "wins": [],
+      "wins": [
+        {
+          "stage": "group-stage",
+          "opponent": "Qatar",
+          "pts": 3
+        }
+      ],
       "ties": [
         {
           "stage": "group-stage",
@@ -1179,21 +1211,21 @@
         }
       ],
       "losses": [],
-      "total": 1,
+      "total": 4,
       "last_result": {
-        "result": "D",
-        "score": "1-1",
-        "opponent": "Bosnia-Herzegovina",
+        "result": "W",
+        "score": "6-0",
+        "opponent": "Qatar",
         "stage": "group-stage",
-        "date": "2026-06-12T19:00Z"
+        "date": "2026-06-18T22:00Z"
       },
       "next_game": {
-        "opponent": "Qatar",
-        "date": "2026-06-18T22:00Z",
+        "opponent": "Switzerland",
+        "date": "2026-06-24T19:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
-      "record": "0W-1D-0L"
+      "record": "1W-1D-0L"
     },
     "Bosnia-Herzegovina": {
       "wins": [],
@@ -1286,22 +1318,27 @@
           "pts": 1
         }
       ],
-      "losses": [],
+      "losses": [
+        {
+          "stage": "group-stage",
+          "opponent": "Canada"
+        }
+      ],
       "total": 1,
       "last_result": {
-        "result": "D",
-        "score": "1-1",
-        "opponent": "Switzerland",
+        "result": "L",
+        "score": "0-6",
+        "opponent": "Canada",
         "stage": "group-stage",
-        "date": "2026-06-13T19:00Z"
+        "date": "2026-06-18T22:00Z"
       },
       "next_game": {
-        "opponent": "Canada",
-        "date": "2026-06-18T22:00Z",
+        "opponent": "Bosnia-Herzegovina",
+        "date": "2026-06-24T19:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
-      "record": "0W-1D-0L"
+      "record": "0W-1D-1L"
     },
     "Switzerland": {
       "wins": [
@@ -2479,20 +2516,6 @@
       "eliminated": false,
       "record": "0W-0D-0L"
     },
-    "Group A Winner": {
-      "wins": [],
-      "ties": [],
-      "losses": [],
-      "total": 0,
-      "last_result": null,
-      "next_game": {
-        "opponent": "Third Place Group C/E/F/H/I",
-        "date": "2026-07-01T01:00Z",
-        "stage": "round-of-32"
-      },
-      "eliminated": false,
-      "record": "0W-0D-0L"
-    },
     "Third Place Group C/E/F/H/I": {
       "wins": [],
       "ties": [],
@@ -2500,7 +2523,7 @@
       "total": 0,
       "last_result": null,
       "next_game": {
-        "opponent": "Group A Winner",
+        "opponent": "Mexico",
         "date": "2026-07-01T01:00Z",
         "stage": "round-of-32"
       },
