@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-21T10:46:47.900570+00:00",
+  "last_updated": "2026-06-21T16:56:14.333295+00:00",
   "standings": [
     {
       "name": "Joe Kasz",
@@ -668,8 +668,8 @@
             "date": "2026-06-15T16:00Z"
           },
           "next_game": {
-            "opponent": "Saudi Arabia",
-            "date": "2026-06-21T16:00Z",
+            "opponent": "Uruguay",
+            "date": "2026-06-27T00:00Z",
             "stage": "group-stage"
           },
           "eliminated": false,
@@ -1899,8 +1899,8 @@
         "date": "2026-06-15T16:00Z"
       },
       "next_game": {
-        "opponent": "Saudi Arabia",
-        "date": "2026-06-21T16:00Z",
+        "opponent": "Uruguay",
+        "date": "2026-06-27T00:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
@@ -2003,8 +2003,8 @@
         "date": "2026-06-15T22:00Z"
       },
       "next_game": {
-        "opponent": "Spain",
-        "date": "2026-06-21T16:00Z",
+        "opponent": "Cape Verde",
+        "date": "2026-06-27T00:00Z",
         "stage": "group-stage"
       },
       "eliminated": false,
