@@ -794,6 +794,30 @@
       .snap-hdr-bar { display: none; }
     }
 
+
+    /* ── Records tables ── */
+    .records-section { display: flex; gap: 14px; margin-top: 18px; flex-wrap: wrap; }
+    .records-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 11px 14px; flex: 1; min-width: 200px;
+    }
+    .records-card h3 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; }
+    .rec-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .rec-table thead th { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); font-weight: 600; padding: 2px 5px 5px; text-align: center; }
+    .rec-table thead th:first-child { text-align: left; }
+    .rec-table tbody tr { border-top: 1px solid var(--border); }
+    .rec-table tbody tr:first-child { border-top: none; }
+    .rec-name { padding: 5px 5px; font-weight: 600; color: var(--text); }
+    .rec-team { padding: 5px 5px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+    .rec-num  { text-align: center; padding: 5px 4px; font-weight: 700; min-width: 26px; }
+    .rec-w    { color: var(--green); }
+    .rec-d    { color: #905c00; }
+    .rec-l    { color: var(--red); }
+    .rec-gp   { color: var(--muted); font-size: 0.72rem; }
+
+    /* ── Bracket owner tag ── */
+    .bracket-owner { font-size: 0.58rem; color: var(--blue); font-weight: 600; margin-left: 4px; white-space: nowrap; }
+
     /* ── Scores & Schedule view ── */
     #scores-view { display: none; max-width: 860px; margin: 0 auto; padding: 16px 16px 48px; }
     /* Sub-tab bar */
@@ -993,19 +1017,18 @@
 </div>
 
 <div id="scores-view">
-  <!-- Sub-tab bar -->
+  <!-- Sub-tab bar: Matches + Groups -->
   <div class="scores-tabs">
-    <button class="scores-tab active" id="stab-scores"   onclick="switchScoresTab('scores')">⚽ Scores</button>
-    <button class="scores-tab"        id="stab-schedule" onclick="switchScoresTab('schedule')">📅 Schedule</button>
-    <button class="scores-tab"        id="stab-groups"   onclick="switchScoresTab('groups')">📊 Groups</button>
+    <button class="scores-tab active" id="stab-matches" onclick="switchScoresTab('matches')">⚽ Matches</button>
+    <button class="scores-tab"        id="stab-groups"  onclick="switchScoresTab('groups')">📊 Groups</button>
   </div>
 
-  <!-- Scores: live + all completed -->
-  <div class="scores-panel" id="scores-panel">
+  <!-- Unified matches panel: live + completed + upcoming all in one -->
+  <div class="scores-panel" id="matches-panel">
     <div class="live-panel">
       <div class="live-panel-header">
         <div class="live-dot inactive" id="live-dot"></div>
-        <span class="live-panel-title" id="live-title">Scores</span>
+        <span class="live-panel-title" id="live-title">All Matches</span>
         <span class="live-updated" id="live-updated"></span>
       </div>
       <div class="scores-filter-bar" id="scores-filter-bar">
@@ -1019,26 +1042,6 @@
         <button class="scores-filter-clear" id="scores-filter-clear" style="display:none" onclick="clearScoresFilter()">✕ Clear</button>
       </div>
       <div id="live-games"><div class="live-empty">Loading…</div></div>
-    </div>
-  </div>
-
-  <!-- Schedule: upcoming only -->
-  <div class="scores-panel" id="schedule-panel" style="display:none">
-    <div class="live-panel">
-      <div class="live-panel-header">
-        <span class="live-panel-title">Schedule</span>
-      </div>
-      <div class="scores-filter-bar" id="sched-filter-bar">
-        <span class="scores-filter-lbl">Filter by</span>
-        <select class="scores-filter-select" id="sched-filter-type" onchange="onFilterTypeChange('sched')">
-          <option value="all">All Games</option>
-          <option value="owner">Owner</option>
-          <option value="team">Team</option>
-        </select>
-        <select class="scores-filter-select" id="sched-filter-value" style="display:none" onchange="applyScoresFilter()"></select>
-        <button class="scores-filter-clear" id="sched-filter-clear" style="display:none" onclick="clearScoresFilter()">✕ Clear</button>
-      </div>
-      <div id="schedule-games"><div class="live-empty">Loading…</div></div>
     </div>
   </div>
 
@@ -1117,6 +1120,17 @@
         <span class="key-item"><span class="key-pts">+6</span> QF Win</span>
         <span class="key-item"><span class="key-pts">+7</span> SF Win</span>
         <span class="key-item"><span class="key-pts">+8</span> Final Win</span>
+      </div>
+
+      <div class="records-section" id="records-section" style="display:none">
+        <div class="records-card">
+          <h3>Player Records</h3>
+          <div id="player-records"></div>
+        </div>
+        <div class="records-card">
+          <h3>Team Records</h3>
+          <div id="team-records"></div>
+        </div>
       </div>
     </div>
 
@@ -1481,6 +1495,96 @@ function buildPlayerTeamMap(standings) {
 }
 
 const ESPN_ALL = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20260611-20260719&limit=200";
+
+
+/* ── Player & Team Records ── */
+function computeRecords(events) {
+  const teamRec = {};
+  const OMIT = new Set(["3rd-place-match"]);
+  for (const e of events) {
+    const slug = e.season?.slug || "";
+    if (OMIT.has(slug)) continue;
+    const comp = e.competitions[0];
+    if (!comp.status.type.completed) continue;
+    const home = comp.competitors.find(c => c.homeAway === "home");
+    const away = comp.competitors.find(c => c.homeAway === "away");
+    if (!home || !away) continue;
+    const hName = home.team.displayName;
+    const aName = away.team.displayName;
+    const hWon  = home.winner, aWon = away.winner;
+    const draw  = !hWon && !aWon;
+    for (const [name, won] of [[hName, hWon],[aName, aWon]]) {
+      if (!teamRec[name]) teamRec[name] = {w:0,d:0,l:0};
+      if (draw) teamRec[name].d++;
+      else if (won) teamRec[name].w++;
+      else teamRec[name].l++;
+    }
+  }
+  const playerRec = {};
+  if (cachedStandingsData) {
+    for (const p of cachedStandingsData.standings) {
+      const rec = {w:0,d:0,l:0};
+      for (const t of p.teams) {
+        const tr = teamRec[t.team];
+        if (tr) { rec.w += tr.w; rec.d += tr.d; rec.l += tr.l; }
+      }
+      playerRec[p.name] = rec;
+    }
+  }
+  return { teamRec, playerRec };
+}
+
+function buildRecords() {
+  if (!cachedLiveEvents || !cachedStandingsData) return;
+  const { teamRec, playerRec } = computeRecords(cachedLiveEvents);
+  const section = document.getElementById("records-section");
+  if (!section) return;
+
+  // Player records table
+  const pRows = cachedStandingsData.standings.map(p => {
+    const r = playerRec[p.name] || {w:0,d:0,l:0};
+    const gp = r.w + r.d + r.l;
+    return `<tr>
+      <td class="rec-name">${p.name}</td>
+      <td class="rec-num rec-w">${r.w}</td>
+      <td class="rec-num rec-d">${r.d}</td>
+      <td class="rec-num rec-l">${r.l}</td>
+      <td class="rec-num rec-gp">${gp}</td>
+    </tr>`;
+  }).join("");
+  const pEl = document.getElementById("player-records");
+  if (pEl) pEl.innerHTML = `<table class="rec-table">
+    <thead><tr><th>Player</th><th>W</th><th>D</th><th>L</th><th>GP</th></tr></thead>
+    <tbody>${pRows}</tbody>
+  </table>`;
+
+  // Team records — only teams that have played, sorted W desc then D desc
+  const played = Object.entries(teamRec)
+    .filter(([,r]) => r.w + r.d + r.l > 0)
+    .sort((a,b) => (b[1].w - a[1].w) || (b[1].d - a[1].d) || (a[1].l - b[1].l) || a[0].localeCompare(b[0]));
+  const tRows = played.map(([name, r]) => {
+    const gp    = r.w + r.d + r.l;
+    const owner = (playerTeamMap[name] || [])[0];
+    const ownerTag = owner ? `<span class="team-owner-tag">${owner}</span>` : "";
+    return `<tr>
+      <td class="rec-name"><span style="margin-right:3px">${flag(name)}</span>${name}${ownerTag}</td>
+      <td class="rec-num rec-w">${r.w}</td>
+      <td class="rec-num rec-d">${r.d}</td>
+      <td class="rec-num rec-l">${r.l}</td>
+      <td class="rec-num rec-gp">${gp}</td>
+    </tr>`;
+  }).join("");
+  const tEl = document.getElementById("team-records");
+  if (tEl) tEl.innerHTML = tRows
+    ? `<table class="rec-table">
+        <thead><tr><th>Team</th><th>W</th><th>D</th><th>L</th><th>GP</th></tr></thead>
+        <tbody>${tRows}</tbody>
+      </table>`
+    : `<div class="live-empty" style="font-size:0.75rem">No matches played yet.</div>`;
+
+  const anyPlayed = played.length > 0;
+  section.style.display = anyPlayed ? "" : "none";
+}
 
 // Re-derives every player's points directly from completed ESPN events.
 // Called on every live poll so the leaderboard updates the moment ESPN marks a match final —
@@ -1932,9 +2036,9 @@ function renderLbLiveGames(allEvents) {
 let scoresFilter = { type: "all", value: "" };
 
 function onFilterTypeChange(panel) {
-  const typeEl  = document.getElementById(`${panel}-filter-type`);
-  const valEl   = document.getElementById(`${panel}-filter-value`);
-  const clearEl = document.getElementById(`${panel}-filter-clear`);
+  const typeEl  = document.getElementById("scores-filter-type");
+  const valEl   = document.getElementById("scores-filter-value");
+  const clearEl = document.getElementById("scores-filter-clear");
   const type    = typeEl.value;
 
   if (type === "all") {
@@ -1965,27 +2069,22 @@ function onFilterTypeChange(panel) {
 }
 
 function applyScoresFilter() {
-  // Determine which panel is active
-  const sPanel = document.getElementById("scores-panel");
-  const panel  = (sPanel && sPanel.style.display !== "none") ? "scores" : "sched";
-  const typeEl = document.getElementById(`${panel}-filter-type`);
-  const valEl  = document.getElementById(`${panel}-filter-value`);
-  const clearEl = document.getElementById(`${panel}-filter-clear`);
-  const value  = valEl?.value || "";
-  scoresFilter = { type: typeEl?.value || "all", value };
-  clearEl.style.display = value ? "" : "none";
+  const typeEl  = document.getElementById("scores-filter-type");
+  const valEl   = document.getElementById("scores-filter-value");
+  const clearEl = document.getElementById("scores-filter-clear");
+  const value   = valEl?.value || "";
+  scoresFilter  = { type: typeEl?.value || "all", value };
+  if (clearEl) clearEl.style.display = value ? "" : "none";
   if (cachedLiveEvents) renderLiveScores(cachedLiveEvents);
 }
 
 function clearScoresFilter() {
-  ["scores","sched"].forEach(panel => {
-    const t = document.getElementById(`${panel}-filter-type`);
-    const v = document.getElementById(`${panel}-filter-value`);
-    const c = document.getElementById(`${panel}-filter-clear`);
-    if (t) t.value = "all";
-    if (v) { v.style.display = "none"; v.innerHTML = ""; }
-    if (c) c.style.display = "none";
-  });
+  const t = document.getElementById("scores-filter-type");
+  const v = document.getElementById("scores-filter-value");
+  const c = document.getElementById("scores-filter-clear");
+  if (t) t.value = "all";
+  if (v) { v.style.display = "none"; v.innerHTML = ""; }
+  if (c) c.style.display = "none";
   scoresFilter = { type: "all", value: "" };
   if (cachedLiveEvents) renderLiveScores(cachedLiveEvents);
 }
@@ -2043,43 +2142,41 @@ function renderLiveScores(events) {
 
   dot.className = live.length ? "live-dot" : "live-dot inactive";
 
-  // ── Scores panel: live now + all completed (most recent day first) ──
-  let scoresHtml = "";
-  if (live.length) {
-    scoresHtml += `<div class="section-divider live-hdr">● Live Now (${live.length})</div>`;
-    scoresHtml += live.map(gameCard).join("");
-  }
-  if (completed.length) {
-    const byDay = {};
-    for (const e of completed) {
-      const day = toETDay(e.date);
-      if (!byDay[day]) byDay[day] = [];
-      byDay[day].push(e);
-    }
-    for (const day of Object.keys(byDay).sort().reverse()) {
-      scoresHtml += `<div class="day-header">${dayLabel(day+"T16:00:00Z")}</div>`;
-      scoresHtml += byDay[day].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(gameCard).join("");
-    }
-  }
-  document.getElementById("live-games").innerHTML =
-    scoresHtml || `<div class="live-empty">No completed matches yet.</div>`;
+  // ── Unified matches panel: live → upcoming (soonest first) → completed (most recent first) ──
+  let allHtml = "";
 
-  // ── Schedule panel: upcoming only, chronological ──
-  let schedHtml = "";
-  if (upcoming.length) {
-    const byDay = {};
-    for (const e of upcoming) {
-      const day = toETDay(e.date);
-      if (!byDay[day]) byDay[day] = [];
-      byDay[day].push(e);
-    }
-    for (const day of Object.keys(byDay).sort()) {
-      schedHtml += `<div class="day-header sched-hdr">📅 ${dayLabel(day+"T16:00:00Z")}</div>`;
-      schedHtml += byDay[day].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(gameCard).join("");
-    }
+  // 1. Live now at top
+  if (live.length) {
+    allHtml += `<div class="section-divider live-hdr">● Live Now (${live.length})</div>`;
+    allHtml += live.map(gameCard).join("");
   }
-  document.getElementById("schedule-games").innerHTML =
-    schedHtml || `<div class="live-empty">No upcoming matches scheduled.</div>`;
+
+  // 2. All non-live events grouped by ET day
+  const nonLive = filtered.filter(e => !LIVE_STATUSES.has(e.competitions[0].status.type.name));
+  const byDay = {};
+  for (const e of nonLive) {
+    const day = toETDay(e.date);
+    if (!byDay[day]) byDay[day] = [];
+    byDay[day].push(e);
+  }
+
+  const todayStr = new Date(Date.now() - 4*3600*1000).toISOString().slice(0,10);
+  const futureDays = Object.keys(byDay).filter(d => d >= todayStr).sort();          // today + upcoming ascending
+  const pastDays   = Object.keys(byDay).filter(d => d < todayStr).sort().reverse(); // completed descending
+
+  for (const day of [...futureDays, ...pastDays]) {
+    const dayEvts   = byDay[day].sort((a,b) => new Date(a.date) - new Date(b.date));
+    const isFuture  = day > todayStr;
+    const hdrClass  = isFuture ? "day-header sched-hdr" : "day-header";
+    const prefix    = isFuture ? "📅 " : "";
+    allHtml += `<div class="${hdrClass}">${prefix}${dayLabel(day+"T16:00:00Z")}</div>`;
+    allHtml += dayEvts.map(gameCard).join("");
+  }
+
+  document.getElementById("live-games").innerHTML =
+    allHtml || `<div class="live-empty">No matches yet.</div>`;
+
+  buildRecords();
 }
 
 /* ── Main load ── */
@@ -2325,7 +2422,7 @@ let currentScoresTab = "scores";
 
 function switchScoresTab(tab) {
   currentScoresTab = tab;
-  ["scores","schedule","groups"].forEach(t => {
+  ["matches","groups"].forEach(t => {
     document.getElementById("stab-" + t).classList.toggle("active", t === tab);
     document.getElementById(t + "-panel").style.display = t === tab ? "block" : "none";
   });
@@ -2378,6 +2475,7 @@ function getEventRoundSlug(e) {
 function bracketTeamRow(name, score, won, isFinished) {
   const isTbd    = !name || name === "TBD" || name.toLowerCase().includes("winner") || name.toLowerCase().includes("place");
   const owned    = !isTbd && !!playerTeamMap[name];
+  const owner    = owned ? (playerTeamMap[name] || [])[0] : null;
   const nameClass = won ? "winner-name" : (owned ? "owned-name" : "");
   const scoreClass = won ? "winner-score" : "";
   const rowClass = isFinished ? (won ? "winner" : "loser") : (owned ? "owned" : "");
@@ -2385,6 +2483,7 @@ function bracketTeamRow(name, score, won, isFinished) {
   return `<div class="bracket-team ${rowClass}">
     <span class="bracket-team-flag">${isTbd ? "" : flag(name)}</span>
     <span class="bracket-team-name ${nameClass} ${isTbd ? "bracket-tbd" : ""}">${name || "TBD"}</span>
+    ${owner ? `<span class="bracket-owner">${owner}</span>` : ""}
     ${owned ? `<span class="owned-pip"></span>` : ""}
     <span class="bracket-team-score ${scoreClass}">${isFinished ? score : ""}</span>
   </div>`;
