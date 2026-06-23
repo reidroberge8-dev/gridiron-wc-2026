@@ -746,8 +746,19 @@
       font-size: 0.75rem; font-weight: 800; flex-shrink: 0;
     }
     .snap-name { flex: 1; font-weight: 700; font-size: 0.88rem; color: var(--text); }
-    .snap-bar-wrap { flex: 2; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-    .snap-bar-fill { height: 100%; border-radius: 3px; background: var(--gold); transition: width 0.4s ease; }
+    .snap-bar-wrap { flex: 2; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .snap-bar-fill { display: none; }
+    .snr-w { font-size: 0.78rem; font-weight: 700; color: var(--green); }
+    .snr-d { font-size: 0.78rem; font-weight: 700; color: #905c00; }
+    .snr-l { font-size: 0.78rem; font-weight: 700; color: var(--red); }
+    .snr-sep { font-size: 0.65rem; color: var(--border); }
+    /* Team record badge inline after team name */
+    .team-rec { font-size: 0.6rem; font-weight: 600; color: var(--muted); margin-left: 5px; white-space: nowrap; }
+    .team-rec-w { color: var(--green); }
+    .team-rec-d { color: #905c00; }
+    .team-rec-l { color: var(--red); }
+    /* Player record badge under Pick # */
+    .player-rec-badge { font-size: 0.6rem; font-weight: 600; color: var(--muted); display: block; margin-top: 1px; }
     .snap-pts { font-size: 0.88rem; font-weight: 800; color: var(--gold); width: 48px; min-width: 48px; text-align: right; flex-shrink: 0; }
     .snap-pts-lbl { font-size: 0.6rem; color: var(--muted); margin-left: 2px; }
     .snap-hdr-row {
@@ -756,7 +767,7 @@
       border-bottom: 1px solid var(--border);
     }
     .snap-hdr-fill  { flex: 1; }
-    .snap-hdr-bar   { flex: 2; }
+    .snap-hdr-bar   { flex: 2; text-align: center; font-size: 0.55rem; font-weight: 600; color: var(--blue); letter-spacing: 0.4px; text-transform: uppercase; }
     .snap-hdr-stat  {
       min-width: 40px; text-align: center;
       font-size: 0.55rem; font-weight: 600; color: var(--muted);
@@ -787,7 +798,7 @@
     @media (max-width: 700px) {
       .snap-bar-wrap { flex: 1.5; }
       .snap-name { font-size: 0.82rem; }
-      .snap-hdr-bar  { flex: 1.5; }
+      .snap-hdr-bar  { flex: 1.5; font-size: 0.5rem; }
     }
     @media (max-width: 420px) {
       .snap-hdr-bar, .snap-bar-wrap { display: none; }
@@ -1067,7 +1078,7 @@
         <div class="snap-hdr-row">
           <div style="width:26px;flex-shrink:0"></div>
           <span class="snap-hdr-fill"></span>
-          <div class="snap-hdr-bar"></div>
+          <span class="snap-hdr-bar">W-D-L</span>
           <span class="snap-hdr-pts">Pts</span>
           <div class="snap-match-hdr">
             <span class="snap-match-title" style="color:var(--blue)">Matches</span>
@@ -1213,7 +1224,7 @@ function formatUpdated(iso) {
 }
 
 /* ── Standings ── */
-function buildTeamCell(t, slotLabel) {
+function buildTeamCell(t, slotLabel, teamRec) {
   const isTbd  = !t || t.team === "TODO" || t.team === "TBD";
   const name   = isTbd ? slotLabel : t.team;
   const pts    = isTbd ? 0 : (t.total ?? 0);
@@ -1270,11 +1281,17 @@ function buildTeamCell(t, slotLabel) {
     }
   }
 
+  // Team W-D-L record
+  const tr2 = (!isTbd && teamRec) ? (teamRec[name] || {w:0,d:0,l:0}) : null;
+  const teamRecHTML = (tr2 && (tr2.w+tr2.d+tr2.l) > 0)
+    ? `<span class="team-rec"><span class="team-rec-w">${tr2.w}W</span>·<span class="team-rec-d">${tr2.d}D</span>·<span class="team-rec-l">${tr2.l}L</span></span>`
+    : "";
+
   return `
     <td class="${isTbd ? "team-cell team-tbd" : "team-cell"}">
       <div class="team-flag-name">
         <span>${isTbd ? "⬜" : flag(name)}</span>
-        <span>${name}</span>
+        <span>${name}</span>${teamRecHTML}
       </div>
       ${chips ? `<div class="chips">${chips}</div>` : ""}
       <div class="team-meta">${liveLine}${lastLine}${nextLine}</div>
@@ -1282,7 +1299,8 @@ function buildTeamCell(t, slotLabel) {
     <td class="team-pts-cell"><span class="team-pts">${pts}</span><span class="team-pts-lbl">pts</span></td>`;
 }
 
-function buildMobileCards(standings) {
+function buildMobileCards(standings, playerRec, teamRec) {
+  playerRec = playerRec || {}; teamRec = teamRec || {};
   const container = document.getElementById("mobile-cards");
   const totals = standings.map(p => p.total);
   container.innerHTML = standings.map(p => {
@@ -1329,7 +1347,7 @@ function buildMobileCards(standings) {
 
       return `<div class="m-team-row ${isTbd ? "tbd" : ""}">
         <div class="m-team-left">
-          <div class="m-team-flag-name">${isTbd ? "⬜" : flag(name)} ${name}</div>
+          <div class="m-team-flag-name">${isTbd ? "⬜" : flag(name)} ${name}${(()=>{const tr3=(!isTbd&&teamRec)?teamRec[name]||{w:0,d:0,l:0}:null;return (tr3&&(tr3.w+tr3.d+tr3.l)>0)?`<span class="team-rec" style="margin-left:5px"><span class="team-rec-w">${tr3.w}W</span>·<span class="team-rec-d">${tr3.d}D</span>·<span class="team-rec-l">${tr3.l}L</span></span>`:"";})()} </div>
           ${chips ? `<div class="m-chips">${chips}</div>` : ""}
           <div class="m-team-meta">${meta}</div>
         </div>
@@ -1346,6 +1364,7 @@ function buildMobileCards(standings) {
         <div class="m-player-info">
           <div class="m-player-name">${p.name}</div>
           <div class="m-pick-badge">Pick #${rank} ${tbBadge}</div>
+          ${(()=>{const pr=playerRec[p.name]||{w:0,d:0,l:0};return (pr.w+pr.d+pr.l)>0?`<div class="player-rec-badge"><span class="team-rec-w">${pr.w}W</span> · <span class="team-rec-d">${pr.d}D</span> · <span class="team-rec-l">${pr.l}L</span></div>`:"";})()} 
         </div>
         <div class="m-total">
           <span class="m-total-pts">${p.total}</span>
@@ -1363,8 +1382,11 @@ function buildSnapshot(standings) {
   if (!bar || !list) return;
   bar.style.display = 'block';
   const medals = ['🥇','🥈','🥉'];
-  const maxPts = Math.max(...standings.map(p => p.total || 0), 1);
   const OMIT   = new Set(["3rd-place-match"]);
+  // Player records for W-D-L display
+  const { playerRec } = (cachedLiveEvents && cachedLiveEvents.length)
+    ? computeRecords(cachedLiveEvents)
+    : { playerRec: {} };
 
   // Count completed / upcoming+live matches per team from live ESPN events
   function teamCounts(teamName) {
@@ -1385,8 +1407,6 @@ function buildSnapshot(standings) {
     const rank  = p.draft_pick;
     const rc    = rank <= 3 ? `rank-${rank}` : 'rank-other';
     const label = rank <= 3 ? medals[rank - 1] : rank;
-    const pct   = Math.round(((p.total || 0) / maxPts) * 100);
-
     // Sum match counts across all 4 teams
     let totalDone = 0, totalLeft = 0, anyLive = false;
     for (const t of (p.teams || [])) {
@@ -1407,10 +1427,14 @@ function buildSnapshot(standings) {
       ? `<span style="color:var(--green)">●</span>${totalLeft}`
       : totalLeft;
 
+    // Owner W-D-L record for bar column
+    const pr = playerRec[p.name] || {w:0,d:0,l:0};
+    const recHTML = `<span class="snr-w">${pr.w}W</span><span class="snr-sep">·</span><span class="snr-d">${pr.d}D</span><span class="snr-sep">·</span><span class="snr-l">${pr.l}L</span>`;
+
     return `<div class="snap-row">`
       + `<div class="snap-rank ${rc}">${label}</div>`
       + `<span class="snap-name">${p.name}</span>`
-      + `<div class="snap-bar-wrap"><div class="snap-bar-fill" style="width:${pct}%"></div></div>`
+      + `<div class="snap-bar-wrap">${recHTML}</div>`
       + `<span class="snap-pts">${p.total || 0}<span class="snap-pts-lbl">pts</span></span>`
       + `<div class="snap-match-group">`
       + `<span class="snap-stat">${totalDone}<span class="snap-stat-lbl"> ✓</span></span>`
@@ -1433,8 +1457,12 @@ function buildStandings(data) {
   const tbody = document.getElementById("standings-body");
   tbody.innerHTML = "";
   const standings = sortedStandings(data.standings);
+  // Compute W-D-L records for display
+  const { teamRec, playerRec } = (cachedLiveEvents && cachedLiveEvents.length)
+    ? computeRecords(cachedLiveEvents)
+    : { teamRec: {}, playerRec: {} };
   buildSnapshot(standings);
-  buildMobileCards(standings);
+  buildMobileCards(standings, playerRec, teamRec);
   const totals = standings.map(p => p.total);
   for (const p of standings) {
     const rank = p.draft_pick;
@@ -1448,15 +1476,15 @@ function buildStandings(data) {
     tr.dataset.rank = rank;
     tr.innerHTML = `
       <td class="rank-cell"><div class="rank-badge ${rankClass}">${rankDisplay}</div></td>
-      <td class="name-cell"><div class="player-name">${p.name}</div><span class="pick-badge">Pick #${rank} ${tbBadge}</span></td>
+      <td class="name-cell"><div class="player-name">${p.name}</div><span class="pick-badge">Pick #${rank} ${tbBadge}</span>${(()=>{const pr=playerRec[p.name]||{w:0,d:0,l:0};return (pr.w+pr.d+pr.l)>0?`<span class="player-rec-badge"><span class="team-rec-w">${pr.w}W</span> · <span class="team-rec-d">${pr.d}D</span> · <span class="team-rec-l">${pr.l}L</span></span>`:"";})()} </td>
       <td class="name-div-cell"></td>
-      ${buildTeamCell(teams[0],"Team 1")}
+      ${buildTeamCell(teams[0],"Team 1",teamRec)}
       <td class="divider-cell"></td>
-      ${buildTeamCell(teams[1],"Team 2")}
+      ${buildTeamCell(teams[1],"Team 2",teamRec)}
       <td class="divider-cell"></td>
-      ${buildTeamCell(teams[2],"Team 3")}
+      ${buildTeamCell(teams[2],"Team 3",teamRec)}
       <td class="divider-cell"></td>
-      ${buildTeamCell(teams[3],"Team 4")}
+      ${buildTeamCell(teams[3],"Team 4",teamRec)}
       <td class="total-cell"><span class="total-pts">${p.total}</span><span class="total-lbl">pts</span></td>`;
     tbody.appendChild(tr);
   }
