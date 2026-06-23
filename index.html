@@ -802,7 +802,6 @@
     }
     @media (max-width: 420px) {
       .snap-hdr-bar, .snap-bar-wrap { display: none; }
-      .snap-hdr-bar { display: none; }
     }
 
 
@@ -868,12 +867,11 @@
       text-decoration: underline;
     }
     #live-games   { max-height: 80vh; overflow-y: auto; }
-    #schedule-games { max-height: 80vh; overflow-y: auto; }
     #group-standings-body { max-height: 80vh; overflow-y: auto; }
     @media (max-width: 700px) {
       #scores-view { padding: 10px 6px 40px; }
       .scores-tab { font-size: 0.7rem; padding: 7px 6px; }
-      #live-games, #schedule-games, #group-standings-body { max-height: none; }
+      #live-games, #group-standings-body { max-height: none; }
     }
 
     /* ── Draft Board v2 (mobile-first round cards) ── */
@@ -1693,7 +1691,7 @@ async function refreshLiveScores() {
     const data = await res.json();
     cachedLiveEvents = data.events || [];
     applyESPNPoints(cachedLiveEvents);   // recompute standings live — no GH Actions dependency
-    buildStandings(cachedStandingsData);
+    if (cachedStandingsData) buildStandings(cachedStandingsData);
     renderLiveScores(cachedLiveEvents);
     refreshBracket();  // update bracket with fresh events
     document.getElementById("live-updated").textContent = new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
@@ -2446,7 +2444,7 @@ function renderAvailableTeams() {
 
 /* ── View toggle ── */
 let currentView = "leaderboard";
-let currentScoresTab = "scores";
+let currentScoresTab = "matches";
 
 function switchScoresTab(tab) {
   currentScoresTab = tab;
