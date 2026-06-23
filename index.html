@@ -1262,7 +1262,7 @@ function buildTeamCell(t, slotLabel, teamRec) {
     lastLine = `
       <div class="meta-line">
         <span class="meta-label">Last</span>
-        <span>vs ${last.opponent}, ${last.score}</span>
+        <span>vs ${last.opponent}, <span class="result-${(last.result||"x").toLowerCase()}">${last.result}</span> ${last.score}</span>
       </div>`;
   }
 
@@ -1336,7 +1336,7 @@ function buildMobileCards(standings, playerRec, teamRec) {
       } else {
         if (last) {
           const cls = RESULT_CLASS[last.result] || "";
-          meta += `<div class="m-meta-line"><span class="m-meta-lbl">Last</span><span>vs ${last.opponent}, ${last.score}</span></div>`;
+          meta += `<div class="m-meta-line"><span class="m-meta-lbl">Last</span><span>vs ${last.opponent}, <span class="result-${(last.result||"x").toLowerCase()}">${last.result}</span> ${last.score}</span></div>`;
         }
         if (elim) {
           meta += `<div class="eliminated-badge" style="margin-top:4px">☠ Eliminated${record ? ` · ${record}` : ""}</div>`;
