@@ -181,8 +181,7 @@
     .result-d { color: #905c00; font-weight: 700; }
     .result-l { color: #cc0000; font-weight: 700; }
     .team-elim { text-decoration: line-through; opacity: 0.6; }
-    .elim-e { color: #d32f2f; font-weight: 700; font-size: 0.72em;
-               margin-left: 4px; line-height: 1; vertical-align: middle; }
+    .elim-line { color: #d32f2f; font-size: 0.72rem; margin-top: 3px; }
     .eliminated-badge {
       display: inline-block; margin-top: 4px;
       background: rgba(204,0,0,0.08); border: 1px solid rgba(204,0,0,0.2);
@@ -1275,7 +1274,9 @@ function buildTeamCell(t, slotLabel, teamRec) {
   // Next game or Eliminated
   let nextLine = "";
   if (!lg) {
-    if (!elim && next) {
+    if (elim) {
+      nextLine = `<div class="elim-line">☠ Eliminated</div>`;
+    } else if (next) {
       nextLine = `
         <div class="meta-line">
           <span class="meta-label">Next</span>
@@ -1294,7 +1295,7 @@ function buildTeamCell(t, slotLabel, teamRec) {
     <td class="${isTbd ? "team-cell team-tbd" : "team-cell"}">
       <div class="team-flag-name">
         <span>${isTbd ? "⬜" : flag(name)}</span>
-        <span class="${elim ? 'team-elim' : ''}">${name}</span>${elim ? '<span class="elim-e">E</span>' : ''}${teamRecHTML}
+        <span class="${elim ? 'team-elim' : ''}">${name}</span>${teamRecHTML}
       </div>
       ${chips ? `<div class="chips">${chips}</div>` : ""}
       <div class="team-meta">${liveLine}${lastLine}${nextLine}</div>
@@ -1346,14 +1347,16 @@ function buildMobileCards(standings, playerRec, teamRec) {
           const cls = RESULT_CLASS[last.result] || "";
           meta += `<div class="m-meta-line"><span class="m-meta-lbl">Last</span><span>vs ${last.opponent}, <span class="result-${(last.result||"x").toLowerCase()}">${last.result}</span> ${last.score}</span></div>`;
         }
-        if (!elim && next) {
+        if (elim) {
+          meta += `<div class="elim-line">☠ Eliminated</div>`;
+        } else if (next) {
           meta += `<div class="m-meta-line"><span class="m-meta-lbl">Next</span><span>vs ${next.opponent}, ${fmtFullDateTime(next.date)}</span></div>`;
         }
       }
 
       return `<div class="m-team-row ${isTbd ? "tbd" : ""}">
         <div class="m-team-left">
-          <div class="m-team-flag-name">${isTbd ? "⬜" : flag(name)} ${elim ? `<span class="team-elim">${name}</span><span class="elim-e">E</span>` : name}${(()=>{const tr3=(!isTbd&&teamRec)?teamRec[name]||{w:0,d:0,l:0}:null;return (tr3&&(tr3.w+tr3.d+tr3.l)>0)?`<span class="team-rec" style="margin-left:5px"><span class="team-rec-w">${tr3.w}W</span>·<span class="team-rec-d">${tr3.d}D</span>·<span class="team-rec-l">${tr3.l}L</span></span>`:"";})()} </div>
+          <div class="m-team-flag-name">${isTbd ? "⬜" : flag(name)} ${elim ? `<span class="team-elim">${name}</span>` : name}${(()=>{const tr3=(!isTbd&&teamRec)?teamRec[name]||{w:0,d:0,l:0}:null;return (tr3&&(tr3.w+tr3.d+tr3.l)>0)?`<span class="team-rec" style="margin-left:5px"><span class="team-rec-w">${tr3.w}W</span>·<span class="team-rec-d">${tr3.d}D</span>·<span class="team-rec-l">${tr3.l}L</span></span>`:"";})()} </div>
           ${chips ? `<div class="m-chips">${chips}</div>` : ""}
           <div class="m-team-meta">${meta}</div>
         </div>
