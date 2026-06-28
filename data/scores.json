@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-28T20:44:27.069748+00:00",
+  "last_updated": "2026-06-28T22:09:00.657909+00:00",
   "standings": [
     {
       "name": "Joe Kasz",
@@ -243,6 +243,11 @@
               "stage": "group-stage",
               "opponent": "Qatar",
               "pts": 3
+            },
+            {
+              "stage": "round-of-32",
+              "opponent": "South Africa",
+              "pts": 4
             }
           ],
           "ties": [
@@ -258,17 +263,21 @@
               "opponent": "Switzerland"
             }
           ],
-          "total": 4,
+          "total": 8,
           "last_result": {
-            "result": "L",
-            "score": "1-2",
-            "opponent": "Switzerland",
-            "stage": "group-stage",
-            "date": "2026-06-24T19:00Z"
+            "result": "W",
+            "score": "1-0",
+            "opponent": "South Africa",
+            "stage": "round-of-32",
+            "date": "2026-06-28T19:00Z"
           },
-          "next_game": null,
-          "eliminated": true,
-          "record": "1W-1D-1L"
+          "next_game": {
+            "opponent": "Round of 32 3 Winner",
+            "date": "2026-07-04T17:00Z",
+            "stage": "round-of-16"
+          },
+          "eliminated": false,
+          "record": "2W-1D-1L"
         },
         {
           "team": "Czechia",
@@ -303,7 +312,7 @@
           "record": "0W-1D-2L"
         }
       ],
-      "total": 21,
+      "total": 25,
       "draft_pick": 2,
       "tiebreaker": 4
     },
@@ -1428,19 +1437,23 @@
         {
           "stage": "group-stage",
           "opponent": "Mexico"
+        },
+        {
+          "stage": "round-of-32",
+          "opponent": "Canada"
         }
       ],
       "total": 4,
       "last_result": {
-        "result": "W",
-        "score": "1-0",
-        "opponent": "South Korea",
-        "stage": "group-stage",
-        "date": "2026-06-25T01:00Z"
+        "result": "L",
+        "score": "0-1",
+        "opponent": "Canada",
+        "stage": "round-of-32",
+        "date": "2026-06-28T19:00Z"
       },
       "next_game": null,
       "eliminated": true,
-      "record": "1W-1D-1L"
+      "record": "1W-1D-2L"
     },
     "South Korea": {
       "wins": [
@@ -1510,6 +1523,11 @@
           "stage": "group-stage",
           "opponent": "Qatar",
           "pts": 3
+        },
+        {
+          "stage": "round-of-32",
+          "opponent": "South Africa",
+          "pts": 4
         }
       ],
       "ties": [
@@ -1525,17 +1543,21 @@
           "opponent": "Switzerland"
         }
       ],
-      "total": 4,
+      "total": 8,
       "last_result": {
-        "result": "L",
-        "score": "1-2",
-        "opponent": "Switzerland",
-        "stage": "group-stage",
-        "date": "2026-06-24T19:00Z"
+        "result": "W",
+        "score": "1-0",
+        "opponent": "South Africa",
+        "stage": "round-of-32",
+        "date": "2026-06-28T19:00Z"
       },
-      "next_game": null,
-      "eliminated": true,
-      "record": "1W-1D-1L"
+      "next_game": {
+        "opponent": "Round of 32 3 Winner",
+        "date": "2026-07-04T17:00Z",
+        "stage": "round-of-16"
+      },
+      "eliminated": false,
+      "record": "2W-1D-1L"
     },
     "Bosnia-Herzegovina": {
       "wins": [
@@ -3025,20 +3047,6 @@
       "eliminated": false,
       "record": "2W-1D-0L"
     },
-    "Round of 32 1 Winner": {
-      "wins": [],
-      "ties": [],
-      "losses": [],
-      "total": 0,
-      "last_result": null,
-      "next_game": {
-        "opponent": "Round of 32 3 Winner",
-        "date": "2026-07-04T17:00Z",
-        "stage": "round-of-16"
-      },
-      "eliminated": false,
-      "record": "0W-0D-0L"
-    },
     "Round of 32 3 Winner": {
       "wins": [],
       "ties": [],
@@ -3046,7 +3054,7 @@
       "total": 0,
       "last_result": null,
       "next_game": {
-        "opponent": "Round of 32 1 Winner",
+        "opponent": "Canada",
         "date": "2026-07-04T17:00Z",
         "stage": "round-of-16"
       },
