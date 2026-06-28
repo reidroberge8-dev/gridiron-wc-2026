@@ -152,7 +152,9 @@ def build_team_data(events):
     )
     if group_matches_done >= 72:  # all group games done
         for name, t in teams.items():
-            if t["next_game"] is None and not t["eliminated"]:
+            # Skip teams with a knockout win — they advanced, next game just not yet scheduled
+            has_knockout_win = any(w["stage"] in KNOCKOUT_SLUGS for w in t["wins"])
+            if t["next_game"] is None and not t["eliminated"] and not has_knockout_win:
                 t["eliminated"] = True
 
     return teams
