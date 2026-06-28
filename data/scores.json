@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-28T16:50:50.562330+00:00",
+  "last_updated": "2026-06-28T20:44:27.069748+00:00",
   "standings": [
     {
       "name": "Joe Kasz",
@@ -266,12 +266,8 @@
             "stage": "group-stage",
             "date": "2026-06-24T19:00Z"
           },
-          "next_game": {
-            "opponent": "South Africa",
-            "date": "2026-06-28T19:00Z",
-            "stage": "round-of-32"
-          },
-          "eliminated": false,
+          "next_game": null,
+          "eliminated": true,
           "record": "1W-1D-1L"
         },
         {
@@ -1442,12 +1438,8 @@
         "stage": "group-stage",
         "date": "2026-06-25T01:00Z"
       },
-      "next_game": {
-        "opponent": "Canada",
-        "date": "2026-06-28T19:00Z",
-        "stage": "round-of-32"
-      },
-      "eliminated": false,
+      "next_game": null,
+      "eliminated": true,
       "record": "1W-1D-1L"
     },
     "South Korea": {
@@ -1541,12 +1533,8 @@
         "stage": "group-stage",
         "date": "2026-06-24T19:00Z"
       },
-      "next_game": {
-        "opponent": "South Africa",
-        "date": "2026-06-28T19:00Z",
-        "stage": "round-of-32"
-      },
-      "eliminated": false,
+      "next_game": null,
+      "eliminated": true,
       "record": "1W-1D-1L"
     },
     "Bosnia-Herzegovina": {
