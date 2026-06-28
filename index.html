@@ -1233,10 +1233,15 @@ function buildTeamCell(t, slotLabel, teamRec) {
   const next   = isTbd ? null  : (t.next_game   ?? null);
   const record = isTbd ? null  : (t.record       ?? null);
 
-  // Point chips (wins + draws)
+  // Point chips — one chip per stage showing total pts for that round
   let chips = "";
-  for (const w of wins) chips += `<span class="chip chip-win">${STAGE_SHORT[w.stage]||w.stage} +${w.pts}</span>`;
-  for (const d of ties) chips += `<span class="chip chip-tie">${STAGE_SHORT[d.stage]||d.stage} +${d.pts}</span>`;
+  { const STAGE_ORDER = ["group-stage","round-of-32","round-of-16","quarterfinals","semifinals","final"];
+    const stg = {};
+    for (const w of wins) stg[w.stage] = (stg[w.stage] || 0) + w.pts;
+    for (const d of ties) stg[d.stage] = (stg[d.stage] || 0) + d.pts;
+    for (const s of STAGE_ORDER)
+      if (stg[s]) chips += `<span class="chip chip-win">${STAGE_SHORT[s]||s}: +${stg[s]}</span>`;
+  }
 
   // Live score (takes priority over Last/Next)
   const lg = !isTbd ? liveGamesMap[name] : null;
@@ -1322,8 +1327,13 @@ function buildMobileCards(standings, playerRec, teamRec) {
       const record = isTbd ? null  : (t.record ?? null);
 
       let chips = "";
-      for (const w of wins) chips += `<span class="chip chip-win">${STAGE_SHORT[w.stage]||w.stage} +${w.pts}</span>`;
-      for (const d of ties) chips += `<span class="chip chip-tie">${STAGE_SHORT[d.stage]||d.stage} +${d.pts}</span>`;
+      { const STAGE_ORDER = ["group-stage","round-of-32","round-of-16","quarterfinals","semifinals","final"];
+        const stg = {};
+        for (const w of wins) stg[w.stage] = (stg[w.stage] || 0) + w.pts;
+        for (const d of ties) stg[d.stage] = (stg[d.stage] || 0) + d.pts;
+        for (const s of STAGE_ORDER)
+          if (stg[s]) chips += `<span class="chip chip-win">${STAGE_SHORT[s]||s}: +${stg[s]}</span>`;
+      }
 
       // Live score (takes priority)
       const mlg = !isTbd ? liveGamesMap[name] : null;
