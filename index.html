@@ -182,6 +182,7 @@
     .result-l { color: #cc0000; font-weight: 700; }
     .team-elim { text-decoration: line-through; opacity: 0.6; }
     .elim-line { color: #d32f2f; font-size: 0.72rem; margin-top: 3px; }
+    .max-pts-line { font-size: 0.58rem; color: var(--muted); margin-top: 2px; line-height: 1; }
     .eliminated-badge {
       display: inline-block; margin-top: 4px;
       background: rgba(204,0,0,0.08); border: 1px solid rgba(204,0,0,0.2);
@@ -1307,6 +1308,7 @@ function buildMobileCards(standings, playerRec, teamRec) {
   playerRec = playerRec || {}; teamRec = teamRec || {};
   const container = document.getElementById("mobile-cards");
   const totals = standings.map(p => p.total);
+  const _mmaps = buildMaxPtsMaps();
   container.innerHTML = standings.map(p => {
     const rank = p.draft_pick;
     const rankClass   = rank <= 3 ? `rank-${rank}` : "rank-other";
@@ -1378,6 +1380,7 @@ function buildMobileCards(standings, playerRec, teamRec) {
         <div class="m-total">
           <span class="m-total-pts">${p.total}</span>
           <span class="m-total-lbl">pts</span>
+          ${(()=>{const mp=computePlayerMaxPts(p,_mmaps);return mp!==null&&mp>p.total?`<div class="max-pts-line">Max: ${mp}</div>`:"";})()} 
         </div>
       </div>
       ${teamRows}
@@ -1461,6 +1464,94 @@ function sortedStandings(standings) {
   ).map((p, i) => ({ ...p, draft_pick: i + 1 }));
 }
 
+
+/* ── Max-points calculator ── */
+function buildMaxPtsMaps() {
+  const STAGE_ORDER = ["group-stage","round-of-32","round-of-16","quarterfinals","semifinals","final"];
+  const groupLeft = {}, knockScheduled = {};
+  for (const e of (cachedLiveEvents || [])) {
+    const slug = e.season?.slug || "";
+    if (slug === "3rd-place-match") continue;
+    const comp = e.competitions[0];
+    if (comp.status.type.completed) continue;
+    const home = comp.competitors.find(c => c.homeAway === "home");
+    const away = comp.competitors.find(c => c.homeAway === "away");
+    if (!home || !away) continue;
+    const hN = home.team.displayName, aN = away.team.displayName;
+    if (slug === "group-stage") {
+      groupLeft[hN] = (groupLeft[hN] || 0) + 1;
+      groupLeft[aN] = (groupLeft[aN] || 0) + 1;
+    } else {
+      [hN, aN].forEach(n => {
+        if (!knockScheduled[n]) knockScheduled[n] = [];
+        knockScheduled[n].push({ stage: slug, opponent: n === hN ? aN : hN });
+      });
+    }
+  }
+  return { groupLeft, knockScheduled };
+}
+
+function computePlayerMaxPts(player, maps) {
+  if (!cachedLiveEvents || !cachedLiveEvents.length) return null;
+  const STAGE_ORDER = ["group-stage","round-of-32","round-of-16","quarterfinals","semifinals","final"];
+  const WIN_PTS_MAP  = {"group-stage":3,"round-of-32":4,"round-of-16":5,"quarterfinals":6,"semifinals":7,"final":8};
+  const { groupLeft, knockScheduled } = maps;
+
+  function teamNextStage(t) {
+    if (t.eliminated) return null;
+    if (t.next_game?.stage) return t.next_game.stage;
+    const idxs = [...(t.wins||[]),...(t.ties||[])].map(x => STAGE_ORDER.indexOf(x.stage)).filter(i => i >= 0);
+    if (!idxs.length) return "group-stage";
+    const ni = Math.max(...idxs) + 1;
+    return ni < STAGE_ORDER.length ? STAGE_ORDER[ni] : null;
+  }
+
+  // Max pts for teamName from fromStage up to (not including) untilStage
+  function maxBetween(teamName, fromStage, untilStage) {
+    const fi = STAGE_ORDER.indexOf(fromStage);
+    const ui = untilStage ? STAGE_ORDER.indexOf(untilStage) : STAGE_ORDER.length;
+    if (fi < 0 || ui <= fi) return 0;
+    let pts = 0;
+    for (let i = fi; i < ui; i++) {
+      const s = STAGE_ORDER[i];
+      pts += s === "group-stage" ? (groupLeft[teamName] || 0) * 3 : (WIN_PTS_MAP[s] || 0);
+    }
+    return pts;
+  }
+
+  const alive = player.teams.filter(t => !t.eliminated && t.team && t.team !== "TODO" && t.team !== "TBD");
+  const aliveSet = new Set(alive.map(t => t.team));
+  let maxAdd = 0;
+  const counted = new Set();
+
+  for (const t of alive) {
+    if (counted.has(t.team)) continue;
+    const from = teamNextStage(t);
+    if (!from) continue;
+
+    // Find earliest scheduled knockout match against another alive team from same player
+    const conflict = (knockScheduled[t.team] || [])
+      .filter(m => aliveSet.has(m.opponent) && !counted.has(m.opponent))
+      .sort((a, b) => STAGE_ORDER.indexOf(a.stage) - STAGE_ORDER.indexOf(b.stage))[0];
+
+    if (conflict) {
+      const opp = alive.find(x => x.team === conflict.opponent);
+      const oppFrom = teamNextStage(opp);
+      // Both contribute up to conflict; then one team wins and takes everything from conflict stage onward
+      maxAdd += maxBetween(t.team,   from,    conflict.stage)
+             + (oppFrom ? maxBetween(opp.team, oppFrom, conflict.stage) : 0)
+             + maxBetween(t.team, conflict.stage, null);
+      counted.add(t.team);
+      counted.add(conflict.opponent);
+    } else {
+      maxAdd += maxBetween(t.team, from, null);
+      counted.add(t.team);
+    }
+  }
+
+  return player.total + maxAdd;
+}
+
 function buildStandings(data) {
   cachedStandingsData = data;
   const tbody = document.getElementById("standings-body");
@@ -1473,6 +1564,7 @@ function buildStandings(data) {
   buildSnapshot(standings);
   buildMobileCards(standings, playerRec, teamRec);
   const totals = standings.map(p => p.total);
+  const _maxMaps = buildMaxPtsMaps();
   for (const p of standings) {
     const rank = p.draft_pick;
     const rankClass   = rank <= 3 ? `rank-${rank}` : "rank-other";
@@ -1494,7 +1586,7 @@ function buildStandings(data) {
       ${buildTeamCell(teams[2],"Team 3",teamRec)}
       <td class="divider-cell"></td>
       ${buildTeamCell(teams[3],"Team 4",teamRec)}
-      <td class="total-cell"><span class="total-pts">${p.total}</span><span class="total-lbl">pts</span></td>`;
+      <td class="total-cell"><span class="total-pts">${p.total}</span><span class="total-lbl">pts</span>${(()=>{const mp=computePlayerMaxPts(p,_maxMaps);return mp!==null&&mp>p.total?`<div class="max-pts-line">Max: ${mp}</div>`:"";})()} </td>`;
     tbody.appendChild(tr);
   }
 }
