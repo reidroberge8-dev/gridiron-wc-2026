@@ -183,6 +183,7 @@
     .team-elim { text-decoration: line-through; opacity: 0.6; }
     .elim-line { color: #d32f2f; font-size: 0.72rem; margin-top: 3px; }
     .max-pts-line { font-size: 0.58rem; color: var(--muted); margin-top: 2px; line-height: 1; }
+    .team-elim-bg { background: rgba(211,47,47,0.07); }
     .eliminated-badge {
       display: inline-block; margin-top: 4px;
       background: rgba(204,0,0,0.08); border: 1px solid rgba(204,0,0,0.2);
@@ -609,7 +610,8 @@
         padding: 9px 14px; border-bottom: 1px solid var(--border);
       }
       .m-team-row:last-child { border-bottom: none; }
-      .m-team-row.tbd { opacity: 0.35; }
+      .m-team-row.elim { background: rgba(211,47,47,0.07); }
+    .m-team-row.tbd { opacity: 0.35; }
       .m-team-left  { flex: 1; min-width: 0; }
       .m-team-flag-name {
         display: flex; align-items: center; gap: 6px;
@@ -1293,7 +1295,7 @@ function buildTeamCell(t, slotLabel, teamRec) {
     : "";
 
   return `
-    <td class="${isTbd ? "team-cell team-tbd" : "team-cell"}">
+    <td class="${isTbd ? "team-cell team-tbd" : elim ? "team-cell team-elim-bg" : "team-cell"}">
       <div class="team-flag-name">
         <span>${isTbd ? "⬜" : flag(name)}</span>
         <span class="${elim ? 'team-elim' : ''}">${name}</span>${teamRecHTML}
@@ -1356,7 +1358,7 @@ function buildMobileCards(standings, playerRec, teamRec) {
         }
       }
 
-      return `<div class="m-team-row ${isTbd ? "tbd" : ""}">
+      return `<div class="m-team-row ${isTbd ? "tbd" : elim ? "elim" : ""}">
         <div class="m-team-left">
           <div class="m-team-flag-name">${isTbd ? "⬜" : flag(name)} ${elim ? `<span class="team-elim">${name}</span>` : name}${(()=>{const tr3=(!isTbd&&teamRec)?teamRec[name]||{w:0,d:0,l:0}:null;return (tr3&&(tr3.w+tr3.d+tr3.l)>0)?`<span class="team-rec" style="margin-left:5px"><span class="team-rec-w">${tr3.w}W</span>·<span class="team-rec-d">${tr3.d}D</span>·<span class="team-rec-l">${tr3.l}L</span></span>`:"";})()} </div>
           ${chips ? `<div class="m-chips">${chips}</div>` : ""}
