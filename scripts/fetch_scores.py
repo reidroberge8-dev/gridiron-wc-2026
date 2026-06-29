@@ -143,18 +143,28 @@ def build_team_data(events):
         t["record"] = f"{w}W-{d}D-{l}L"
 
     # Detect group-stage elimination:
-    # If a team has no next_game AND group stage is well underway, they didn't advance
-    now = datetime.now(timezone.utc).isoformat()
+    # Wait until R32 bracket is published in ESPN before marking group non-qualifiers.
+    # Until then, a team with next_game=None might just be a 3rd-place qualifier whose
+    # R32 slot hasn't been scheduled yet — don't incorrectly mark them eliminated.
     group_matches_done = sum(
         1 for e in events
         if e.get("season", {}).get("slug") == "group-stage"
         and e["competitions"][0]["status"]["type"].get("completed", False)
     )
-    if group_matches_done >= 72:  # all group games done
+    knockout_events_exist = any(
+        e.get("season", {}).get("slug") in KNOCKOUT_SLUGS
+        for e in events
+    )
+    if group_matches_done >= 72 and knockout_events_exist:
         for name, t in teams.items():
-            # Skip teams with a knockout win — they advanced, next game just not yet scheduled
+            # Skip teams with a knockout game (win or scheduled next) — they advanced
             has_knockout_win = any(w["stage"] in KNOCKOUT_SLUGS for w in t["wins"])
-            if t["next_game"] is None and not t["eliminated"] and not has_knockout_win:
+            has_knockout_next = (
+                t["next_game"] is not None
+                and t["next_game"].get("stage") in KNOCKOUT_SLUGS
+            )
+            if (t["next_game"] is None and not t["eliminated"]
+                    and not has_knockout_win and not has_knockout_next):
                 t["eliminated"] = True
 
     return teams

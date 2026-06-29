@@ -1768,6 +1768,33 @@ function applyESPNPoints(events) {
     }
   }
 
+  // Derive eliminated status from live ESPN data so stale scores.json flags can't
+  // show a team as eliminated while they're actively playing or have a game scheduled.
+  const KNOCKOUT_SLUGS_JS = new Set(["round-of-32","round-of-16","quarterfinals","semifinals","final"]);
+  const knockoutElim   = new Set();  // teams that lost a completed knockout match
+  const knockoutAlive  = new Set();  // teams with a live or scheduled knockout match
+  for (const e of events) {
+    const slug = e.season?.slug || "";
+    if (!KNOCKOUT_SLUGS_JS.has(slug)) continue;
+    const comp = e.competitions[0];
+    const home = comp.competitors.find(c => c.homeAway === "home");
+    const away = comp.competitors.find(c => c.homeAway === "away");
+    if (!home || !away) continue;
+    const hN = home.team.displayName, aN = away.team.displayName;
+    if (comp.status.type.completed) {
+      // Loser of a completed knockout match is out
+      const loser = home.winner ? aN : (away.winner ? hN : null);
+      if (loser) knockoutElim.add(loser);
+      // Winner is clearly still alive
+      const winner = home.winner ? hN : (away.winner ? aN : null);
+      if (winner) knockoutAlive.add(winner);
+    } else {
+      // Live or scheduled knockout match — both teams are definitely still in
+      knockoutAlive.add(hN);
+      knockoutAlive.add(aN);
+    }
+  }
+
   // Patch each player's team entries and recompute player total
   for (const p of cachedStandingsData.standings) {
     p.total = 0;
@@ -1777,6 +1804,9 @@ function applyESPNPoints(events) {
         t.ties  = teamTies[t.team]  || [];
         t.total = teamTotals[t.team] || 0;
       }
+      // Correct eliminated flag from live data: alive overrides stale scores.json
+      if (knockoutAlive.has(t.team))  t.eliminated = false;
+      if (knockoutElim.has(t.team))   t.eliminated = true;
       p.total += t.total;
     }
   }
