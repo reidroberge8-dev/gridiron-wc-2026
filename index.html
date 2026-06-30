@@ -514,12 +514,12 @@
       }
       .btb-btn {
         flex: 1; display: flex; flex-direction: column; align-items: center;
-        justify-content: center; padding: 8px 4px 2px; background: none;
-        border: none; cursor: pointer; gap: 2px; color: var(--muted);
-        font-size: 0.57rem; font-weight: 700; letter-spacing: 0.3px;
+        justify-content: center; padding: 10px 4px 6px; background: none;
+        border: none; cursor: pointer; gap: 4px; color: var(--muted);
+        font-size: 0.62rem; font-weight: 700; letter-spacing: 0.3px;
         text-transform: uppercase; transition: color 0.15s;
       }
-      .btb-icon { font-size: 1.25rem; line-height: 1; display: block; }
+      .btb-icon { font-size: 1.5rem; line-height: 1; display: block; }
       .btb-btn.active { color: var(--blue); }
       .btb-btn.active .btb-icon { filter: drop-shadow(0 0 3px rgba(0,98,177,0.4)); }
       body { padding-bottom: max(74px, calc(64px + env(safe-area-inset-bottom, 0px))); }
@@ -2684,7 +2684,12 @@ function switchView(view) {
   document.getElementById("scores-view").style.display  = view === "scores"      ? "block" : "none";
   document.getElementById("bracket-view").style.display = view === "bracket"     ? "block" : "none";
   document.getElementById("draft-view").style.display   = view === "draft"       ? "block" : "none";
-  if (view === "bracket") renderBracket(cachedBracketEvents);
+  if (view === "bracket") {
+    // Always use freshest live data; trigger a fetch if cache is cold
+    if (cachedLiveEvents.length) cachedBracketEvents = cachedLiveEvents;
+    renderBracket(cachedBracketEvents);
+    if (!cachedLiveEvents.length) refreshLiveScores();
+  }
   if (view === "draft")   { renderDraftBoard(); renderAvailableTeams(); }
 }
 
