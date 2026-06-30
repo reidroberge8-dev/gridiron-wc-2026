@@ -2802,6 +2802,28 @@ const ROUND_LABEL = {
 // How many matchups per round (2026 WC: 48 teams, new Round of 32)
 const ROUND_SIZES = { "round-of-32":16, "round-of-16":8, "quarterfinals":4, "semifinals":2, "final":1 };
 
+// Hard-coded bracket slot order keyed by ESPN event ID.
+// Pairs of adjacent positions feed the same next-round match, and the bracket
+// halves align correctly all the way through to the Final.
+//
+// R32 pairs → R16 → QF → SF
+//  pos 1-2  (SA/Canada + Neth/Morocco)      → R16-1 (Canada vs Morocco) → QF1 → SF1
+//  pos 3-4  (Germany/Paraguay + IvC/Norway) → R16-2                     → QF1 → SF1
+//  pos 5-6  (Portugal/Croatia + Spain/Aus)  → R16-5                     → QF2 → SF1
+//  pos 7-8  (Belgium/Senegal + USA/Bosnia)  → R16-6                     → QF2 → SF1
+//  pos 9-10 (Brazil/Japan + France/Sweden)  → R16-3 (Brazil vs ?)       → QF3 → SF2
+//  pos 11-12(Mexico/Ecuador + England/Congo)→ R16-4                     → QF3 → SF2
+//  pos 13-14(Switzerland/Alg + Arg/CapeV)   → R16-7                     → QF4 → SF2
+//  pos 15-16(Australia/Egypt + Colombia/Gh) → R16-8                     → QF4 → SF2
+const BRACKET_SLOT = {
+  "round-of-32":   {760486:1,760488:2,760489:3,760490:4,760496:5,760497:6,760493:7,760494:8,
+                    760487:9,760492:10,760491:11,760495:12,760498:13,760500:14,760499:15,760501:16},
+  "round-of-16":   {760502:1,760503:2,760506:3,760507:4,760504:5,760505:6,760508:7,760509:8},
+  "quarterfinals": {760510:1,760511:2,760512:3,760513:4},
+  "semifinals":    {760514:1,760515:2},
+  "final":         {760517:1},
+};
+
 // ESPN stores round info in different fields depending on competition —
 // try multiple locations before giving up.
 function getEventRoundSlug(e) {
@@ -2840,9 +2862,15 @@ function renderBracket(events) {
   const container = document.getElementById("bracket-rounds");
 
   container.innerHTML = ROUND_ORDER.map(slug => {
+    const slotMap = BRACKET_SLOT[slug] || {};
     const matches = events
       .filter(e => getEventRoundSlug(e) === slug)
-      .sort((a, b) => new Date(a.date) - new Date(b.date));
+      .sort((a, b) => {
+        const sa = slotMap[parseInt(a.id)] ?? 999;
+        const sb = slotMap[parseInt(b.id)] ?? 999;
+        if (sa !== sb) return sa - sb;
+        return new Date(a.date) - new Date(b.date); // fallback: date
+      });
 
     const isFinal = slug === "final";
     let cards;
