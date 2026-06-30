@@ -659,10 +659,25 @@
 
       /* pull-to-refresh indicator */
       #pull-indicator {
-        display: none; align-items: center; justify-content: center;
-        padding: 10px; font-size: 0.72rem; color: var(--blue);
-        font-weight: 700; letter-spacing: 0.3px;
+        position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        padding: 14px; background: var(--card); border-bottom: 1px solid var(--border);
+        font-size: 0.75rem; color: var(--blue); font-weight: 700; letter-spacing: 0.3px;
+        transform: translateY(-100%); will-change: transform;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.18);
       }
+      #pull-indicator.ptr-snap { transition: transform 0.32s cubic-bezier(0.4,0,0.2,1); }
+      .ptr-arrow { display: inline-block; transition: transform 0.2s ease; font-size: 1rem; line-height: 1; }
+      .ptr-arrow.flipped { transform: rotate(180deg); }
+      .ptr-spinner {
+        display: none; width: 17px; height: 17px; flex-shrink: 0;
+        border: 2.5px solid var(--border); border-top-color: var(--blue);
+        border-radius: 50%; animation: ptr-spin 0.65s linear infinite;
+      }
+      #pull-indicator.ptr-refreshing .ptr-arrow,
+      #pull-indicator.ptr-refreshing .ptr-label { display: none; }
+      #pull-indicator.ptr-refreshing .ptr-spinner { display: inline-block; }
+      @keyframes ptr-spin { to { transform: rotate(360deg); } }
       .m-team-left  { flex: 1; min-width: 0; }
       .m-team-flag-name {
         display: flex; align-items: center; gap: 6px;
@@ -1049,7 +1064,7 @@
   <div class="last-updated"><span id="status-dot"></span><span id="updated-text">Loading…</span></div>
 </header>
 
-<div id="pull-indicator"></div>
+<div id="pull-indicator"><span class="ptr-arrow">↓</span><span class="ptr-label">Pull to refresh</span><span class="ptr-spinner"></span></div>
 
 <div class="view-toggle">
   <button class="toggle-btn active" id="btn-leaderboard" onclick="switchView('leaderboard')">🏆 Leaderboard</button>
@@ -3139,33 +3154,57 @@ setInterval(refreshGroupStandings, 5 * 60 * 1000);
     else if (dx > 0 && idx > 0)            switchView(_VIEWS[idx - 1]);
   }, { passive: true });
 
-  // ── Pull-to-refresh (mobile only) ────────────────────────
+  // ── Pull-to-refresh (mobile only) ────────────────────
   (function() {
-    const ind = document.getElementById("pull-indicator");
-    let _py = 0, _active = false;
+    const ind   = document.getElementById("pull-indicator");
+    const arrow = ind && ind.querySelector(".ptr-arrow");
+    const lbl   = ind && ind.querySelector(".ptr-label");
+    let _py = 0, _active = false, _busy = false;
+
     document.addEventListener("touchstart", function(e) {
-      _py = (window.scrollY <= 2 && window.innerWidth <= 700) ? e.touches[0].clientY : 0;
+      if (_busy) return;
+      _py = (window.scrollY <= 2 && window.innerWidth <= 768) ? e.touches[0].clientY : 0;
     }, { passive: true });
+
     document.addEventListener("touchmove", function(e) {
-      if (!_py || !ind) return;
+      if (!_py || !ind || _busy) return;
       const dy = e.touches[0].clientY - _py;
-      if (dy > 8) {
+      if (dy > 6) {
         _active = true;
-        ind.style.display = "flex";
-        ind.style.opacity = Math.min(dy / 70, 1);
-        ind.textContent = dy > 60 ? "\u2191 Release to refresh" : "\u2193 Pull to refresh";
+        ind.classList.remove("ptr-snap");
+        // 2× drag resistance: need to pull twice the indicator height to fully reveal
+        const h = ind.offsetHeight || 50;
+        const offset = Math.min(0, -h + dy / 2);
+        ind.style.transform = "translateY(" + offset + "px)";
+        if (arrow) arrow.classList.toggle("flipped", dy > 60);
+        if (lbl)   lbl.textContent = dy > 60 ? "Release to refresh" : "Pull to refresh";
       }
     }, { passive: true });
+
     document.addEventListener("touchend", function(e) {
-      if (!_active || !ind) return;
+      if (!_active || !ind || _busy) return;
       const pulled = e.changedTouches[0].clientY - _py;
       _py = 0; _active = false;
+      ind.classList.add("ptr-snap");
       if (pulled > 60) {
-        ind.textContent = "\u21BB Refreshing\u2026"; ind.style.opacity = "1";
+        _busy = true;
+        ind.style.transform = "translateY(0)";
+        ind.classList.add("ptr-refreshing");
         Promise.all([loadScores(), refreshLiveScores()])
-          .finally(function() { ind.style.display = "none"; });
+          .finally(function() {
+            const h = ind.offsetHeight || 50;
+            ind.style.transform = "translateY(-" + h + "px)";
+            setTimeout(function() {
+              ind.classList.remove("ptr-refreshing", "ptr-snap");
+              ind.style.transform = "";   // reverts to CSS translateY(-100%)
+              if (arrow) arrow.classList.remove("flipped");
+              if (lbl)   lbl.textContent = "Pull to refresh";
+              _busy = false;
+            }, 350);
+          });
       } else {
-        ind.style.display = "none";
+        ind.style.transform = "";   // snap back (no transition since ptr-snap just added)
+        setTimeout(function() { ind.classList.remove("ptr-snap"); }, 350);
       }
     }, { passive: true });
   })();
