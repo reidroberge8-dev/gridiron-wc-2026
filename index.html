@@ -1077,8 +1077,23 @@
 <div id="error-msg"></div>
 
 <div id="bracket-view">
-  <div class="bracket-scroll">
-    <div class="bracket-rounds" id="bracket-rounds"></div>
+  <div class="scores-tabs" style="margin-bottom:12px">
+    <button class="scores-tab" id="btab-groups" onclick="switchBracketTab('groups')">📊 Group Tables</button>
+    <button class="scores-tab active" id="btab-bracket" onclick="switchBracketTab('bracket')">🏆 Bracket</button>
+  </div>
+  <div id="bracket-content">
+    <div class="bracket-scroll">
+      <div class="bracket-rounds" id="bracket-rounds"></div>
+    </div>
+  </div>
+  <div class="scores-panel" id="groups-panel" style="display:none">
+    <div class="group-panel" style="margin-top:0">
+      <div class="group-panel-header">
+        Group Standings
+        <span id="group-updated"></span>
+      </div>
+      <div id="group-standings-body"><div class="live-empty">Loading…</div></div>
+    </div>
   </div>
 </div>
 
@@ -1103,7 +1118,6 @@
   <div class="scores-tabs">
     <button class="scores-tab active" id="stab-scores"   onclick="switchScoresTab('scores')">⚽ Scores</button>
     <button class="scores-tab"        id="stab-schedule" onclick="switchScoresTab('schedule')">📅 Schedule</button>
-    <button class="scores-tab"        id="stab-groups"   onclick="switchScoresTab('groups')">📊 Groups</button>
   </div>
 
   <!-- Scores panel: live + completed matches -->
@@ -1148,16 +1162,6 @@
     </div>
   </div>
 
-  <!-- Groups: group standings -->
-  <div class="scores-panel" id="groups-panel" style="display:none">
-    <div class="group-panel" style="margin-top:0">
-      <div class="group-panel-header">
-        Group Standings
-        <span id="group-updated"></span>
-      </div>
-      <div id="group-standings-body"><div class="live-empty">Loading…</div></div>
-    </div>
-  </div>
 </div>
 
 <div id="content" style="display:none">
@@ -2889,12 +2893,23 @@ let currentScoresTab = "scores";
 
 function switchScoresTab(tab) {
   currentScoresTab = tab;
-  ["scores","schedule","groups"].forEach(t => {
+  ["scores","schedule"].forEach(t => {
     document.getElementById("stab-" + t).classList.toggle("active", t === tab);
     document.getElementById(t + "-panel").style.display = t === tab ? "block" : "none";
   });
 }
 let cachedBracketEvents = [];
+let currentBracketTab = "bracket";
+function switchBracketTab(tab) {
+  currentBracketTab = tab;
+  ["groups","bracket"].forEach(t => {
+    document.getElementById("btab-" + t).classList.toggle("active", t === tab);
+  });
+  document.getElementById("bracket-content").style.display = tab === "bracket" ? "block" : "none";
+  document.getElementById("groups-panel").style.display   = tab === "groups"  ? "block" : "none";
+  if (tab === "bracket") renderBracket(cachedBracketEvents);
+  if (tab === "groups")  refreshGroupStandings();
+}
 
 function switchView(view) {
   currentView = view;
@@ -2913,10 +2928,13 @@ function switchView(view) {
   document.getElementById("bracket-view").style.display = view === "bracket"     ? "block" : "none";
   document.getElementById("draft-view").style.display   = view === "draft"       ? "block" : "none";
   if (view === "bracket") {
-    // Always use freshest live data; trigger a fetch if cache is cold
     if (cachedLiveEvents.length) cachedBracketEvents = cachedLiveEvents;
-    renderBracket(cachedBracketEvents);
-    if (!cachedLiveEvents.length) refreshLiveScores();
+    if (currentBracketTab === "bracket") {
+      renderBracket(cachedBracketEvents);
+      if (!cachedLiveEvents.length) refreshLiveScores();
+    } else {
+      refreshGroupStandings();
+    }
   }
   if (view === "draft")   { renderDraftBoard(); renderAvailableTeams(); }
 }
