@@ -1725,26 +1725,39 @@ function applyESPNPoints(events) {
   const OMIT = new Set(["3rd-place-match"]);
   const TIE_PTS = { "group-stage": 1 };
 
-  // Build per-team: wins[], ties[], total from completed events
-  const teamWins  = {};
-  const teamTies  = {};
-  const teamTotals = {};
+  // Build per-team: wins[], ties[], total, last_result, next_game from ESPN events
+  const teamWins       = {};
+  const teamTies       = {};
+  const teamTotals     = {};
+  const teamLastResult = {};  // most recent completed match per team
+  const teamNextGame   = {};  // earliest scheduled upcoming match per team
 
   for (const e of events) {
     const slug = e.season?.slug || "";
     if (OMIT.has(slug)) continue;
     const comp = e.competitions[0];
-    if (!comp.status.type.completed) continue;
-
-    const home  = comp.competitors.find(c => c.homeAway === "home");
-    const away  = comp.competitors.find(c => c.homeAway === "away");
+    const home = comp.competitors.find(c => c.homeAway === "home");
+    const away = comp.competitors.find(c => c.homeAway === "away");
     if (!home || !away) continue;
 
     const hName = home.team.displayName;
     const aName = away.team.displayName;
-    const hWon  = home.winner;
-    const aWon  = away.winner;
-    const draw  = !hWon && !aWon;
+    const date  = e.date || "";
+    const isScheduled = comp.status.type.name === "STATUS_SCHEDULED";
+    const isCompleted = comp.status.type.completed;
+
+    // Track earliest scheduled game as next_game
+    if (isScheduled) {
+      for (const [team, opp] of [[hName, aName], [aName, hName]]) {
+        if (!teamNextGame[team] || date < teamNextGame[team].date)
+          teamNextGame[team] = { opponent: opp, date, stage: slug };
+      }
+    }
+
+    if (!isCompleted) continue;
+
+    const hWon = home.winner, aWon = away.winner;
+    const draw = !hWon && !aWon;
 
     [hName, aName].forEach(n => {
       if (!teamWins[n])   teamWins[n]   = [];
@@ -1765,6 +1778,17 @@ function applyESPNPoints(events) {
       const pts    = WIN_PTS[slug] || 3;
       teamWins[winner].push({ stage: slug, opponent: loser, pts });
       teamTotals[winner] += pts;
+    }
+
+    // Track most recent result for each team (my_score-their_score from each team's PoV)
+    const hScore = home.score ?? "0", aScore = away.score ?? "0";
+    for (const [team, opp, myS, oppS, won] of [
+      [hName, aName, hScore, aScore, hWon],
+      [aName, hName, aScore, hScore, aWon],
+    ]) {
+      const result = won ? "W" : (draw ? "D" : "L");
+      if (!teamLastResult[team] || date > teamLastResult[team].date)
+        teamLastResult[team] = { result, score: `${myS}-${oppS}`, opponent: opp, stage: slug, date };
     }
   }
 
@@ -1807,6 +1831,9 @@ function applyESPNPoints(events) {
       // Correct eliminated flag from live data: alive overrides stale scores.json
       if (knockoutAlive.has(t.team))  t.eliminated = false;
       if (knockoutElim.has(t.team))   t.eliminated = true;
+      // Patch last_result and next_game so 60s ESPN refresh corrects stale scores.json
+      if (teamLastResult[t.team]) t.last_result = teamLastResult[t.team];
+      if (teamNextGame[t.team])   t.next_game   = teamNextGame[t.team];
       p.total += t.total;
     }
   }
