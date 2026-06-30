@@ -1068,18 +1068,19 @@
 </div>
 
 <div id="scores-view">
-  <!-- Sub-tab bar: Matches + Groups -->
+  <!-- Sub-tab bar: Scores + Schedule + Groups -->
   <div class="scores-tabs">
-    <button class="scores-tab active" id="stab-matches" onclick="switchScoresTab('matches')">⚽ Matches</button>
-    <button class="scores-tab"        id="stab-groups"  onclick="switchScoresTab('groups')">📊 Groups</button>
+    <button class="scores-tab active" id="stab-scores"   onclick="switchScoresTab('scores')">⚽ Scores</button>
+    <button class="scores-tab"        id="stab-schedule" onclick="switchScoresTab('schedule')">📅 Schedule</button>
+    <button class="scores-tab"        id="stab-groups"   onclick="switchScoresTab('groups')">📊 Groups</button>
   </div>
 
-  <!-- Unified matches panel: live + completed + upcoming all in one -->
-  <div class="scores-panel" id="matches-panel">
+  <!-- Scores panel: live + completed matches -->
+  <div class="scores-panel" id="scores-panel">
     <div class="live-panel">
       <div class="live-panel-header">
         <div class="live-dot inactive" id="live-dot"></div>
-        <span class="live-panel-title" id="live-title">All Matches</span>
+        <span class="live-panel-title" id="live-title">Scores</span>
         <span class="live-updated" id="live-updated"></span>
       </div>
       <div class="scores-filter-bar" id="scores-filter-bar">
@@ -1093,6 +1094,16 @@
         <button class="scores-filter-clear" id="scores-filter-clear" style="display:none" onclick="clearScoresFilter()">✕ Clear</button>
       </div>
       <div id="live-games"><div class="live-empty">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- Schedule panel: upcoming matches -->
+  <div class="scores-panel" id="schedule-panel" style="display:none">
+    <div class="live-panel">
+      <div class="live-panel-header">
+        <span class="live-panel-title">Upcoming Matches</span>
+      </div>
+      <div id="schedule-games"><div class="live-empty">Loading…</div></div>
     </div>
   </div>
 
@@ -2381,39 +2392,49 @@ function renderLiveScores(events) {
 
   dot.className = live.length ? "live-dot" : "live-dot inactive";
 
-  // ── Unified matches panel: live → upcoming (soonest first) → completed (most recent first) ──
-  let allHtml = "";
+  // ── Scores panel: live + completed (most recent first) ──
+  let scoresHtml = "";
 
-  // 1. Live now at top
   if (live.length) {
-    allHtml += `<div class="section-divider live-hdr">● Live Now (${live.length})</div>`;
-    allHtml += live.map(gameCard).join("");
-  }
-
-  // 2. All non-live events grouped by ET day
-  const nonLive = filtered.filter(e => !LIVE_STATUSES.has(e.competitions[0].status.type.name));
-  const byDay = {};
-  for (const e of nonLive) {
-    const day = toETDay(e.date);
-    if (!byDay[day]) byDay[day] = [];
-    byDay[day].push(e);
+    scoresHtml += `<div class="section-divider live-hdr">● Live Now (${live.length})</div>`;
+    scoresHtml += live.map(gameCard).join("");
   }
 
   const todayStr = new Date(Date.now() - 4*3600*1000).toISOString().slice(0,10);
-  const futureDays = Object.keys(byDay).filter(d => d >= todayStr).sort();          // today + upcoming ascending
-  const pastDays   = Object.keys(byDay).filter(d => d < todayStr).sort().reverse(); // completed descending
-
-  for (const day of [...futureDays, ...pastDays]) {
-    const dayEvts   = byDay[day].sort((a,b) => new Date(a.date) - new Date(b.date));
-    const isFuture  = day > todayStr;
-    const hdrClass  = isFuture ? "day-header sched-hdr" : "day-header";
-    const prefix    = isFuture ? "📅 " : "";
-    allHtml += `<div class="${hdrClass}">${prefix}${dayLabel(day+"T16:00:00Z")}</div>`;
-    allHtml += dayEvts.map(gameCard).join("");
+  const completedByDay = {};
+  for (const e of completed) {
+    const day = toETDay(e.date);
+    if (!completedByDay[day]) completedByDay[day] = [];
+    completedByDay[day].push(e);
+  }
+  const pastDays = Object.keys(completedByDay).sort().reverse();
+  for (const day of pastDays) {
+    const dayEvts = completedByDay[day].sort((a,b) => new Date(a.date) - new Date(b.date));
+    scoresHtml += `<div class="day-header">${dayLabel(day+"T16:00:00Z")}</div>`;
+    scoresHtml += dayEvts.map(gameCard).join("");
   }
 
   document.getElementById("live-games").innerHTML =
-    allHtml || `<div class="live-empty">No matches yet.</div>`;
+    scoresHtml || `<div class="live-empty">No results yet.</div>`;
+
+  // ── Schedule panel: upcoming (soonest first) ──
+  const schedEl = document.getElementById("schedule-games");
+  if (schedEl) {
+    let schedHtml = "";
+    const upcomingByDay = {};
+    for (const e of upcoming) {
+      const day = toETDay(e.date);
+      if (!upcomingByDay[day]) upcomingByDay[day] = [];
+      upcomingByDay[day].push(e);
+    }
+    const futureDays = Object.keys(upcomingByDay).sort();
+    for (const day of futureDays) {
+      const dayEvts = upcomingByDay[day].sort((a,b) => new Date(a.date) - new Date(b.date));
+      schedHtml += `<div class="day-header sched-hdr">📅 ${dayLabel(day+"T16:00:00Z")}</div>`;
+      schedHtml += dayEvts.map(gameCard).join("");
+    }
+    schedEl.innerHTML = schedHtml || `<div class="live-empty">No upcoming matches.</div>`;
+  }
 
   buildRecords();
 }
@@ -2657,11 +2678,11 @@ function renderAvailableTeams() {
 
 /* ── View toggle ── */
 let currentView = "leaderboard";
-let currentScoresTab = "matches";
+let currentScoresTab = "scores";
 
 function switchScoresTab(tab) {
   currentScoresTab = tab;
-  ["matches","groups"].forEach(t => {
+  ["scores","schedule","groups"].forEach(t => {
     document.getElementById("stab-" + t).classList.toggle("active", t === tab);
     document.getElementById(t + "-panel").style.display = t === tab ? "block" : "none";
   });
