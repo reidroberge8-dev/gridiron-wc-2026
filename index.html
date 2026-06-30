@@ -508,20 +508,20 @@
     @media (max-width: 700px) {
       .bottom-tab-bar {
         display: flex; position: fixed; bottom: 0; left: 0; right: 0;
-        background: var(--surface); border-top: 1px solid var(--border);
-        z-index: 200; box-shadow: 0 -2px 8px rgba(0,0,0,0.07);
+        background: #013369; border-top: none;
+        z-index: 200; box-shadow: 0 -2px 10px rgba(0,0,0,0.22);
         padding-bottom: max(6px, env(safe-area-inset-bottom, 0px));
       }
       .btb-btn {
         flex: 1; display: flex; flex-direction: column; align-items: center;
         justify-content: center; padding: 10px 4px 6px; background: none;
-        border: none; cursor: pointer; gap: 4px; color: var(--muted);
+        border: none; cursor: pointer; gap: 4px; color: rgba(255,255,255,0.5);
         font-size: 0.62rem; font-weight: 700; letter-spacing: 0.3px;
         text-transform: uppercase; transition: color 0.15s;
       }
       .btb-icon { font-size: 1.5rem; line-height: 1; display: block; }
-      .btb-btn.active { color: var(--blue); }
-      .btb-btn.active .btb-icon { filter: drop-shadow(0 0 3px rgba(0,98,177,0.4)); }
+      .btb-btn.active { color: #ffffff; }
+      .btb-btn.active .btb-icon { filter: drop-shadow(0 0 4px rgba(255,255,255,0.5)); }
       body { padding-bottom: max(74px, calc(64px + env(safe-area-inset-bottom, 0px))); }
     }
 
@@ -2934,14 +2934,14 @@ setInterval(refreshGroupStandings, 5 * 60 * 1000);
   <button class="btb-btn active" id="btb-leaderboard" onclick="switchView('leaderboard')">
     <span class="btb-icon">&#127942;</span><span>Standings</span>
   </button>
-  <button class="btb-btn" id="btb-draft" onclick="switchView('draft')">
-    <span class="btb-icon">&#128203;</span><span>Draft</span>
-  </button>
   <button class="btb-btn" id="btb-scores" onclick="switchView('scores')">
     <span class="btb-icon">&#9917;</span><span>Scores</span>
   </button>
   <button class="btb-btn" id="btb-bracket" onclick="switchView('bracket')">
     <span class="btb-icon">&#128202;</span><span>Bracket</span>
+  </button>
+  <button class="btb-btn" id="btb-draft" onclick="switchView('draft')">
+    <span class="btb-icon">&#128203;</span><span>Draft</span>
   </button>
 </nav>
 </body>
