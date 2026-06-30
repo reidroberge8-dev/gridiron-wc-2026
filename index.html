@@ -1119,6 +1119,16 @@
       <div class="live-panel-header">
         <span class="live-panel-title">Upcoming Matches</span>
       </div>
+      <div class="scores-filter-bar" id="sched-filter-bar">
+        <span class="scores-filter-lbl">Filter by</span>
+        <select class="scores-filter-select" id="sched-filter-type" onchange="onSchedFilterTypeChange()">
+          <option value="all">All Games</option>
+          <option value="owner">Owner</option>
+          <option value="team">Team</option>
+        </select>
+        <select class="scores-filter-select" id="sched-filter-value" style="display:none" onchange="applySchedFilter()"></select>
+        <button class="scores-filter-clear" id="sched-filter-clear" style="display:none" onclick="clearSchedFilter()">&#x2715; Clear</button>
+      </div>
       <div id="schedule-games"><div class="live-empty">Loading…</div></div>
     </div>
   </div>
@@ -2455,6 +2465,74 @@ function clearScoresFilter() {
 
 function escHtml(s) { return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
+/* ── Schedule filter (separate state from Scores filter) ── */
+let schedFilter = { type: "all", value: "" };
+
+function onSchedFilterTypeChange() {
+  const typeEl  = document.getElementById("sched-filter-type");
+  const valEl   = document.getElementById("sched-filter-value");
+  const clearEl = document.getElementById("sched-filter-clear");
+  const type    = typeEl.value;
+  if (type === "all") {
+    valEl.style.display = "none";
+    clearEl.style.display = "none";
+    schedFilter = { type: "all", value: "" };
+    if (cachedLiveEvents) renderLiveScores(cachedLiveEvents);
+    return;
+  }
+  let options = [];
+  if (type === "owner") {
+    const seen = new Set();
+    Object.values(playerTeamMap).forEach(owners => owners.forEach(o => seen.add(o)));
+    options = [...seen].sort();
+  } else {
+    options = Object.keys(playerTeamMap).sort();
+  }
+  valEl.innerHTML = `<option value="">Select ${type === "owner" ? "owner" : "team"}…</option>` +
+    options.map(o => `<option value="${escHtml(o)}">${escHtml(o)}</option>`).join("");
+  valEl.style.display = "";
+  clearEl.style.display = "none";
+  valEl.value = "";
+  schedFilter = { type: "all", value: "" };
+  if (cachedLiveEvents) renderLiveScores(cachedLiveEvents);
+}
+
+function applySchedFilter() {
+  const typeEl  = document.getElementById("sched-filter-type");
+  const valEl   = document.getElementById("sched-filter-value");
+  const clearEl = document.getElementById("sched-filter-clear");
+  const value   = valEl?.value || "";
+  schedFilter   = { type: typeEl?.value || "all", value };
+  if (clearEl) clearEl.style.display = value ? "" : "none";
+  if (cachedLiveEvents) renderLiveScores(cachedLiveEvents);
+}
+
+function clearSchedFilter() {
+  const t = document.getElementById("sched-filter-type");
+  const v = document.getElementById("sched-filter-value");
+  const c = document.getElementById("sched-filter-clear");
+  if (t) t.value = "all";
+  if (v) { v.style.display = "none"; v.innerHTML = ""; }
+  if (c) c.style.display = "none";
+  schedFilter = { type: "all", value: "" };
+  if (cachedLiveEvents) renderLiveScores(cachedLiveEvents);
+}
+
+function filterScheduleEvents(events) {
+  if (schedFilter.type === "all" || !schedFilter.value) return events;
+  return events.filter(e => {
+    const comp = e.competitions[0];
+    const home = comp.competitors.find(c => c.homeAway === "home")?.team?.displayName || "";
+    const away = comp.competitors.find(c => c.homeAway === "away")?.team?.displayName || "";
+    if (schedFilter.type === "team")
+      return home === schedFilter.value || away === schedFilter.value;
+    if (schedFilter.type === "owner")
+      return (playerTeamMap[home]||[]).includes(schedFilter.value) ||
+             (playerTeamMap[away]||[]).includes(schedFilter.value);
+    return true;
+  });
+}
+
 function filterEvents(events) {
   if (scoresFilter.type === "all" || !scoresFilter.value) return events;
   return events.filter(e => {
@@ -2502,7 +2580,7 @@ function renderLiveScores(events) {
   const filtered  = filterEvents(events);
   const live      = filtered.filter(e => LIVE_STATUSES.has(e.competitions[0].status.type.name));
   const completed = filtered.filter(e => FINAL_STATUSES.has(e.competitions[0].status.type.name));
-  const upcoming  = filtered.filter(e => e.competitions[0].status.type.name === "STATUS_SCHEDULED");
+  const upcoming  = filterScheduleEvents(events.filter(e => e.competitions[0].status.type.name === "STATUS_SCHEDULED"));
 
   dot.className = live.length ? "live-dot" : "live-dot inactive";
 
@@ -2524,7 +2602,7 @@ function renderLiveScores(events) {
   const pastDays = Object.keys(completedByDay).sort().reverse();
   for (const day of pastDays) {
     const dayEvts = completedByDay[day].sort((a,b) => new Date(a.date) - new Date(b.date));
-    scoresHtml += `<div class="day-header">${dayLabel(day+"T16:00:00Z")}</div>`;
+    scoresHtml += `<div class="day-header sched-hdr">${dayLabel(day+"T16:00:00Z")}</div>`;
     scoresHtml += dayEvts.map(gameCard).join("");
   }
 
