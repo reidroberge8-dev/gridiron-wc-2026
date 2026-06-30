@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-30T10:43:41.666449+00:00",
+  "last_updated": "2026-06-30T17:29:17.476970+00:00",
   "standings": [
     {
       "name": "Joe Kasz",
@@ -145,12 +145,8 @@
             "stage": "group-stage",
             "date": "2026-06-25T20:00Z"
           },
-          "next_game": {
-            "opponent": "Norway",
-            "date": "2026-06-30T17:00Z",
-            "stage": "round-of-32"
-          },
-          "eliminated": false,
+          "next_game": null,
+          "eliminated": true,
           "record": "2W-0D-1L"
         }
       ],
@@ -1014,12 +1010,8 @@
             "stage": "group-stage",
             "date": "2026-06-26T19:00Z"
           },
-          "next_game": {
-            "opponent": "Ivory Coast",
-            "date": "2026-06-30T17:00Z",
-            "stage": "round-of-32"
-          },
-          "eliminated": false,
+          "next_game": null,
+          "eliminated": true,
           "record": "2W-0D-1L"
         },
         {
@@ -2137,12 +2129,8 @@
         "stage": "group-stage",
         "date": "2026-06-25T20:00Z"
       },
-      "next_game": {
-        "opponent": "Norway",
-        "date": "2026-06-30T17:00Z",
-        "stage": "round-of-32"
-      },
-      "eliminated": false,
+      "next_game": null,
+      "eliminated": true,
       "record": "2W-0D-1L"
     },
     "Ecuador": {
@@ -2650,12 +2638,8 @@
         "stage": "group-stage",
         "date": "2026-06-26T19:00Z"
       },
-      "next_game": {
-        "opponent": "Ivory Coast",
-        "date": "2026-06-30T17:00Z",
-        "stage": "round-of-32"
-      },
-      "eliminated": false,
+      "next_game": null,
+      "eliminated": true,
       "record": "2W-0D-1L"
     },
     "Argentina": {
