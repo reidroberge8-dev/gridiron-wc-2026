@@ -500,11 +500,29 @@
     .toggle-btn:hover { border-color: #0062b1; color: var(--text); background: #eef4fb; }
     .toggle-btn.active { background: #013369; border-color: #013369; color: #ffffff; }
     @media (max-width: 700px) {
-      .view-toggle {
-        grid-template-columns: 1fr 1fr;
-        padding: 12px 12px 0;
+      .view-toggle { display: none; }
+    }
+
+    /* ── Bottom tab bar (mobile only) ── */
+    .bottom-tab-bar { display: none; }
+    @media (max-width: 700px) {
+      .bottom-tab-bar {
+        display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+        background: var(--surface); border-top: 1px solid var(--border);
+        z-index: 200; box-shadow: 0 -2px 8px rgba(0,0,0,0.07);
+        padding-bottom: max(6px, env(safe-area-inset-bottom, 0px));
       }
-      .toggle-btn { padding: 9px 12px; font-size: 0.72rem; text-align: center; }
+      .btb-btn {
+        flex: 1; display: flex; flex-direction: column; align-items: center;
+        justify-content: center; padding: 8px 4px 2px; background: none;
+        border: none; cursor: pointer; gap: 2px; color: var(--muted);
+        font-size: 0.57rem; font-weight: 700; letter-spacing: 0.3px;
+        text-transform: uppercase; transition: color 0.15s;
+      }
+      .btb-icon { font-size: 1.25rem; line-height: 1; display: block; }
+      .btb-btn.active { color: var(--blue); }
+      .btb-btn.active .btb-icon { filter: drop-shadow(0 0 3px rgba(0,98,177,0.4)); }
+      body { padding-bottom: max(74px, calc(64px + env(safe-area-inset-bottom, 0px))); }
     }
 
     /* ── Bracket view ── */
@@ -612,6 +630,23 @@
       .m-team-row:last-child { border-bottom: none; }
       .m-team-row.elim { background: rgba(211,47,47,0.07); }
     .m-team-row.tbd { opacity: 0.35; }
+
+      /* collapsible card body */
+      .m-card-body { overflow: hidden; max-height: 2000px; transition: max-height 0.32s ease; }
+      .m-player-card.collapsed .m-card-body { max-height: 0; }
+      .m-player-header { cursor: pointer; user-select: none; }
+      .m-card-chevron {
+        font-size: 0.8rem; color: var(--muted); flex-shrink: 0;
+        transition: transform 0.25s ease; margin-left: 2px;
+      }
+      .m-player-card.collapsed .m-card-chevron { transform: rotate(-90deg); }
+
+      /* pull-to-refresh indicator */
+      #pull-indicator {
+        display: none; align-items: center; justify-content: center;
+        padding: 10px; font-size: 0.72rem; color: var(--blue);
+        font-weight: 700; letter-spacing: 0.3px;
+      }
       .m-team-left  { flex: 1; min-width: 0; }
       .m-team-flag-name {
         display: flex; align-items: center; gap: 6px;
@@ -998,6 +1033,8 @@
   <div class="last-updated"><span id="status-dot"></span><span id="updated-text">Loading…</span></div>
 </header>
 
+<div id="pull-indicator"></div>
+
 <div class="view-toggle">
   <button class="toggle-btn active" id="btn-leaderboard" onclick="switchView('leaderboard')">🏆 Leaderboard</button>
   <button class="toggle-btn"        id="btn-draft"       onclick="switchView('draft')">📋 Draft Board</button>
@@ -1222,6 +1259,17 @@ function fmtFullDateTime(iso) {
   const suffix = n===1||n===21||n===31?"st":n===2||n===22?"nd":n===3||n===23?"rd":"th";
   return `${day} ${month} ${n}${suffix} at ${time}`;
 }
+function fmtShortDateTime(iso) {
+  // Mobile-compact next-game date: "Tue Jun 16 \u00B7 3pm"
+  if (!iso) return "";
+  const d = new Date(iso);
+  const day  = d.toLocaleDateString("en-US",{weekday:"short",timeZone:"America/New_York"});
+  const mon  = d.toLocaleDateString("en-US",{month:"short",timeZone:"America/New_York"});
+  const dt   = d.toLocaleDateString("en-US",{day:"numeric",timeZone:"America/New_York"});
+  const time = d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZone:"America/New_York"})
+               .replace(":00","").replace(" ","").toLowerCase();
+  return day + " " + mon + " " + dt + " \u00B7 " + time;
+}
 function formatUpdated(iso) {
   return new Date(iso).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
 }
@@ -1354,7 +1402,7 @@ function buildMobileCards(standings, playerRec, teamRec) {
         if (elim) {
           meta += `<div class="elim-line">☠ Eliminated</div>`;
         } else if (next) {
-          meta += `<div class="m-meta-line"><span class="m-meta-lbl">Next</span><span>vs ${next.opponent}, ${fmtFullDateTime(next.date)}</span></div>`;
+          meta += `<div class="m-meta-line"><span class="m-meta-lbl">Next</span><span>vs ${next.opponent}, ${fmtShortDateTime(next.date)}</span></div>`;
         }
       }
 
@@ -1371,8 +1419,8 @@ function buildMobileCards(standings, playerRec, teamRec) {
       </div>`;
     }).join("");
 
-    return `<div class="m-player-card" data-rank="${rank}">
-      <div class="m-player-header">
+    return `<div class="m-player-card${rank > 3 ? " collapsed" : ""}" data-rank="${rank}">
+      <div class="m-player-header" onclick="toggleCard(this)">
         <div class="m-rank-badge ${rankClass}">${rankDisplay}</div>
         <div class="m-player-info">
           <div class="m-player-name">${p.name}</div>
@@ -1384,8 +1432,11 @@ function buildMobileCards(standings, playerRec, teamRec) {
           <span class="m-total-lbl">pts</span>
           ${(()=>{const mp=computePlayerMaxPts(p,_mmaps);return mp!==null&&mp>p.total?`<div class="max-pts-line">Max: ${mp}</div>`:"";})()} 
         </div>
+        <span class="m-card-chevron">&#9662;</span>
       </div>
-      ${teamRows}
+      <div class="m-card-body">
+        ${teamRows}
+      </div>
     </div>`;
   }).join("");
 }
@@ -2619,10 +2670,16 @@ let cachedBracketEvents = [];
 
 function switchView(view) {
   currentView = view;
+  // top buttons (desktop)
   document.getElementById("btn-leaderboard").classList.toggle("active", view === "leaderboard");
   document.getElementById("btn-scores").classList.toggle("active",      view === "scores");
   document.getElementById("btn-bracket").classList.toggle("active",     view === "bracket");
   document.getElementById("btn-draft").classList.toggle("active",       view === "draft");
+  // bottom tab bar (mobile)
+  ["leaderboard","draft","scores","bracket"].forEach(v => {
+    const b = document.getElementById("btb-" + v);
+    if (b) b.classList.toggle("active", v === view);
+  });
   document.getElementById("content").style.display      = view === "leaderboard" ? "block" : "none";
   document.getElementById("scores-view").style.display  = view === "scores"      ? "block" : "none";
   document.getElementById("bracket-view").style.display = view === "bracket"     ? "block" : "none";
@@ -2814,6 +2871,73 @@ setInterval(refreshGroupStandings, 5 * 60 * 1000);
   function closeInstallModal() {
     if (_installModal) _installModal.style.display = 'none';
   }
+
+  // ── Collapsible player cards ──────────────────────────────
+  function toggleCard(header) {
+    header.parentElement.classList.toggle("collapsed");
+  }
+
+  // ── Swipe between tabs (mobile only) ─────────────────────
+  const _VIEWS = ["leaderboard","draft","scores","bracket"];
+  let _sx = 0, _sy = 0;
+  document.addEventListener("touchstart", function(e) {
+    _sx = e.touches[0].clientX; _sy = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener("touchend", function(e) {
+    if (window.innerWidth > 700) return;
+    const dx = e.changedTouches[0].clientX - _sx;
+    const dy = e.changedTouches[0].clientY - _sy;
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    const idx = _VIEWS.indexOf(currentView);
+    if (dx < 0 && idx < _VIEWS.length - 1) switchView(_VIEWS[idx + 1]);
+    else if (dx > 0 && idx > 0)            switchView(_VIEWS[idx - 1]);
+  }, { passive: true });
+
+  // ── Pull-to-refresh (mobile only) ────────────────────────
+  (function() {
+    const ind = document.getElementById("pull-indicator");
+    let _py = 0, _active = false;
+    document.addEventListener("touchstart", function(e) {
+      _py = (window.scrollY <= 2 && window.innerWidth <= 700) ? e.touches[0].clientY : 0;
+    }, { passive: true });
+    document.addEventListener("touchmove", function(e) {
+      if (!_py || !ind) return;
+      const dy = e.touches[0].clientY - _py;
+      if (dy > 8) {
+        _active = true;
+        ind.style.display = "flex";
+        ind.style.opacity = Math.min(dy / 70, 1);
+        ind.textContent = dy > 60 ? "\u2191 Release to refresh" : "\u2193 Pull to refresh";
+      }
+    }, { passive: true });
+    document.addEventListener("touchend", function(e) {
+      if (!_active || !ind) return;
+      const pulled = e.changedTouches[0].clientY - _py;
+      _py = 0; _active = false;
+      if (pulled > 60) {
+        ind.textContent = "\u21BB Refreshing\u2026"; ind.style.opacity = "1";
+        Promise.all([loadScores(), refreshLiveScores()])
+          .finally(function() { ind.style.display = "none"; });
+      } else {
+        ind.style.display = "none";
+      }
+    }, { passive: true });
+  })();
 </script>
+
+<nav class="bottom-tab-bar" id="bottom-tab-bar">
+  <button class="btb-btn active" id="btb-leaderboard" onclick="switchView('leaderboard')">
+    <span class="btb-icon">&#127942;</span><span>Standings</span>
+  </button>
+  <button class="btb-btn" id="btb-draft" onclick="switchView('draft')">
+    <span class="btb-icon">&#128203;</span><span>Draft</span>
+  </button>
+  <button class="btb-btn" id="btb-scores" onclick="switchView('scores')">
+    <span class="btb-icon">&#9917;</span><span>Scores</span>
+  </button>
+  <button class="btb-btn" id="btb-bracket" onclick="switchView('bracket')">
+    <span class="btb-icon">&#128202;</span><span>Bracket</span>
+  </button>
+</nav>
 </body>
 </html>
