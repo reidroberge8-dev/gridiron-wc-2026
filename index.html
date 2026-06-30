@@ -406,6 +406,22 @@
       margin-top: 4px; font-size: 0.58rem; color: var(--blue);
       font-weight: 600; line-height: 1.4;
     }
+    .lb-date-nav-bar {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+    }
+    .lb-date-nav {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--fg); border-radius: 6px; width: 26px; height: 26px;
+      cursor: pointer; font-size: 0.7rem; display: flex;
+      align-items: center; justify-content: center; flex-shrink: 0;
+      padding: 0; line-height: 1; transition: background 0.15s, color 0.15s;
+    }
+    .lb-date-nav:hover:not(:disabled) { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .lb-date-nav:disabled { opacity: 0.28; cursor: default; }
+    .lb-date-nav-label {
+      flex: 1; text-align: center; font-size: 0.78rem; font-weight: 700;
+      color: var(--fg); letter-spacing: 0.2px;
+    }
 
     .live-empty {
       padding: 24px 14px;
@@ -2210,17 +2226,51 @@ function dayLabel(iso) {
   return base;
 }
 
-function renderLbLiveGames(allEvents) {
+// ── Date-navigator state ──
+let lbCachedEvents  = [];
+let lbSelectedDate  = null;   // ET date string "YYYY-MM-DD"; null = today
+
+function lbToETDay(isoStr) {
+  return new Date(new Date(isoStr).getTime() - 4 * 3600 * 1000).toISOString().slice(0, 10);
+}
+
+function lbUniqueDates() {
+  const s = new Set(lbCachedEvents.map(e => lbToETDay(e.date)));
+  return [...s].sort();
+}
+
+function lbNavDate(dir) {
+  const dates = lbUniqueDates();
+  if (!dates.length) return;
+  const todayET = new Date(Date.now() - 4 * 3600 * 1000).toISOString().slice(0, 10);
+  const cur = lbSelectedDate || todayET;
+  const idx = dates.indexOf(cur);
+  const next = idx + dir;
+  if (next < 0 || next >= dates.length) return;
+  lbSelectedDate = dates[next];
+  renderLbForDate(lbSelectedDate);
+}
+
+function renderLbForDate(dateStr) {
   const el = document.getElementById("lb-live-games");
   if (!el) return;
 
-  // Filter to today's matches (ET = UTC-4)
   const todayET = new Date(Date.now() - 4 * 3600 * 1000).toISOString().slice(0, 10);
-  const todayEvents = allEvents.filter(e =>
-    new Date(new Date(e.date).getTime() - 4 * 3600 * 1000).toISOString().slice(0, 10) === todayET
-  );
+  const dates   = lbUniqueDates();
+  const idx     = dates.indexOf(dateStr);
+  const atFirst = idx <= 0;
+  const atLast  = idx >= dates.length - 1;
 
-  if (!todayEvents.length) { el.style.display = "none"; return; }
+  // Format label
+  let dateLabel;
+  if (dateStr === todayET) {
+    dateLabel = "Today's Matches";
+  } else {
+    const d = new Date(dateStr + "T12:00:00Z");
+    dateLabel = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
+  }
+
+  const dayEvents = lbCachedEvents.filter(e => lbToETDay(e.date) === dateStr);
 
   // Sort: live first, then final, then scheduled
   const order = e => {
@@ -2229,9 +2279,9 @@ function renderLbLiveGames(allEvents) {
     if (FINAL_STATUSES.has(s)) return 1;
     return 2;
   };
-  todayEvents.sort((a, b) => order(a) - order(b));
+  dayEvents.sort((a, b) => order(a) - order(b) || new Date(a.date) - new Date(b.date));
 
-  const cards = todayEvents.map(e => {
+  const cards = dayEvents.map(e => {
     const comp     = e.competitions[0];
     const status   = comp.status.type.name;
     const clock    = comp.status.displayClock || "";
@@ -2250,9 +2300,9 @@ function renderLbLiveGames(allEvents) {
 
     let statusLabel;
     if (isHT)
-      statusLabel = `<span class="status-ht" style="font-size:0.58rem">◑ HT</span>`;
+      statusLabel = `<span class="status-ht" style="font-size:0.58rem">&#x25D1; HT</span>`;
     else if (isLive)
-      statusLabel = `<span style="color:var(--green)">● LIVE</span>${clock ? `<span style="color:var(--muted);font-size:0.58rem;margin-left:3px">${clock}</span>` : ""}`;
+      statusLabel = `<span style="color:var(--green)">&#x25CF; LIVE</span>${clock ? `<span style="color:var(--muted);font-size:0.58rem;margin-left:3px">${clock}</span>` : ""}`;
     else if (isFinal)
       statusLabel = `<span class="status-final" style="font-size:0.58rem">Final</span>`;
     else
@@ -2278,8 +2328,34 @@ function renderLbLiveGames(allEvents) {
     </div>`;
   });
 
-  el.innerHTML = `<div class="section-label" style="margin-bottom:8px">Today's Matches</div><div class="lb-live-strip">${cards.join("")}</div>`;
+  const cardsHtml = cards.length
+    ? `<div class="lb-live-strip">${cards.join("")}</div>`
+    : `<div class="live-empty" style="margin-bottom:10px">No matches on this date.</div>`;
+
+  el.innerHTML = `
+    <div class="lb-date-nav-bar">
+      <button class="lb-date-nav" onclick="lbNavDate(-1)" ${atFirst ? "disabled" : ""}>&#9664;</button>
+      <div class="lb-date-nav-label">${dateLabel}</div>
+      <button class="lb-date-nav" onclick="lbNavDate(1)" ${atLast ? "disabled" : ""}>&#9654;</button>
+    </div>
+    ${cardsHtml}`;
   el.style.display = "block";
+}
+
+function renderLbLiveGames(allEvents) {
+  lbCachedEvents = allEvents;
+  const el = document.getElementById("lb-live-games");
+  if (!el) return;
+  const dates = lbUniqueDates();
+  if (!dates.length) { el.style.display = "none"; return; }
+  const todayET = new Date(Date.now() - 4 * 3600 * 1000).toISOString().slice(0, 10);
+  // Default to today if it exists; otherwise nearest future date; else last date
+  if (!lbSelectedDate || !dates.includes(lbSelectedDate)) {
+    lbSelectedDate = dates.includes(todayET)
+      ? todayET
+      : (dates.find(d => d > todayET) || dates[dates.length - 1]);
+  }
+  renderLbForDate(lbSelectedDate);
 }
 
 /* ── Scores / Schedule filter ── */
