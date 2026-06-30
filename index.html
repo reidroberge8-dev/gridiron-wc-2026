@@ -807,7 +807,7 @@
     .snr-w { font-size: 0.78rem; font-weight: 700; color: var(--green); }
     .snr-d { font-size: 0.78rem; font-weight: 700; color: #905c00; }
     .snr-l { font-size: 0.78rem; font-weight: 700; color: var(--red); }
-    .snr-sep { font-size: 0.65rem; color: var(--border); }
+    .snr-sep { font-size: 0.65rem; color: var(--muted); font-weight: 500; }
     /* Team record badge inline after team name */
     .team-rec { font-size: 0.6rem; font-weight: 600; color: var(--muted); margin-left: 5px; white-space: nowrap; }
     .team-rec-w { color: var(--green); }
@@ -815,7 +815,7 @@
     .team-rec-l { color: var(--red); }
     /* Player record badge under Pick # */
     .player-rec-badge { font-size: 0.6rem; font-weight: 600; color: var(--muted); display: block; margin-top: 1px; }
-    .snap-pts { font-size: 0.88rem; font-weight: 800; color: var(--gold); width: 48px; min-width: 48px; text-align: right; flex-shrink: 0; }
+    .snap-pts { font-size: 0.88rem; font-weight: 800; color: var(--gold); width: 48px; min-width: 48px; text-align: right; flex-shrink: 0; border-left: 1px solid var(--border); padding-left: 10px; margin-left: 2px; }
     .snap-pts-lbl { font-size: 0.6rem; color: var(--muted); margin-left: 2px; }
     .snap-hdr-row {
       display: flex; align-items: center; gap: 10px;
@@ -829,7 +829,7 @@
       font-size: 0.55rem; font-weight: 600; color: var(--muted);
       letter-spacing: 0.4px; text-transform: uppercase;
     }
-    .snap-hdr-pts   { width: 48px; min-width: 48px; text-align: right; font-size: 0.55rem; font-weight: 600; color: var(--blue); letter-spacing: 0.4px; text-transform: uppercase; flex-shrink: 0; }
+    .snap-hdr-pts   { width: 48px; min-width: 48px; text-align: right; font-size: 0.55rem; font-weight: 600; color: var(--blue); letter-spacing: 0.4px; text-transform: uppercase; flex-shrink: 0; border-left: 1px solid var(--border); padding-left: 10px; margin-left: 2px; }
     .snap-match-hdr {
       display: flex; flex-direction: column; align-items: center;
       border-left: 1px solid var(--border); padding-left: 10px; margin-left: 2px;
@@ -1531,7 +1531,7 @@ function buildSnapshot(standings) {
 
     // Owner W-D-L record for bar column
     const pr = playerRec[p.name] || {w:0,d:0,l:0};
-    const recHTML = `<span class="snr-w">${pr.w}W</span><span class="snr-sep">·</span><span class="snr-d">${pr.d}D</span><span class="snr-sep">·</span><span class="snr-l">${pr.l}L</span>`;
+    const recHTML = `<span class="snr-w">${pr.w}W</span><span class="snr-sep">-</span><span class="snr-d">${pr.d}D</span><span class="snr-sep">-</span><span class="snr-l">${pr.l}L</span>`;
 
     return `<div class="snap-row">`
       + `<div class="snap-rank ${rc}">${label}</div>`
