@@ -1547,17 +1547,26 @@ function sortedStandings(standings) {
 
 /* ── Max-points calculator ── */
 function buildMaxPtsMaps() {
-  const STAGE_ORDER = ["group-stage","round-of-32","round-of-16","quarterfinals","semifinals","final"];
-  const groupLeft = {}, knockScheduled = {};
+  const groupLeft = {}, knockScheduled = {}, teamBracketSlot = {};
+  const r32Map = BRACKET_SLOT["round-of-32"] || {};
   for (const e of (cachedLiveEvents || [])) {
     const slug = e.season?.slug || "";
     if (slug === "3rd-place-match") continue;
     const comp = e.competitions[0];
-    if (comp.status.type.completed) continue;
     const home = comp.competitors.find(c => c.homeAway === "home");
     const away = comp.competitors.find(c => c.homeAway === "away");
     if (!home || !away) continue;
     const hN = home.team.displayName, aN = away.team.displayName;
+
+    // Bracket slot: map every R32 team (win or lose) to display position 1-16.
+    // Used later to detect which bracket arm two teams share.
+    if (slug === "round-of-32") {
+      const slotNum = r32Map[parseInt(e.id)];
+      if (slotNum) { teamBracketSlot[hN] = slotNum; teamBracketSlot[aN] = slotNum; }
+    }
+
+    if (comp.status.type.completed) continue;  // skip completed for groupLeft / knockScheduled
+
     if (slug === "group-stage") {
       groupLeft[hN] = (groupLeft[hN] || 0) + 1;
       groupLeft[aN] = (groupLeft[aN] || 0) + 1;
@@ -1568,14 +1577,14 @@ function buildMaxPtsMaps() {
       });
     }
   }
-  return { groupLeft, knockScheduled };
+  return { groupLeft, knockScheduled, teamBracketSlot };
 }
 
 function computePlayerMaxPts(player, maps) {
   if (!cachedLiveEvents || !cachedLiveEvents.length) return null;
   const STAGE_ORDER = ["group-stage","round-of-32","round-of-16","quarterfinals","semifinals","final"];
   const WIN_PTS_MAP  = {"group-stage":3,"round-of-32":4,"round-of-16":5,"quarterfinals":6,"semifinals":7,"final":8};
-  const { groupLeft, knockScheduled } = maps;
+  const { groupLeft, knockScheduled, teamBracketSlot } = maps;
 
   function teamNextStage(t) {
     if (t.eliminated) return null;
@@ -1586,7 +1595,6 @@ function computePlayerMaxPts(player, maps) {
     return ni < STAGE_ORDER.length ? STAGE_ORDER[ni] : null;
   }
 
-  // Max pts for teamName from fromStage up to (not including) untilStage
   function maxBetween(teamName, fromStage, untilStage) {
     const fi = STAGE_ORDER.indexOf(fromStage);
     const ui = untilStage ? STAGE_ORDER.indexOf(untilStage) : STAGE_ORDER.length;
@@ -1599,34 +1607,64 @@ function computePlayerMaxPts(player, maps) {
     return pts;
   }
 
-  const alive = player.teams.filter(t => !t.eliminated && t.team && t.team !== "TODO" && t.team !== "TBD");
-  const aliveSet = new Set(alive.map(t => t.team));
+  // Return the earliest stage two teams could possibly meet given their bracket slot positions.
+  // Slots 1-16 represent R32 display positions; pairs of adjacent slots share an R16 arm,
+  // groups of 4 share a QF arm, groups of 8 share an SF arm.
+  function bracketConflictStage(slot1, slot2) {
+    if (Math.ceil(slot1 / 2) === Math.ceil(slot2 / 2)) return "round-of-16";
+    if (Math.ceil(slot1 / 4) === Math.ceil(slot2 / 4)) return "quarterfinals";
+    if ((slot1 <= 8) === (slot2 <= 8))                 return "semifinals";
+    return "final";
+  }
+
+  const aliveTeams = player.teams.filter(t =>
+    !t.eliminated && t.team && t.team !== "TODO" && t.team !== "TBD"
+  );
+
+  // Build work queue: each entry is { name, from, slot }
+  let queue = aliveTeams.map(t => ({
+    name: t.team,
+    from: teamNextStage(t),
+    slot: teamBracketSlot[t.team] || null,
+  })).filter(q => q.from !== null);
+
   let maxAdd = 0;
-  const counted = new Set();
 
-  for (const t of alive) {
-    if (counted.has(t.team)) continue;
-    const from = teamNextStage(t);
-    if (!from) continue;
-
-    // Find earliest scheduled knockout match against another alive team from same player
-    const conflict = (knockScheduled[t.team] || [])
-      .filter(m => aliveSet.has(m.opponent) && !counted.has(m.opponent))
-      .sort((a, b) => STAGE_ORDER.indexOf(a.stage) - STAGE_ORDER.indexOf(b.stage))[0];
-
-    if (conflict) {
-      const opp = alive.find(x => x.team === conflict.opponent);
-      const oppFrom = teamNextStage(opp);
-      // Both contribute up to conflict; then one team wins and takes everything from conflict stage onward
-      maxAdd += maxBetween(t.team,   from,    conflict.stage)
-             + (oppFrom ? maxBetween(opp.team, oppFrom, conflict.stage) : 0)
-             + maxBetween(t.team, conflict.stage, null);
-      counted.add(t.team);
-      counted.add(conflict.opponent);
-    } else {
-      maxAdd += maxBetween(t.team, from, null);
-      counted.add(t.team);
+  // Iteratively resolve the earliest pairwise conflict, re-queuing the winner,
+  // until only one team remains. This correctly handles 3+ team scenarios where
+  // the winner of one match becomes the opponent in the next.
+  while (queue.length > 0) {
+    if (queue.length === 1) {
+      maxAdd += maxBetween(queue[0].name, queue[0].from, null);
+      break;
     }
+
+    // Find the earliest conflict across all pairs in the queue
+    let best = null;
+    for (let i = 0; i < queue.length; i++) {
+      for (let j = i + 1; j < queue.length; j++) {
+        const a = queue[i], b = queue[j];
+        // Direct scheduled matchup (exact opponent known) takes precedence
+        const direct = (knockScheduled[a.name] || []).find(m => m.opponent === b.name)
+                    || (knockScheduled[b.name] || []).find(m => m.opponent === a.name);
+        let stage = direct?.stage;
+        // Fall back to bracket arm analysis using R32 slot positions
+        if (!stage && a.slot && b.slot) stage = bracketConflictStage(a.slot, b.slot);
+        if (!stage) stage = "final";
+        if (!best || STAGE_ORDER.indexOf(stage) < STAGE_ORDER.indexOf(best.stage)) {
+          best = { stage, i, j, a, b };
+        }
+      }
+    }
+
+    if (!best) { for (const t of queue) maxAdd += maxBetween(t.name, t.from, null); break; }
+
+    const { stage, i, j, a, b } = best;
+    // Both contribute up to the conflict stage; winner is re-queued from that stage onward
+    maxAdd += maxBetween(a.name, a.from, stage) + maxBetween(b.name, b.from, stage);
+    const winner = { name: a.name, from: stage, slot: a.slot || b.slot };
+    queue = queue.filter((_, idx) => idx !== i && idx !== j);
+    queue.push(winner);
   }
 
   return player.total + maxAdd;
