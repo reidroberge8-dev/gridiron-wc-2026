@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-01T18:24:37.423000+00:00",
+  "last_updated": "2026-07-01T22:50:39.317387+00:00",
   "standings": [
     {
       "name": "Joe Kasz",
@@ -745,23 +745,23 @@
             {
               "stage": "group-stage",
               "opponent": "Norway"
+            },
+            {
+              "stage": "round-of-32",
+              "opponent": "Belgium"
             }
           ],
           "total": 3,
           "last_result": {
-            "result": "W",
-            "score": "5-0",
-            "opponent": "Iraq",
-            "stage": "group-stage",
-            "date": "2026-06-26T19:00Z"
-          },
-          "next_game": {
+            "result": "L",
+            "score": "2-3",
             "opponent": "Belgium",
-            "date": "2026-07-01T20:00Z",
-            "stage": "round-of-32"
+            "stage": "round-of-32",
+            "date": "2026-07-01T20:00Z"
           },
-          "eliminated": false,
-          "record": "1W-0D-2L"
+          "next_game": null,
+          "eliminated": true,
+          "record": "1W-0D-3L"
         },
         {
           "team": "Panama",
@@ -1276,6 +1276,11 @@
               "stage": "group-stage",
               "opponent": "New Zealand",
               "pts": 3
+            },
+            {
+              "stage": "round-of-32",
+              "opponent": "Senegal",
+              "pts": 4
             }
           ],
           "ties": [
@@ -1291,21 +1296,17 @@
             }
           ],
           "losses": [],
-          "total": 5,
+          "total": 9,
           "last_result": {
             "result": "W",
-            "score": "5-1",
-            "opponent": "New Zealand",
-            "stage": "group-stage",
-            "date": "2026-06-27T03:00Z"
-          },
-          "next_game": {
+            "score": "3-2",
             "opponent": "Senegal",
-            "date": "2026-07-01T20:00Z",
-            "stage": "round-of-32"
+            "stage": "round-of-32",
+            "date": "2026-07-01T20:00Z"
           },
+          "next_game": null,
           "eliminated": false,
-          "record": "1W-2D-0L"
+          "record": "2W-2D-0L"
         },
         {
           "team": "Colombia",
@@ -1408,7 +1409,7 @@
           "record": "0W-1D-2L"
         }
       ],
-      "total": 13,
+      "total": 17,
       "draft_pick": 9,
       "tiebreaker": 1
     }
@@ -2352,6 +2353,11 @@
           "stage": "group-stage",
           "opponent": "New Zealand",
           "pts": 3
+        },
+        {
+          "stage": "round-of-32",
+          "opponent": "Senegal",
+          "pts": 4
         }
       ],
       "ties": [
@@ -2367,21 +2373,17 @@
         }
       ],
       "losses": [],
-      "total": 5,
+      "total": 9,
       "last_result": {
         "result": "W",
-        "score": "5-1",
-        "opponent": "New Zealand",
-        "stage": "group-stage",
-        "date": "2026-06-27T03:00Z"
-      },
-      "next_game": {
+        "score": "3-2",
         "opponent": "Senegal",
-        "date": "2026-07-01T20:00Z",
-        "stage": "round-of-32"
+        "stage": "round-of-32",
+        "date": "2026-07-01T20:00Z"
       },
+      "next_game": null,
       "eliminated": false,
-      "record": "1W-2D-0L"
+      "record": "2W-2D-0L"
     },
     "Egypt": {
       "wins": [
@@ -2605,23 +2607,23 @@
         {
           "stage": "group-stage",
           "opponent": "Norway"
+        },
+        {
+          "stage": "round-of-32",
+          "opponent": "Belgium"
         }
       ],
       "total": 3,
       "last_result": {
-        "result": "W",
-        "score": "5-0",
-        "opponent": "Iraq",
-        "stage": "group-stage",
-        "date": "2026-06-26T19:00Z"
-      },
-      "next_game": {
+        "result": "L",
+        "score": "2-3",
         "opponent": "Belgium",
-        "date": "2026-07-01T20:00Z",
-        "stage": "round-of-32"
+        "stage": "round-of-32",
+        "date": "2026-07-01T20:00Z"
       },
-      "eliminated": false,
-      "record": "1W-0D-2L"
+      "next_game": null,
+      "eliminated": true,
+      "record": "1W-0D-3L"
     },
     "Iraq": {
       "wins": [],
