@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-02T16:29:56.925612+00:00",
+  "last_updated": "2026-07-02T20:43:45.379351+00:00",
   "standings": [
     {
       "name": "Joe Kasz",
@@ -605,12 +605,8 @@
             "stage": "group-stage",
             "date": "2026-06-28T02:00Z"
           },
-          "next_game": {
-            "opponent": "Spain",
-            "date": "2026-07-02T19:00Z",
-            "stage": "round-of-32"
-          },
-          "eliminated": false,
+          "next_game": null,
+          "eliminated": true,
           "record": "1W-1D-1L"
         },
         {
@@ -990,12 +986,8 @@
             "stage": "group-stage",
             "date": "2026-06-27T00:00Z"
           },
-          "next_game": {
-            "opponent": "Austria",
-            "date": "2026-07-02T19:00Z",
-            "stage": "round-of-32"
-          },
-          "eliminated": false,
+          "next_game": null,
+          "eliminated": true,
           "record": "2W-1D-0L"
         },
         {
@@ -2317,12 +2309,8 @@
         "stage": "group-stage",
         "date": "2026-06-27T00:00Z"
       },
-      "next_game": {
-        "opponent": "Austria",
-        "date": "2026-07-02T19:00Z",
-        "stage": "round-of-32"
-      },
-      "eliminated": false,
+      "next_game": null,
+      "eliminated": true,
       "record": "2W-1D-0L"
     },
     "Cape Verde": {
@@ -2815,12 +2803,8 @@
         "stage": "group-stage",
         "date": "2026-06-28T02:00Z"
       },
-      "next_game": {
-        "opponent": "Spain",
-        "date": "2026-07-02T19:00Z",
-        "stage": "round-of-32"
-      },
-      "eliminated": false,
+      "next_game": null,
+      "eliminated": true,
       "record": "1W-1D-1L"
     },
     "Jordan": {
