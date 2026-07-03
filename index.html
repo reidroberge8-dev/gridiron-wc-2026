@@ -1291,7 +1291,7 @@ const WIN_PTS = {
 };
 const LIVE_STATUSES  = new Set(["STATUS_FIRST_HALF","STATUS_SECOND_HALF","STATUS_HALFTIME",
   "STATUS_IN_PROGRESS","STATUS_EXTRA_TIME","STATUS_OVERTIME","STATUS_PENALTIES"]);
-const FINAL_STATUSES = new Set(["STATUS_FINAL","STATUS_FULL_TIME","STATUS_FINAL_PEN"]);  // STATUS_FINAL_PEN = ESPN name for penalty shootout results
+const FINAL_STATUSES = new Set(["STATUS_FINAL","STATUS_FULL_TIME","STATUS_FINAL_PEN","STATUS_FINAL_AET","STATUS_AFTER_EXTRA_TIME"]);  // STATUS_FINAL_PEN = ESPN name for penalty shootout results
 const RESULT_CLASS = { W:"result-w", D:"result-d", L:"result-l" };
 
 function flag(name) { return FLAGS[name] || "🏳️"; }
