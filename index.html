@@ -2965,8 +2965,19 @@ const ROUND_SIZES = { "round-of-32":16, "round-of-16":8, "quarterfinals":4, "sem
 //  pos 13-14(Switzerland/Alg + Arg/CapeV)   → R16-7                     → QF4 → SF2
 //  pos 15-16(Australia/Egypt + Colombia/Gh) → R16-8                     → QF4 → SF2
 const BRACKET_SLOT = {
-  "round-of-32":   {760486:1,760488:2,760489:3,760490:4,760496:5,760497:6,760493:7,760494:8,
-                    760487:9,760492:10,760491:11,760495:12,760498:13,760500:14,760499:15,760501:16},
+  // Pairs = which two R32 matches feed the same R16 match (verified from ESPN R16 matchups)
+  // SF1 half (slots 1-8):
+  //   1-2: Canada/SA + Morocco/Neth  → R16: Morocco vs Canada    → QF: Morocco vs France
+  //   3-4: Paraguay/Ger + France/Swe → R16: France vs Paraguay   → QF: Morocco vs France
+  //   5-6: Croatia/Por + Austria/Spa → R16: Spain vs Portugal    → QF: Spa/Por vs Bel/USA
+  //   7-8: Senegal/Bel + Bosnia/USA  → R16: Belgium vs USA       → QF: Spa/Por vs Bel/USA
+  // SF2 half (slots 9-16):
+  //   9-10: Japan/Bra + Norway/IvC   → R16: Norway vs Brazil     → QF: Norway vs England
+  //  11-12: Congo/Eng + Ecuador/Mex  → R16: England vs Mexico    → QF: Norway vs England
+  //  13-14: Ghana/Col + Algeria/Swi  → R16: Colombia vs Switz    → QF: Col/Swi vs Egy/Arg
+  //  15-16: Egypt/Aus + CpVerde/Arg  → R16: Egypt vs Argentina   → QF: Col/Swi vs Egy/Arg
+  "round-of-32":   {760486:1,760488:2,760489:3,760492:4,760496:5,760497:6,760493:7,760494:8,
+                    760487:9,760490:10,760495:11,760491:12,760501:13,760498:14,760499:15,760500:16},
   "round-of-16":   {760502:1,760503:2,760506:3,760507:4,760504:5,760505:6,760508:7,760509:8},
   "quarterfinals": {760510:1,760511:2,760512:3,760513:4},
   "semifinals":    {760514:1,760515:2},
