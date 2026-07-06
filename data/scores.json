@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-05T22:32:48.630847+00:00",
+  "last_updated": "2026-07-06T13:00:26.953623+00:00",
   "standings": [
     {
       "name": "Joe Ricc",
@@ -239,22 +239,23 @@
             }
           ],
           "ties": [],
-          "losses": [],
+          "losses": [
+            {
+              "stage": "round-of-16",
+              "opponent": "England"
+            }
+          ],
           "total": 13,
           "last_result": {
-            "result": "W",
-            "score": "2-0",
-            "opponent": "Ecuador",
-            "stage": "round-of-32",
-            "date": "2026-07-01T02:00Z"
-          },
-          "next_game": {
+            "result": "L",
+            "score": "2-3",
             "opponent": "England",
-            "date": "2026-07-06T00:00Z",
-            "stage": "round-of-16"
+            "stage": "round-of-16",
+            "date": "2026-07-06T01:00Z"
           },
-          "eliminated": false,
-          "record": "4W-0D-0L"
+          "next_game": null,
+          "eliminated": true,
+          "record": "4W-0D-1L"
         },
         {
           "team": "Egypt",
@@ -342,6 +343,175 @@
       "tiebreaker": 5
     },
     {
+      "name": "Reid",
+      "teams": [
+        {
+          "team": "England",
+          "wins": [
+            {
+              "stage": "group-stage",
+              "opponent": "Croatia",
+              "pts": 3
+            },
+            {
+              "stage": "group-stage",
+              "opponent": "Panama",
+              "pts": 3
+            },
+            {
+              "stage": "round-of-32",
+              "opponent": "Congo DR",
+              "pts": 4
+            },
+            {
+              "stage": "round-of-16",
+              "opponent": "Mexico",
+              "pts": 5
+            }
+          ],
+          "ties": [
+            {
+              "stage": "group-stage",
+              "opponent": "Ghana",
+              "pts": 1
+            }
+          ],
+          "losses": [],
+          "total": 16,
+          "last_result": {
+            "result": "W",
+            "score": "3-2",
+            "opponent": "Mexico",
+            "stage": "round-of-16",
+            "date": "2026-07-06T01:00Z"
+          },
+          "next_game": {
+            "opponent": "Norway",
+            "date": "2026-07-11T21:00Z",
+            "stage": "quarterfinals"
+          },
+          "eliminated": false,
+          "record": "4W-1D-0L"
+        },
+        {
+          "team": "United States",
+          "wins": [
+            {
+              "stage": "group-stage",
+              "opponent": "Paraguay",
+              "pts": 3
+            },
+            {
+              "stage": "group-stage",
+              "opponent": "Australia",
+              "pts": 3
+            },
+            {
+              "stage": "round-of-32",
+              "opponent": "Bosnia-Herzegovina",
+              "pts": 4
+            }
+          ],
+          "ties": [],
+          "losses": [
+            {
+              "stage": "group-stage",
+              "opponent": "T\u00fcrkiye"
+            }
+          ],
+          "total": 10,
+          "last_result": {
+            "result": "W",
+            "score": "2-0",
+            "opponent": "Bosnia-Herzegovina",
+            "stage": "round-of-32",
+            "date": "2026-07-02T00:00Z"
+          },
+          "next_game": {
+            "opponent": "Belgium",
+            "date": "2026-07-07T00:00Z",
+            "stage": "round-of-16"
+          },
+          "eliminated": false,
+          "record": "3W-0D-1L"
+        },
+        {
+          "team": "Iran",
+          "wins": [],
+          "ties": [
+            {
+              "stage": "group-stage",
+              "opponent": "New Zealand",
+              "pts": 1
+            },
+            {
+              "stage": "group-stage",
+              "opponent": "Belgium",
+              "pts": 1
+            },
+            {
+              "stage": "group-stage",
+              "opponent": "Egypt",
+              "pts": 1
+            }
+          ],
+          "losses": [],
+          "total": 3,
+          "last_result": {
+            "result": "D",
+            "score": "1-1",
+            "opponent": "Egypt",
+            "stage": "group-stage",
+            "date": "2026-06-27T03:00Z"
+          },
+          "next_game": null,
+          "eliminated": true,
+          "record": "0W-3D-0L"
+        },
+        {
+          "team": "Algeria",
+          "wins": [
+            {
+              "stage": "group-stage",
+              "opponent": "Jordan",
+              "pts": 3
+            }
+          ],
+          "ties": [
+            {
+              "stage": "group-stage",
+              "opponent": "Austria",
+              "pts": 1
+            }
+          ],
+          "losses": [
+            {
+              "stage": "group-stage",
+              "opponent": "Argentina"
+            },
+            {
+              "stage": "round-of-32",
+              "opponent": "Switzerland"
+            }
+          ],
+          "total": 4,
+          "last_result": {
+            "result": "L",
+            "score": "0-2",
+            "opponent": "Switzerland",
+            "stage": "round-of-32",
+            "date": "2026-07-03T03:00Z"
+          },
+          "next_game": null,
+          "eliminated": true,
+          "record": "1W-1D-2L"
+        }
+      ],
+      "total": 33,
+      "draft_pick": 3,
+      "tiebreaker": 9
+    },
+    {
       "name": "Matt",
       "teams": [
         {
@@ -426,7 +596,7 @@
             "date": "2026-07-05T20:00Z"
           },
           "next_game": {
-            "opponent": "Round of 16 4 Winner",
+            "opponent": "England",
             "date": "2026-07-11T21:00Z",
             "stage": "quarterfinals"
           },
@@ -501,7 +671,7 @@
         }
       ],
       "total": 31,
-      "draft_pick": 3,
+      "draft_pick": 4,
       "tiebreaker": 7
     },
     {
@@ -666,172 +836,8 @@
         }
       ],
       "total": 30,
-      "draft_pick": 4,
-      "tiebreaker": 6
-    },
-    {
-      "name": "Reid",
-      "teams": [
-        {
-          "team": "England",
-          "wins": [
-            {
-              "stage": "group-stage",
-              "opponent": "Croatia",
-              "pts": 3
-            },
-            {
-              "stage": "group-stage",
-              "opponent": "Panama",
-              "pts": 3
-            },
-            {
-              "stage": "round-of-32",
-              "opponent": "Congo DR",
-              "pts": 4
-            }
-          ],
-          "ties": [
-            {
-              "stage": "group-stage",
-              "opponent": "Ghana",
-              "pts": 1
-            }
-          ],
-          "losses": [],
-          "total": 11,
-          "last_result": {
-            "result": "W",
-            "score": "2-1",
-            "opponent": "Congo DR",
-            "stage": "round-of-32",
-            "date": "2026-07-01T16:00Z"
-          },
-          "next_game": {
-            "opponent": "Mexico",
-            "date": "2026-07-06T00:00Z",
-            "stage": "round-of-16"
-          },
-          "eliminated": false,
-          "record": "3W-1D-0L"
-        },
-        {
-          "team": "United States",
-          "wins": [
-            {
-              "stage": "group-stage",
-              "opponent": "Paraguay",
-              "pts": 3
-            },
-            {
-              "stage": "group-stage",
-              "opponent": "Australia",
-              "pts": 3
-            },
-            {
-              "stage": "round-of-32",
-              "opponent": "Bosnia-Herzegovina",
-              "pts": 4
-            }
-          ],
-          "ties": [],
-          "losses": [
-            {
-              "stage": "group-stage",
-              "opponent": "T\u00fcrkiye"
-            }
-          ],
-          "total": 10,
-          "last_result": {
-            "result": "W",
-            "score": "2-0",
-            "opponent": "Bosnia-Herzegovina",
-            "stage": "round-of-32",
-            "date": "2026-07-02T00:00Z"
-          },
-          "next_game": {
-            "opponent": "Belgium",
-            "date": "2026-07-07T00:00Z",
-            "stage": "round-of-16"
-          },
-          "eliminated": false,
-          "record": "3W-0D-1L"
-        },
-        {
-          "team": "Iran",
-          "wins": [],
-          "ties": [
-            {
-              "stage": "group-stage",
-              "opponent": "New Zealand",
-              "pts": 1
-            },
-            {
-              "stage": "group-stage",
-              "opponent": "Belgium",
-              "pts": 1
-            },
-            {
-              "stage": "group-stage",
-              "opponent": "Egypt",
-              "pts": 1
-            }
-          ],
-          "losses": [],
-          "total": 3,
-          "last_result": {
-            "result": "D",
-            "score": "1-1",
-            "opponent": "Egypt",
-            "stage": "group-stage",
-            "date": "2026-06-27T03:00Z"
-          },
-          "next_game": null,
-          "eliminated": true,
-          "record": "0W-3D-0L"
-        },
-        {
-          "team": "Algeria",
-          "wins": [
-            {
-              "stage": "group-stage",
-              "opponent": "Jordan",
-              "pts": 3
-            }
-          ],
-          "ties": [
-            {
-              "stage": "group-stage",
-              "opponent": "Austria",
-              "pts": 1
-            }
-          ],
-          "losses": [
-            {
-              "stage": "group-stage",
-              "opponent": "Argentina"
-            },
-            {
-              "stage": "round-of-32",
-              "opponent": "Switzerland"
-            }
-          ],
-          "total": 4,
-          "last_result": {
-            "result": "L",
-            "score": "0-2",
-            "opponent": "Switzerland",
-            "stage": "round-of-32",
-            "date": "2026-07-03T03:00Z"
-          },
-          "next_game": null,
-          "eliminated": true,
-          "record": "1W-1D-2L"
-        }
-      ],
-      "total": 28,
       "draft_pick": 5,
-      "tiebreaker": 9
+      "tiebreaker": 6
     },
     {
       "name": "Devin",
@@ -1494,22 +1500,23 @@
         }
       ],
       "ties": [],
-      "losses": [],
+      "losses": [
+        {
+          "stage": "round-of-16",
+          "opponent": "England"
+        }
+      ],
       "total": 13,
       "last_result": {
-        "result": "W",
-        "score": "2-0",
-        "opponent": "Ecuador",
-        "stage": "round-of-32",
-        "date": "2026-07-01T02:00Z"
-      },
-      "next_game": {
+        "result": "L",
+        "score": "2-3",
         "opponent": "England",
-        "date": "2026-07-06T00:00Z",
-        "stage": "round-of-16"
+        "stage": "round-of-16",
+        "date": "2026-07-06T01:00Z"
       },
-      "eliminated": false,
-      "record": "4W-0D-0L"
+      "next_game": null,
+      "eliminated": true,
+      "record": "4W-0D-1L"
     },
     "South Africa": {
       "wins": [
@@ -2784,7 +2791,7 @@
         "date": "2026-07-05T20:00Z"
       },
       "next_game": {
-        "opponent": "Round of 16 4 Winner",
+        "opponent": "England",
         "date": "2026-07-11T21:00Z",
         "stage": "quarterfinals"
       },
@@ -3030,6 +3037,11 @@
           "stage": "round-of-32",
           "opponent": "Congo DR",
           "pts": 4
+        },
+        {
+          "stage": "round-of-16",
+          "opponent": "Mexico",
+          "pts": 5
         }
       ],
       "ties": [
@@ -3040,21 +3052,21 @@
         }
       ],
       "losses": [],
-      "total": 11,
+      "total": 16,
       "last_result": {
         "result": "W",
-        "score": "2-1",
-        "opponent": "Congo DR",
-        "stage": "round-of-32",
-        "date": "2026-07-01T16:00Z"
+        "score": "3-2",
+        "opponent": "Mexico",
+        "stage": "round-of-16",
+        "date": "2026-07-06T01:00Z"
       },
       "next_game": {
-        "opponent": "Mexico",
-        "date": "2026-07-06T00:00Z",
-        "stage": "round-of-16"
+        "opponent": "Norway",
+        "date": "2026-07-11T21:00Z",
+        "stage": "quarterfinals"
       },
       "eliminated": false,
-      "record": "3W-1D-0L"
+      "record": "4W-1D-0L"
     },
     "Croatia": {
       "wins": [
@@ -3252,20 +3264,6 @@
       "next_game": {
         "opponent": "Round of 16 5 Winner",
         "date": "2026-07-10T19:00Z",
-        "stage": "quarterfinals"
-      },
-      "eliminated": false,
-      "record": "0W-0D-0L"
-    },
-    "Round of 16 4 Winner": {
-      "wins": [],
-      "ties": [],
-      "losses": [],
-      "total": 0,
-      "last_result": null,
-      "next_game": {
-        "opponent": "Norway",
-        "date": "2026-07-11T21:00Z",
         "stage": "quarterfinals"
       },
       "eliminated": false,
