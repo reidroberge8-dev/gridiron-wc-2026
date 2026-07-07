@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-07T21:58:17.316674+00:00",
+  "last_updated": "2026-07-07T23:10:40.081845+00:00",
   "standings": [
     {
       "name": "Joe Ricc",
@@ -68,6 +68,11 @@
               "stage": "round-of-32",
               "opponent": "Algeria",
               "pts": 4
+            },
+            {
+              "stage": "round-of-16",
+              "opponent": "Colombia",
+              "pts": 5
             }
           ],
           "ties": [
@@ -78,17 +83,21 @@
             }
           ],
           "losses": [],
-          "total": 11,
+          "total": 16,
           "last_result": {
             "result": "W",
-            "score": "2-0",
-            "opponent": "Algeria",
-            "stage": "round-of-32",
-            "date": "2026-07-03T03:00Z"
+            "score": "0-0",
+            "opponent": "Colombia",
+            "stage": "round-of-16",
+            "date": "2026-07-07T20:00Z"
           },
-          "next_game": null,
+          "next_game": {
+            "opponent": "Argentina",
+            "date": "2026-07-12T01:00Z",
+            "stage": "quarterfinals"
+          },
           "eliminated": false,
-          "record": "3W-1D-0L"
+          "record": "4W-1D-0L"
         },
         {
           "team": "Canada",
@@ -166,7 +175,7 @@
           "record": "0W-1D-2L"
         }
       ],
-      "total": 38,
+      "total": 43,
       "draft_pick": 1,
       "tiebreaker": 4
     },
@@ -213,7 +222,7 @@
             "date": "2026-07-07T16:00Z"
           },
           "next_game": {
-            "opponent": "Round of 16 8 Winner",
+            "opponent": "Switzerland",
             "date": "2026-07-12T01:00Z",
             "stage": "quarterfinals"
           },
@@ -1089,18 +1098,23 @@
               "pts": 1
             }
           ],
-          "losses": [],
+          "losses": [
+            {
+              "stage": "round-of-16",
+              "opponent": "Switzerland"
+            }
+          ],
           "total": 11,
           "last_result": {
-            "result": "W",
-            "score": "1-0",
-            "opponent": "Ghana",
-            "stage": "round-of-32",
-            "date": "2026-07-04T01:30Z"
+            "result": "L",
+            "score": "0-0",
+            "opponent": "Switzerland",
+            "stage": "round-of-16",
+            "date": "2026-07-07T20:00Z"
           },
           "next_game": null,
-          "eliminated": false,
-          "record": "3W-1D-0L"
+          "eliminated": true,
+          "record": "3W-1D-1L"
         },
         {
           "team": "Iraq",
@@ -1835,6 +1849,11 @@
           "stage": "round-of-32",
           "opponent": "Algeria",
           "pts": 4
+        },
+        {
+          "stage": "round-of-16",
+          "opponent": "Colombia",
+          "pts": 5
         }
       ],
       "ties": [
@@ -1845,17 +1864,21 @@
         }
       ],
       "losses": [],
-      "total": 11,
+      "total": 16,
       "last_result": {
         "result": "W",
-        "score": "2-0",
-        "opponent": "Algeria",
-        "stage": "round-of-32",
-        "date": "2026-07-03T03:00Z"
+        "score": "0-0",
+        "opponent": "Colombia",
+        "stage": "round-of-16",
+        "date": "2026-07-07T20:00Z"
       },
-      "next_game": null,
+      "next_game": {
+        "opponent": "Argentina",
+        "date": "2026-07-12T01:00Z",
+        "stage": "quarterfinals"
+      },
       "eliminated": false,
-      "record": "3W-1D-0L"
+      "record": "4W-1D-0L"
     },
     "Brazil": {
       "wins": [
@@ -2853,7 +2876,7 @@
         "date": "2026-07-07T16:00Z"
       },
       "next_game": {
-        "opponent": "Round of 16 8 Winner",
+        "opponent": "Switzerland",
         "date": "2026-07-12T01:00Z",
         "stage": "quarterfinals"
       },
@@ -3246,32 +3269,23 @@
           "pts": 1
         }
       ],
-      "losses": [],
+      "losses": [
+        {
+          "stage": "round-of-16",
+          "opponent": "Switzerland"
+        }
+      ],
       "total": 11,
       "last_result": {
-        "result": "W",
-        "score": "1-0",
-        "opponent": "Ghana",
-        "stage": "round-of-32",
-        "date": "2026-07-04T01:30Z"
+        "result": "L",
+        "score": "0-0",
+        "opponent": "Switzerland",
+        "stage": "round-of-16",
+        "date": "2026-07-07T20:00Z"
       },
       "next_game": null,
-      "eliminated": false,
-      "record": "3W-1D-0L"
-    },
-    "Round of 16 8 Winner": {
-      "wins": [],
-      "ties": [],
-      "losses": [],
-      "total": 0,
-      "last_result": null,
-      "next_game": {
-        "opponent": "Argentina",
-        "date": "2026-07-12T01:00Z",
-        "stage": "quarterfinals"
-      },
-      "eliminated": false,
-      "record": "0W-0D-0L"
+      "eliminated": true,
+      "record": "3W-1D-1L"
     },
     "Quarterfinal 1 Winner": {
       "wins": [],
