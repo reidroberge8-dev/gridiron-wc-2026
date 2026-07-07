@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-06T23:19:27.565440+00:00",
+  "last_updated": "2026-07-07T01:13:39.587852+00:00",
   "standings": [
     {
       "name": "Joe Ricc",
@@ -427,11 +427,7 @@
             "stage": "round-of-32",
             "date": "2026-07-02T00:00Z"
           },
-          "next_game": {
-            "opponent": "Belgium",
-            "date": "2026-07-07T00:00Z",
-            "stage": "round-of-16"
-          },
+          "next_game": null,
           "eliminated": false,
           "record": "3W-0D-1L"
         },
@@ -1207,11 +1203,7 @@
             "stage": "round-of-32",
             "date": "2026-07-01T20:00Z"
           },
-          "next_game": {
-            "opponent": "United States",
-            "date": "2026-07-07T00:00Z",
-            "stage": "round-of-16"
-          },
+          "next_game": null,
           "eliminated": false,
           "record": "2W-2D-0L"
         },
@@ -1735,11 +1727,7 @@
         "stage": "round-of-32",
         "date": "2026-07-02T00:00Z"
       },
-      "next_game": {
-        "opponent": "Belgium",
-        "date": "2026-07-07T00:00Z",
-        "stage": "round-of-16"
-      },
+      "next_game": null,
       "eliminated": false,
       "record": "3W-0D-1L"
     },
@@ -2476,11 +2464,7 @@
         "stage": "round-of-32",
         "date": "2026-07-01T20:00Z"
       },
-      "next_game": {
-        "opponent": "United States",
-        "date": "2026-07-07T00:00Z",
-        "stage": "round-of-16"
-      },
+      "next_game": null,
       "eliminated": false,
       "record": "2W-2D-0L"
     },
