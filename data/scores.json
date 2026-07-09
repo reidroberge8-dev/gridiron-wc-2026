@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-09T20:57:30.967156+00:00",
+  "last_updated": "2026-07-09T22:39:49.948592+00:00",
   "standings": [
     {
       "name": "Joe Ricc",
@@ -31,21 +31,30 @@
               "stage": "round-of-16",
               "opponent": "Paraguay",
               "pts": 5
+            },
+            {
+              "stage": "quarterfinals",
+              "opponent": "Morocco",
+              "pts": 6
             }
           ],
           "ties": [],
           "losses": [],
-          "total": 18,
+          "total": 24,
           "last_result": {
             "result": "W",
-            "score": "1-0",
-            "opponent": "Paraguay",
-            "stage": "round-of-16",
-            "date": "2026-07-04T21:00Z"
+            "score": "2-0",
+            "opponent": "Morocco",
+            "stage": "quarterfinals",
+            "date": "2026-07-09T20:00Z"
           },
-          "next_game": null,
+          "next_game": {
+            "opponent": "Quarterfinal 2 Winner",
+            "date": "2026-07-14T19:00Z",
+            "stage": "semifinals"
+          },
           "eliminated": false,
-          "record": "5W-0D-0L"
+          "record": "6W-0D-0L"
         },
         {
           "team": "Switzerland",
@@ -171,7 +180,7 @@
           "record": "0W-1D-2L"
         }
       ],
-      "total": 43,
+      "total": 49,
       "draft_pick": 1,
       "tiebreaker": 4
     },
@@ -754,18 +763,23 @@
               "pts": 1
             }
           ],
-          "losses": [],
+          "losses": [
+            {
+              "stage": "quarterfinals",
+              "opponent": "France"
+            }
+          ],
           "total": 16,
           "last_result": {
-            "result": "W",
-            "score": "3-0",
-            "opponent": "Canada",
-            "stage": "round-of-16",
-            "date": "2026-07-04T17:00Z"
+            "result": "L",
+            "score": "0-2",
+            "opponent": "France",
+            "stage": "quarterfinals",
+            "date": "2026-07-09T20:00Z"
           },
           "next_game": null,
-          "eliminated": false,
-          "record": "4W-1D-0L"
+          "eliminated": true,
+          "record": "4W-1D-1L"
         },
         {
           "team": "Austria",
@@ -1945,18 +1959,23 @@
           "pts": 1
         }
       ],
-      "losses": [],
+      "losses": [
+        {
+          "stage": "quarterfinals",
+          "opponent": "France"
+        }
+      ],
       "total": 16,
       "last_result": {
-        "result": "W",
-        "score": "3-0",
-        "opponent": "Canada",
-        "stage": "round-of-16",
-        "date": "2026-07-04T17:00Z"
+        "result": "L",
+        "score": "0-2",
+        "opponent": "France",
+        "stage": "quarterfinals",
+        "date": "2026-07-09T20:00Z"
       },
       "next_game": null,
-      "eliminated": false,
-      "record": "4W-1D-0L"
+      "eliminated": true,
+      "record": "4W-1D-1L"
     },
     "Haiti": {
       "wins": [],
@@ -2695,21 +2714,30 @@
           "stage": "round-of-16",
           "opponent": "Paraguay",
           "pts": 5
+        },
+        {
+          "stage": "quarterfinals",
+          "opponent": "Morocco",
+          "pts": 6
         }
       ],
       "ties": [],
       "losses": [],
-      "total": 18,
+      "total": 24,
       "last_result": {
         "result": "W",
-        "score": "1-0",
-        "opponent": "Paraguay",
-        "stage": "round-of-16",
-        "date": "2026-07-04T21:00Z"
+        "score": "2-0",
+        "opponent": "Morocco",
+        "stage": "quarterfinals",
+        "date": "2026-07-09T20:00Z"
       },
-      "next_game": null,
+      "next_game": {
+        "opponent": "Quarterfinal 2 Winner",
+        "date": "2026-07-14T19:00Z",
+        "stage": "semifinals"
+      },
       "eliminated": false,
-      "record": "5W-0D-0L"
+      "record": "6W-0D-0L"
     },
     "Senegal": {
       "wins": [
@@ -3271,20 +3299,6 @@
       "eliminated": true,
       "record": "3W-1D-1L"
     },
-    "Quarterfinal 1 Winner": {
-      "wins": [],
-      "ties": [],
-      "losses": [],
-      "total": 0,
-      "last_result": null,
-      "next_game": {
-        "opponent": "Quarterfinal 2 Winner",
-        "date": "2026-07-14T19:00Z",
-        "stage": "semifinals"
-      },
-      "eliminated": false,
-      "record": "0W-0D-0L"
-    },
     "Quarterfinal 2 Winner": {
       "wins": [],
       "ties": [],
@@ -3292,7 +3306,7 @@
       "total": 0,
       "last_result": null,
       "next_game": {
-        "opponent": "Quarterfinal 1 Winner",
+        "opponent": "France",
         "date": "2026-07-14T19:00Z",
         "stage": "semifinals"
       },
