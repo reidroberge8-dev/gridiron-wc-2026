@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-09T19:11:17.222676+00:00",
+  "last_updated": "2026-07-09T20:57:30.967156+00:00",
   "standings": [
     {
       "name": "Joe Ricc",
@@ -43,11 +43,7 @@
             "stage": "round-of-16",
             "date": "2026-07-04T21:00Z"
           },
-          "next_game": {
-            "opponent": "Morocco",
-            "date": "2026-07-09T20:00Z",
-            "stage": "quarterfinals"
-          },
+          "next_game": null,
           "eliminated": false,
           "record": "5W-0D-0L"
         },
@@ -767,11 +763,7 @@
             "stage": "round-of-16",
             "date": "2026-07-04T17:00Z"
           },
-          "next_game": {
-            "opponent": "France",
-            "date": "2026-07-09T20:00Z",
-            "stage": "quarterfinals"
-          },
+          "next_game": null,
           "eliminated": false,
           "record": "4W-1D-0L"
         },
@@ -1962,11 +1954,7 @@
         "stage": "round-of-16",
         "date": "2026-07-04T17:00Z"
       },
-      "next_game": {
-        "opponent": "France",
-        "date": "2026-07-09T20:00Z",
-        "stage": "quarterfinals"
-      },
+      "next_game": null,
       "eliminated": false,
       "record": "4W-1D-0L"
     },
@@ -2719,11 +2707,7 @@
         "stage": "round-of-16",
         "date": "2026-07-04T21:00Z"
       },
-      "next_game": {
-        "opponent": "Morocco",
-        "date": "2026-07-09T20:00Z",
-        "stage": "quarterfinals"
-      },
+      "next_game": null,
       "eliminated": false,
       "record": "5W-0D-0L"
     },
