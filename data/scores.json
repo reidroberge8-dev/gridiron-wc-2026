@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-14T21:26:15.757738+00:00",
+  "last_updated": "2026-07-14T22:32:56.446427+00:00",
   "standings": [
     {
       "name": "Joe Ricc",
@@ -239,7 +239,11 @@
             "stage": "semifinals",
             "date": "2026-07-14T19:00Z"
           },
-          "next_game": null,
+          "next_game": {
+            "opponent": "Semifinal 2 Winner",
+            "date": "2026-07-19T19:00Z",
+            "stage": "final"
+          },
           "eliminated": false,
           "record": "6W-1D-0L"
         },
@@ -2456,7 +2460,11 @@
         "stage": "semifinals",
         "date": "2026-07-14T19:00Z"
       },
-      "next_game": null,
+      "next_game": {
+        "opponent": "Semifinal 2 Winner",
+        "date": "2026-07-19T19:00Z",
+        "stage": "final"
+      },
       "eliminated": false,
       "record": "6W-1D-0L"
     },
@@ -3337,20 +3345,6 @@
       "eliminated": true,
       "record": "3W-1D-1L"
     },
-    "Semifinal 1 Winner": {
-      "wins": [],
-      "ties": [],
-      "losses": [],
-      "total": 0,
-      "last_result": null,
-      "next_game": {
-        "opponent": "Semifinal 2 Winner",
-        "date": "2026-07-19T19:00Z",
-        "stage": "final"
-      },
-      "eliminated": false,
-      "record": "0W-0D-0L"
-    },
     "Semifinal 2 Winner": {
       "wins": [],
       "ties": [],
@@ -3358,7 +3352,7 @@
       "total": 0,
       "last_result": null,
       "next_game": {
-        "opponent": "Semifinal 1 Winner",
+        "opponent": "Spain",
         "date": "2026-07-19T19:00Z",
         "stage": "final"
       },
